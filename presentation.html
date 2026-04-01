@@ -827,6 +827,10 @@
         <h3 style="font-size:14px;margin-bottom:6px;color:var(--orange)">&#1060;&#1086;&#1090;&#1086; &#1073;&#1072;&#1075;&#1072; = &#1080;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077;</h3>
         <p>&#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1086;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1077;&#1090; &#1087;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;&#1091;. ADB &#1090;&#1103;&#1085;&#1077;&#1090; &#1089;&#1082;&#1088;&#1080;&#1085;&#1096;&#1086;&#1090; + &#1083;&#1086;&#1075;&#1080;. &#1048;&#1048; &#1072;&#1085;&#1072;&#1083;&#1080;&#1079;&#1080;&#1088;&#1091;&#1077;&#1090;. scrcpy показывает экран. &#1060;&#1080;&#1082;&#1089;&#1080;&#1090;&#1089;&#1103; &#1080; &#1079;&#1072;&#1083;&#1080;&#1074;&#1072;&#1077;&#1090;&#1089;&#1103; &#1086;&#1073;&#1088;&#1072;&#1090;&#1085;&#1086;.</p>
       </div>
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--purple)">Сессии и логи</h3>
+        <p>Каждое действие &mdash; сессия с логом. Админ входит в любую, продолжает работу. Результат &rarr; PR в финальную сборку.</p>
+      </div>
     </div>
   </div>
   <div class="slide-num">04</div>
@@ -2069,7 +2073,139 @@
   <div class="slide-num">21</div>
 </div>
 
-<!-- SLIDE 22: CTA -->
+<!-- SLIDE 22: Sessions & PR Model -->
+<div class="slide">
+  <div class="section-label">Управление работой</div>
+  <h2>Сессии и Pull Requests: <span class="accent-text">Git-модель для AI-работы</span></h2>
+  <div class="lead">
+    Каждая задача &mdash; отдельная сессия. Каждый результат &mdash; PR в финальную сборку. Админ видит и контролирует всё.
+  </div>
+
+  <div class="cards-2" style="max-width:1100px">
+    <!-- Terminal: session workflow -->
+    <div class="screen-mockup">
+      <div class="screen-topbar">
+        <div class="screen-dot"></div>
+        <div class="screen-dot"></div>
+        <div class="screen-dot" style="margin-right:8px"></div>
+        <span style="font-size:11px;color:var(--text-muted)">Сессии и PR</span>
+      </div>
+      <div class="screen-body" style="min-height:auto;padding:16px 20px;font-size:11px;line-height:1.8">
+        <div><span class="prompt">$ claude --list-sessions</span></div>
+        <div>&nbsp;</div>
+        <div><span class="dim"> ID        Работник   Задача              Статус    PR</span></div>
+        <div><span class="dim"> ses_001   Рустам     hvac перевод RU     </span><span style="color:var(--green)">merged</span><span class="dim">    #14 &#10003;</span></div>
+        <div><span class="dim"> ses_002   Алишер     hvac перевод AR     </span><span style="color:var(--yellow)">active</span><span class="dim">    #21 draft</span></div>
+        <div><span class="dim"> ses_003   Джамшид    ADB finder L07      </span><span style="color:var(--red)">stuck</span><span class="dim">     &mdash;</span></div>
+        <div><span class="dim"> ses_004   [Агент]    decode 3 APK        </span><span style="color:var(--accent2)">running</span><span class="dim">   &mdash;</span></div>
+        <div>&nbsp;</div>
+        <div><span class="prompt">$ claude --join-session ses_002</span></div>
+        <div>&nbsp;</div>
+        <div><span class="tool">[Восстановлен контекст: Алишер, hvac AR, 30/42]</span></div>
+        <div>&nbsp;</div>
+        <div><span class="prompt">Админ &gt;</span> покажи RTL проблему</div>
+        <div><span class="ai">ИИ &gt;</span> layout/activity_zone_select.xml</div>
+        <div><span class="ai">&nbsp;&nbsp;&nbsp;&nbsp;</span> не имеет layoutDirection="rtl"</div>
+        <div><span class="prompt">Админ &gt;</span> исправь</div>
+        <div><span class="tool">[apk-rebuild]</span> <span class="dim">&#10003;</span></div>
+        <div><span class="prompt">Админ &gt;</span> обнови PR</div>
+        <div><span class="tool">[PR #21 обновлён &rarr; ready for review]</span></div>
+      </div>
+    </div>
+
+    <!-- Right side: 4 cards -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--green)">Каждая задача = сессия</h3>
+        <p>Полный лог действий, контекст, использованные скиллы, результаты. Ничего не теряется, всё можно пересмотреть.</p>
+      </div>
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--accent2)">Вход в любую сессию</h3>
+        <p>Админ или лид входит в сессию любого работника через CLI. Видит контекст, продолжает работу, исправляет ошибки.</p>
+      </div>
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--purple)">Результат &rarr; PR</h3>
+        <p>Каждая завершённая сессия создаёт Pull Request в финальную сборку. Ревью, мерж, история изменений &mdash; как в Git.</p>
+      </div>
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--orange)">Мульти-агентные суб-сессии</h3>
+        <p>Сложные задачи порождают суб-сессии для каждого агента. Оркестратор собирает результаты в один PR.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">22</div>
+</div>
+
+<!-- SLIDE 23: Skill Versioning Matrix -->
+<div class="slide">
+  <div class="section-label">Версионирование скиллов</div>
+  <h2>Версии скиллов: <span class="accent-text">процессор &times; Android &times; прошивка</span></h2>
+  <div class="lead">
+    Один скилл &mdash; много версий. Система автоматически подбирает нужную по платформе из дампа устройства.
+  </div>
+
+  <div class="cards-2" style="max-width:1100px">
+    <!-- Matrix table -->
+    <div class="card-p" style="padding:28px;">
+      <h3 style="font-size:16px;margin-bottom:16px;color:var(--accent2)">root-helper</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <tr>
+          <th style="text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-muted);font-size:12px;font-weight:600;"></th>
+          <th style="text-align:center;padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-muted);font-size:12px;font-weight:600;">Android 10</th>
+          <th style="text-align:center;padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-muted);font-size:12px;font-weight:600;">Android 12</th>
+          <th style="text-align:center;padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-muted);font-size:12px;font-weight:600;">Android 13</th>
+        </tr>
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid var(--border);font-weight:600;">SA8155P</td>
+          <td style="text-align:center;padding:12px 14px;border-bottom:1px solid var(--border);">
+            <div style="color:var(--green);font-weight:600;">v1.0</div>
+            <div style="font-size:10px;color:var(--text-muted);">fastboot</div>
+          </td>
+          <td style="text-align:center;padding:12px 14px;border-bottom:1px solid var(--border);">
+            <div style="color:var(--green);font-weight:600;">v1.1</div>
+            <div style="font-size:10px;color:var(--text-muted);">+AVB off</div>
+          </td>
+          <td style="text-align:center;padding:12px 14px;border-bottom:1px solid var(--border);">
+            <span style="color:var(--text-muted);">&mdash;</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:12px 14px;font-weight:600;">SA8295P</td>
+          <td style="text-align:center;padding:12px 14px;">
+            <span style="color:var(--text-muted);">&mdash;</span>
+          </td>
+          <td style="text-align:center;padding:12px 14px;">
+            <div style="color:var(--blue);font-weight:600;">v2.0</div>
+            <div style="font-size:10px;color:var(--text-muted);">EDL mode</div>
+          </td>
+          <td style="text-align:center;padding:12px 14px;">
+            <div style="color:var(--purple);font-weight:600;">v2.1</div>
+            <div style="font-size:10px;color:var(--text-muted);">new super</div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Explanation cards -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--green)">Автовыбор версии</h3>
+        <p>Система определяет платформу из дампа устройства (SoC, Android, прошивка) и автоматически подбирает правильную версию скилла.</p>
+      </div>
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--yellow)">Fallback с предупреждением</h3>
+        <p>Если нет точного совпадения &mdash; используется ближайшая версия + предупреждение админу. Безопасный режим по умолчанию.</p>
+      </div>
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--accent2)">Рост без переписывания</h3>
+        <p>Новая платформа = новая строка в матрице, не переписывание старых версий. Каждая версия изолирована и протестирована.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">23</div>
+</div>
+
+<!-- SLIDE 24: CTA -->
 <div class="slide slide-title" style="background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.12) 0%, transparent 70%);">
   <div class="logo-big">RE</div>
   <h1 style="font-size:52px">Auto RE Platform</h1>
@@ -2083,8 +2219,8 @@
       <div class="big-stat-label">&#1073;&#1099;&#1089;&#1090;&#1088;&#1077;&#1077; &#1072;&#1076;&#1072;&#1087;&#1090;&#1072;&#1094;&#1080;&#1103;</div>
     </div>
     <div class="big-stat">
-      <div class="big-stat-val" style="color:var(--accent2)">18</div>
-      <div class="big-stat-label">&#1048;&#1048;-&#1089;&#1082;&#1080;&#1083;&#1083;&#1086;&#1074;</div>
+      <div class="big-stat-val" style="color:var(--accent2)">24</div>
+      <div class="big-stat-label">скиллов &times; платформ</div>
     </div>
     <div class="big-stat">
       <div class="big-stat-val" style="color:var(--purple)">5</div>
@@ -2105,7 +2241,7 @@
     <div class="tag-pill" style="border-color:var(--green);background:rgba(34,197,94,0.1)">ADB</div>
     <div class="tag-pill" style="border-color:var(--blue);background:rgba(59,130,246,0.1)">scrcpy</div>
   </div>
-  <div class="slide-num">22</div>
+  <div class="slide-num">24</div>
 </div>
 
 </body>

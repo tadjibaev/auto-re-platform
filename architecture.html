@@ -560,6 +560,113 @@
     margin: 2px;
   }
   .stat-pill .val { color: var(--text); font-weight: 600; }
+
+  /* =================== SESSION ARCHITECTURE =================== */
+  .session-canvas {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .session-canvas::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 30% 40%, rgba(6,182,212,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .session-tree {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--dim);
+    padding: 16px 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .session-tree .node-label {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .session-tree .node-storage {
+    color: var(--cyan);
+  }
+  .session-tree .node-redis {
+    color: var(--orange);
+  }
+  .session-tree .node-minio {
+    color: var(--purple);
+  }
+  .session-tree .node-pg {
+    color: var(--blue);
+  }
+  .session-tree .tree-branch {
+    color: var(--muted);
+    user-select: none;
+  }
+  .session-schema {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 12px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--dim);
+    overflow-x: auto;
+  }
+  .session-schema .schema-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .session-schema .kw { color: var(--accent); }
+  .session-schema .tbl { color: var(--green); font-weight: 600; }
+  .session-schema .col { color: var(--text); }
+  .session-schema .typ { color: var(--cyan); }
+  .session-schema .cmt { color: var(--muted); font-style: italic; }
+  .session-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .session-stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .session-stat-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 16px rgba(99,102,241,0.1);
+  }
+  .session-stat-card .stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .session-stat-card .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .session-stat-card .stat-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
 </style>
 </head>
 <body>
@@ -574,10 +681,11 @@
   <a href="#s1" style="color:var(--orange)">1. Сетевая топология</a>
   <a href="#s2" style="color:var(--purple)">2. Docker-контейнеры</a>
   <a href="#s3" style="color:var(--blue)">3. Потоки данных</a>
-  <a href="#s4" style="color:var(--green)">4. Стоимость (breakdown)</a>
-  <a href="#s5" style="color:var(--accent)">5. Дорожная карта масштабирования</a>
-  <a href="#s6" style="color:var(--red)">6. Бэкапы и аварийное восстановление</a>
-  <a href="#s7" style="color:var(--yellow)">7. Мониторинг</a>
+  <a href="#s4" style="color:var(--cyan)">4. Архитектура сессий</a>
+  <a href="#s5" style="color:var(--green)">5. Стоимость (breakdown)</a>
+  <a href="#s6" style="color:var(--accent)">6. Дорожная карта масштабирования</a>
+  <a href="#s7" style="color:var(--red)">7. Бэкапы и аварийное восстановление</a>
+  <a href="#s8" style="color:var(--yellow)">8. Мониторинг</a>
 </div>
 
 <!-- ═══════════════════ SECTION 1: NETWORK TOPOLOGY ═══════════════════ -->
@@ -1066,8 +1174,115 @@
 </div>
 
 
-<!-- ═══════════════════ SECTION 4: COST BREAKDOWN ═══════════════════ -->
-<h2 id="s4" style="color:var(--green)">4. Стоимость (детальный breakdown)</h2>
+<!-- ═══════════════════ SECTION 4: SESSION ARCHITECTURE ═══════════════════ -->
+<h2 id="s4" style="color:var(--cyan)">4. Архитектура сессий</h2>
+<p><span class="tag tag-cyan">Хранение и управление</span> Каждый воркер работает в изолированных сессиях. Состояние, сообщения и артефакты хранятся в трёх уровнях: PostgreSQL (холодный), Redis (горячий), MinIO (файлы).</p>
+
+<!-- Session stats dashboard -->
+<div class="session-stats">
+  <div class="session-stat-card">
+    <div class="stat-value" style="color:var(--green)"><span class="stat-dot" style="background:var(--green)"></span>5</div>
+    <div class="stat-label">Активные</div>
+  </div>
+  <div class="session-stat-card">
+    <div class="stat-value" style="color:var(--blue)"><span class="stat-dot" style="background:var(--blue)"></span>2</div>
+    <div class="stat-label">На ревью</div>
+  </div>
+  <div class="session-stat-card">
+    <div class="stat-value" style="color:var(--muted)"><span class="stat-dot" style="background:var(--muted)"></span>8</div>
+    <div class="stat-label">Завершено сегодня</div>
+  </div>
+  <div class="session-stat-card">
+    <div class="stat-value" style="color:var(--dim)">347</div>
+    <div class="stat-label">Всего сессий</div>
+  </div>
+</div>
+
+<h3>Хранение и поток сессий</h3>
+<div class="session-canvas">
+  <div class="session-tree">
+    <span class="node-label">Worker (Claude Code)</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9474;</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> <span class="node-label">Session ses_001</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> Messages: <span class="node-pg">хранятся в PostgreSQL</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> Tool calls: <span class="node-pg">хранятся в PostgreSQL</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> Артефакты: <span class="node-minio">хранятся в MinIO</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> State: <span class="node-redis">Redis (горячий)</span> &#10230; <span class="node-pg">PostgreSQL (холодный)</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472;</span> PR: <span class="node-storage">привязан к сборке проекта</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9474;</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9492;&#9472;&#9472;</span> <span class="node-label">Session ses_002</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> Под-сессия (Агент 1) &#10230; <span class="node-redis">Redis state</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> Под-сессия (Агент 2) &#10230; <span class="node-redis">Redis state</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472;</span> Оркестратор &#10230; <span class="node-storage">объединяет результаты</span>
+  </div>
+</div>
+
+<h3>CLI: подключение к сессии</h3>
+<div class="session-canvas">
+  <div class="session-tree">
+    <span class="node-label">claude --join-session ses_001</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9474;</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> Загрузка контекста из <span class="node-pg">PostgreSQL</span> (сообщения)<br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> Загрузка состояния из <span class="node-redis">Redis</span> (текущий прогресс)<br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9500;&#9472;&#9472;</span> Восстановление <span class="node-storage">MCP-соединения</span><br>
+    <span class="tree-branch">&nbsp;&nbsp;&#9492;&#9472;&#9472;</span> Продолжение диалога
+  </div>
+</div>
+
+<h3>Схемы хранения данных</h3>
+<div class="grid-2">
+  <div class="session-schema">
+    <div class="schema-title" style="color:var(--blue)">&#128024; PostgreSQL</div>
+    <span class="kw">TABLE</span> <span class="tbl">sessions</span> (<br>
+    &nbsp;&nbsp;<span class="col">id</span> <span class="typ">UUID PK</span>,
+    <span class="col">project_id</span> <span class="typ">UUID FK</span>,<br>
+    &nbsp;&nbsp;<span class="col">worker_id</span> <span class="typ">UUID FK</span>,
+    <span class="col">stage</span> <span class="typ">VARCHAR</span>,<br>
+    &nbsp;&nbsp;<span class="col">language</span> <span class="typ">VARCHAR</span>,
+    <span class="col">status</span> <span class="typ">ENUM</span>,<br>
+    &nbsp;&nbsp;<span class="col">created</span> <span class="typ">TIMESTAMP</span>,
+    <span class="col">updated</span> <span class="typ">TIMESTAMP</span><br>
+    )<br><br>
+    <span class="kw">TABLE</span> <span class="tbl">session_messages</span> (<br>
+    &nbsp;&nbsp;<span class="col">session_id</span> <span class="typ">UUID FK</span>,
+    <span class="col">role</span> <span class="typ">VARCHAR</span>,<br>
+    &nbsp;&nbsp;<span class="col">content</span> <span class="typ">JSONB</span>,
+    <span class="col">tool_calls</span> <span class="typ">JSONB</span>,<br>
+    &nbsp;&nbsp;<span class="col">tokens</span> <span class="typ">INT</span>,
+    <span class="col">timestamp</span> <span class="typ">TIMESTAMP</span><br>
+    )<br><br>
+    <span class="kw">TABLE</span> <span class="tbl">session_prs</span> (<br>
+    &nbsp;&nbsp;<span class="col">session_id</span> <span class="typ">UUID FK</span>,
+    <span class="col">pr_number</span> <span class="typ">INT</span>,<br>
+    &nbsp;&nbsp;<span class="col">status</span> <span class="typ">ENUM</span>,
+    <span class="col">diff</span> <span class="typ">TEXT</span>,<br>
+    &nbsp;&nbsp;<span class="col">reviewer</span> <span class="typ">VARCHAR</span><br>
+    )
+  </div>
+  <div>
+    <div class="session-schema">
+      <div class="schema-title" style="color:var(--orange)">&#9889; Redis</div>
+      <span class="kw">KEY</span> <span class="tbl">session:{id}:state</span><br>
+      &nbsp;&nbsp;&#10230; <span class="typ">HASH</span> { <span class="col">current_file</span>, <span class="col">progress</span>, <span class="col">temp_results</span> }<br><br>
+      <span class="kw">KEY</span> <span class="tbl">session:{id}:locks</span><br>
+      &nbsp;&nbsp;&#10230; <span class="typ">HASH</span> { <span class="col">locked_by</span>, <span class="col">expires</span> }
+    </div>
+    <div class="session-schema">
+      <div class="schema-title" style="color:var(--purple)">&#128230; MinIO</div>
+      <span class="kw">BUCKET</span> <span class="tbl">sessions/{id}/artifacts/</span><br>
+      &nbsp;&nbsp;&#10230; APK, скриншоты, логи<br>
+      &nbsp;&nbsp;<span class="cmt">// Автоудаление через 90 дней (lifecycle policy)</span>
+    </div>
+  </div>
+</div>
+
+<div class="key-point">
+  <strong>Принцип:</strong> горячие данные (текущий прогресс, блокировки) &mdash; в Redis с TTL. Холодные данные (история сообщений, PR) &mdash; в PostgreSQL. Бинарные артефакты &mdash; в MinIO с lifecycle-политикой.
+</div>
+
+
+<!-- ═══════════════════ SECTION 5: COST BREAKDOWN ═══════════════════ -->
+<h2 id="s5" style="color:var(--green)">5. Стоимость (детальный breakdown)</h2>
 <p><span class="tag tag-green">Ежемесячные расходы в USD</span> Для двух сценариев: 6 воркеров (старт) и 20 воркеров (рост).</p>
 
 <div class="cost-table">
@@ -1117,8 +1332,8 @@
 </div>
 
 
-<!-- ═══════════════════ SECTION 5: SCALING ROADMAP ═══════════════════ -->
-<h2 id="s5" style="color:var(--accent)">5. Дорожная карта масштабирования</h2>
+<!-- ═══════════════════ SECTION 6: SCALING ROADMAP ═══════════════════ -->
+<h2 id="s6" style="color:var(--accent)">6. Дорожная карта масштабирования</h2>
 <p><span class="tag tag-purple">3 фазы роста</span> От Docker Compose до Kubernetes, от 1 сервера до кластера.</p>
 
 <div class="timeline">
@@ -1234,8 +1449,8 @@
 </table>
 
 
-<!-- ═══════════════════ SECTION 6: BACKUP & DR ═══════════════════ -->
-<h2 id="s6" style="color:var(--red)">6. Бэкапы и аварийное восстановление</h2>
+<!-- ═══════════════════ SECTION 7: BACKUP & DR ═══════════════════ -->
+<h2 id="s7" style="color:var(--red)">7. Бэкапы и аварийное восстановление</h2>
 <p><span class="tag tag-red">RTO: 4 часа</span> <span class="tag tag-yellow">RPO: 6 часов</span> Трёхуровневая стратегия бэкапов с off-site хранением.</p>
 
 <div class="backup-grid">
@@ -1326,8 +1541,8 @@
 </div>
 
 
-<!-- ═══════════════════ SECTION 7: MONITORING ═══════════════════ -->
-<h2 id="s7" style="color:var(--yellow)">7. Стек мониторинга</h2>
+<!-- ═══════════════════ SECTION 8: MONITORING ═══════════════════ -->
+<h2 id="s8" style="color:var(--yellow)">8. Стек мониторинга</h2>
 <p><span class="tag tag-yellow">Полная наблюдаемость</span> 4 уровня мониторинга: доступность, логи, метрики, алерты.</p>
 
 <div class="monitor-grid">

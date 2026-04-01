@@ -479,6 +479,10 @@
     <div class="nav-item" onclick="showPage('activity')">
       <span class="nav-icon">&#9776;</span> &#1051;&#1077;&#1085;&#1090;&#1072; &#1072;&#1082;&#1090;&#1080;&#1074;&#1085;&#1086;&#1089;&#1090;&#1080;
     </div>
+    <div class="nav-item" onclick="showPage('sessions')">
+      <span class="nav-icon">&#8596;</span> &#1057;&#1077;&#1089;&#1089;&#1080;&#1080;
+      <span class="nav-badge" style="background:var(--accent)">5</span>
+    </div>
     <div class="nav-item" onclick="showPage('questions')">
       <span class="nav-icon">&#63;</span> &#1042;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099;
       <span class="nav-badge">7</span>
@@ -717,6 +721,14 @@
             <span class="link" onclick="showPage('activity')">&#1042;&#1089;&#1103; &#1083;&#1077;&#1085;&#1090;&#1072;</span>
           </div>
 
+          <div class="feed-item clickable" onclick="showPage('sessions')" style="cursor:pointer">
+            <div class="feed-time">14:40</div>
+            <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#128309;</div>
+            <div class="feed-text">
+              <span class="highlight">ses_004</span> &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1072;: &laquo;hvac AR&raquo; (&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;, auto-translate 12/42)
+            </div>
+          </div>
+
           <div class="feed-item clickable" onclick="showPage('activity')" style="cursor:pointer">
             <div class="feed-time">14:32</div>
             <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
@@ -871,7 +883,11 @@
         <div class="card">
           <div class="card-header">
             &#1044;&#1080;&#1072;&#1083;&#1086;&#1075; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1072; (&#1078;&#1080;&#1074;&#1086;&#1081;)
-            <span class="link" onclick="showPage('activity')">&#1042;&#1089;&#1103; &#1080;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103;</span>
+            <span>
+              <span class="link" onclick="showPage('sessions')">5 &#1072;&#1082;&#1090;&#1080;&#1074;&#1085;&#1099;&#1093; &#1089;&#1077;&#1089;&#1089;&#1080;&#1081;</span>
+              &nbsp;&middot;&nbsp;
+              <span class="link" onclick="showPage('activity')">&#1042;&#1089;&#1103; &#1080;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103;</span>
+            </span>
           </div>
 
           <div class="convo-item">
@@ -1033,6 +1049,42 @@
             </div>
           </div>
 
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header">Pull Requests (4)</div>
+
+            <div class="alert-item clickable" style="cursor:pointer" onclick="showPage('sessions')">
+              <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:var(--yellow-bg);color:var(--yellow);font-weight:600;flex-shrink:0">draft</span>
+              <div style="flex:1">
+                <div style="font-size:13px"><strong>#21</strong> &#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; hvac AR &mdash; <span style="color:var(--text-dim)">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</span></div>
+                <div class="alert-time" style="color:var(--yellow)">&#9888;&#65039; RTL &#1087;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;&#1072;</div>
+              </div>
+            </div>
+
+            <div class="alert-item clickable" style="cursor:pointer">
+              <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:var(--blue-bg);color:var(--blue);font-weight:600;flex-shrink:0">review</span>
+              <div style="flex:1">
+                <div style="font-size:13px"><strong>#18</strong> Weather widget &mdash; <span style="color:var(--text-dim)">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</span></div>
+                <div class="alert-time">&#1086;&#1078;&#1080;&#1076;&#1072;&#1077;&#1090; &#1052;&#1072;&#1082;&#1089;&#1080;&#1084;</div>
+              </div>
+            </div>
+
+            <div class="alert-item clickable" style="cursor:pointer">
+              <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:var(--green-bg);color:var(--green);font-weight:600;flex-shrink:0">merged</span>
+              <div style="flex:1">
+                <div style="font-size:13px"><strong>#14</strong> &#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; hvac RU &mdash; <span style="color:var(--text-dim)">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</span></div>
+                <div class="alert-time" style="color:var(--green)">&#10003; 1 &#1072;&#1087;&#1088;</div>
+              </div>
+            </div>
+
+            <div class="alert-item clickable" style="cursor:pointer">
+              <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:var(--green-bg);color:var(--green);font-weight:600;flex-shrink:0">merged</span>
+              <div style="flex:1">
+                <div style="font-size:13px"><strong>#12</strong> SystemUI &#1072;&#1076;&#1072;&#1087;&#1090;&#1072;&#1094;&#1080;&#1103; &mdash; <span style="color:var(--text-dim)">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</span></div>
+                <div class="alert-time" style="color:var(--green)">&#10003; 30 &#1084;&#1072;&#1088;</div>
+              </div>
+            </div>
+          </div>
+
           <div class="card">
             <div class="card-header">&#1053;&#1072;&#1082;&#1086;&#1087;&#1083;&#1077;&#1085;&#1085;&#1099;&#1077; &#1079;&#1085;&#1072;&#1085;&#1080;&#1103;</div>
             <div class="knowledge-item clickable" onclick="showPage('knowledge')" style="cursor:pointer">
@@ -1162,6 +1214,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">82%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>25&#1084;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">3 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
 
         <div class="skill-card" onclick="showPage('skill-detail')">
@@ -1175,6 +1228,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">91%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>40&#1084;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">3 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
 
         <div class="skill-card" onclick="showPage('skill-detail')">
@@ -1188,6 +1242,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--yellow)">74%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>1&#1095;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">2 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
       </div>
 
@@ -1206,6 +1261,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">94%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>15&#1084;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">3 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
 
         <div class="skill-card" onclick="showPage('skill-detail')">
@@ -1219,6 +1275,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--red)">62%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>3&#1084;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">3 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
 
         <div class="skill-card" onclick="showPage('skill-detail')">
@@ -1232,6 +1289,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">87%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>45&#1084;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">2 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
       </div>
 
@@ -1250,6 +1308,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">85%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>2&#1095;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">3 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
 
         <div class="skill-card" onclick="showPage('skill-detail')">
@@ -1263,6 +1322,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--red)">58%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>3&#1095;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">3 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
 
         <div class="skill-card" onclick="showPage('skill-detail')">
@@ -1276,6 +1336,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">79%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>1.5&#1095;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">2 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
       </div>
 
@@ -1294,6 +1355,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">92%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>30&#1084;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">3 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
 
         <div class="skill-card" onclick="showPage('skill-detail')">
@@ -1307,6 +1369,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">88%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>1&#1095;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">2 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
 
         <div class="skill-card" onclick="showPage('skill-detail')">
@@ -1320,6 +1383,7 @@
             <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">95%</span></div>
             <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>20&#1084;</span></div>
           </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">3 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
         </div>
       </div>
 
@@ -2301,7 +2365,7 @@
   <!-- ========== SKILL DETAIL ========== -->
   <div class="page" id="page-skill-detail">
     <div class="topbar">
-      <h1><span style="cursor:pointer;color:var(--text-dim)" onclick="showPage('skills')">&larr;</span>&nbsp;&nbsp;apk-translate v1.3</h1>
+      <h1><span style="cursor:pointer;color:var(--text-dim)" onclick="showPage('skills')">&larr;</span>&nbsp;&nbsp;apk-translate v1.3 <span style="font-size:12px;font-weight:400;padding:3px 10px;background:var(--accent);border-radius:5px;color:white;margin-left:8px;vertical-align:middle">SA8155P &middot; Android 12</span></h1>
       <div class="topbar-right">
         <span style="font-size:13px;color:var(--text-dim)">&#1069;&#1090;&#1072;&#1087;: <strong style="color:var(--blue)">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</strong> &middot; &#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100;: <strong style="color:var(--text)">2 (MCP)</strong> &middot; &#1057;&#1086;&#1079;&#1076;&#1072;&#1085;: 12 &#1084;&#1072;&#1088; 2026</span>
       </div>
@@ -2407,6 +2471,54 @@
                 <span style="color:var(--text-muted);flex-shrink:0;width:50px">12 &#1084;&#1072;&#1088;</span>
                 <span style="color:var(--text-dim)">&#1041;&#1072;&#1079;&#1086;&#1074;&#1099;&#1081; &#1087;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; &#1088;&#1077;&#1089;&#1091;&#1088;&#1089;&#1086;&#1074;</span>
               </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header">&#1052;&#1072;&#1090;&#1088;&#1080;&#1094;&#1072; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;</div>
+            <div style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:12px">
+                <thead>
+                  <tr style="border-bottom:1px solid var(--border);color:var(--text-muted);text-align:left">
+                    <th style="padding:10px 12px">&#1055;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1072;</th>
+                    <th style="padding:10px 8px">Android</th>
+                    <th style="padding:10px 8px">&#1042;&#1077;&#1088;&#1089;&#1080;&#1103;</th>
+                    <th style="padding:10px 8px">&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom:1px solid var(--border)">
+                    <td style="padding:10px 12px;font-weight:500">SA8155P</td>
+                    <td style="padding:10px 8px">10-11</td>
+                    <td style="padding:10px 8px">v1.2</td>
+                    <td style="padding:10px 8px"><span style="color:var(--green)">&#10003; &#1055;&#1088;&#1086;&#1074;&#1077;&#1088;&#1077;&#1085;</span></td>
+                  </tr>
+                  <tr style="border-bottom:1px solid var(--border);background:rgba(99,102,241,0.06)">
+                    <td style="padding:10px 12px;font-weight:600;color:var(--accent)">SA8155P</td>
+                    <td style="padding:10px 8px;color:var(--accent)">12</td>
+                    <td style="padding:10px 8px;color:var(--accent);font-weight:600">v1.3</td>
+                    <td style="padding:10px 8px"><span style="color:var(--accent);font-weight:600">&#10003; &#1040;&#1082;&#1090;&#1080;&#1074;&#1077;&#1085;</span></td>
+                  </tr>
+                  <tr style="border-bottom:1px solid var(--border)">
+                    <td style="padding:10px 12px;font-weight:500">SA8295P</td>
+                    <td style="padding:10px 8px">12</td>
+                    <td style="padding:10px 8px">v1.3</td>
+                    <td style="padding:10px 8px"><span style="color:var(--green)">&#10003; &#1055;&#1088;&#1086;&#1074;&#1077;&#1088;&#1077;&#1085;</span></td>
+                  </tr>
+                  <tr style="border-bottom:1px solid var(--border)">
+                    <td style="padding:10px 12px;font-weight:500">SA8295P</td>
+                    <td style="padding:10px 8px">13</td>
+                    <td style="padding:10px 8px">v1.3</td>
+                    <td style="padding:10px 8px"><span style="color:var(--yellow)">&#9888;&#65039; &#1053;&#1077; &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1077;&#1085;</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 12px;font-weight:500;color:var(--text-dim)">Generic</td>
+                    <td style="padding:10px 8px;color:var(--text-dim)">&#1074;&#1089;&#1077;</td>
+                    <td style="padding:10px 8px;color:var(--text-dim)">v1.0</td>
+                    <td style="padding:10px 8px"><span style="color:var(--text-muted)">Fallback</span></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -2873,6 +2985,168 @@
     </div>
   </div>
 
+  <!-- ========== SESSIONS ========== -->
+  <div class="page" id="page-sessions">
+    <div class="topbar">
+      <h1>&#1057;&#1077;&#1089;&#1089;&#1080;&#1080;</h1>
+      <div class="topbar-right">
+        <button class="btn">&#1060;&#1080;&#1083;&#1100;&#1090;&#1088; &#1087;&#1086; &#1074;&#1086;&#1088;&#1082;&#1077;&#1088;&#1091;</button>
+        <button class="btn">&#1060;&#1080;&#1083;&#1100;&#1090;&#1088; &#1087;&#1086; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1091;</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="tabs">
+        <div class="tab active">&#1040;&#1082;&#1090;&#1080;&#1074;&#1085;&#1099;&#1077; (5)</div>
+        <div class="tab">&#1053;&#1072; &#1088;&#1077;&#1074;&#1100;&#1102; (2)</div>
+        <div class="tab">&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1105;&#1085;&#1085;&#1099;&#1077;</div>
+        <div class="tab">&#1042;&#1089;&#1077;</div>
+      </div>
+
+      <div class="card">
+
+        <!-- Session 1 -->
+        <div class="alert-item clickable" style="cursor:pointer;padding:16px 20px" onclick="showPage('worker-detail')">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <span style="color:var(--green);font-size:14px">&#9679;</span>
+              <code style="font-size:13px;font-weight:600;color:var(--accent)">ses_001</code>
+              <span style="font-weight:600;font-size:13px">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:12px;color:var(--text-dim)">Deepal S07</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:13px">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; com.deepal.media &#8594; RU</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-dim);margin-bottom:8px">
+              <span>&#1069;&#1090;&#1072;&#1087;: <span style="color:var(--blue)">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</span></span>
+              <span>&#127479;&#127482;</span>
+              <span>15/156 &#1089;&#1090;&#1088;&#1086;&#1082;</span>
+              <span>47 &#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;</span>
+              <span>23 &#1084;&#1080;&#1085;</span>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();showPage('worker-detail')">&#1042;&#1086;&#1081;&#1090;&#1080;</button>
+              <button class="btn" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();showPage('activity')">&#1051;&#1086;&#1075;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session 2 -->
+        <div class="alert-item clickable" style="cursor:pointer;padding:16px 20px" onclick="showPage('worker-detail')">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <span style="color:var(--green);font-size:14px">&#9679;</span>
+              <code style="font-size:13px;font-weight:600;color:var(--accent)">ses_002</code>
+              <span style="font-weight:600;font-size:13px">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:12px;color:var(--text-dim)">Changan UNI-K</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:13px">Voice setup &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-dim);margin-bottom:6px">
+              <span>&#1069;&#1090;&#1072;&#1087;: <span style="color:var(--purple)">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span></span>
+              <span>&#127479;&#127482;</span>
+              <span>&#1052;&#1091;&#1083;&#1100;&#1090;&#1080;-&#1072;&#1075;&#1077;&#1085;&#1090; Level 3</span>
+              <span>3 &#1089;&#1091;&#1073;-&#1089;&#1077;&#1089;&#1089;&#1080;&#1080;</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-dim);margin-left:20px;margin-bottom:8px;display:flex;flex-direction:column;gap:3px">
+              <div>&#9492;&#9472;&#9472; <span style="color:var(--green)">&#9679;</span> &#1057;&#1091;&#1073;: &#1072;&#1085;&#1072;&#1083;&#1080;&#1079; &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1081; <span style="color:var(--green)">(&#1079;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1072;)</span></div>
+              <div>&#9492;&#9472;&#9472; <span style="color:var(--green)">&#9679;</span> &#1057;&#1091;&#1073;: &#1087;&#1072;&#1090;&#1095; framework <span style="color:var(--accent)">(&#1074; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077;)</span></div>
+              <div>&#9492;&#9472;&#9472; <span style="color:var(--yellow)">&#9679;</span> &#1057;&#1091;&#1073;: &#1090;&#1077;&#1089;&#1090; &#1082;&#1086;&#1084;&#1072;&#1085;&#1076; <span style="color:var(--text-muted)">(&#1086;&#1078;&#1080;&#1076;&#1072;&#1077;&#1090;)</span></div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();showPage('worker-detail')">&#1042;&#1086;&#1081;&#1090;&#1080;</button>
+              <button class="btn" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();showPage('activity')">&#1051;&#1086;&#1075;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session 3 -->
+        <div class="alert-item clickable" style="cursor:pointer;padding:16px 20px" onclick="showPage('worker-detail')">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <span style="color:var(--yellow);font-size:14px">&#9679;</span>
+              <code style="font-size:13px;font-weight:600;color:var(--accent)">ses_003</code>
+              <span style="font-weight:600;font-size:13px">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:12px;color:var(--text-dim)">Deepal L07</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:13px">ADB finder</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-dim);margin-bottom:6px">
+              <span>&#1069;&#1090;&#1072;&#1087;: <span style="color:var(--red)">&#1042;&#1079;&#1083;&#1086;&#1084;</span></span>
+              <span>&#1055;&#1086;&#1087;&#1099;&#1090;&#1082;&#1072; &#1095;&#1077;&#1088;&#1077;&#1079; diag port</span>
+              <span>12 &#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;</span>
+              <span>1&#1095; 15&#1084;&#1080;&#1085;</span>
+            </div>
+            <div style="font-size:12px;color:var(--yellow);margin-bottom:8px">
+              &#9888;&#65039; &#1047;&#1072;&#1089;&#1090;&#1088;&#1103;&#1083; &mdash; 3 &#1087;&#1086;&#1074;&#1090;&#1086;&#1088;&#1085;&#1099;&#1093; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1072;
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();showPage('worker-detail')">&#1042;&#1086;&#1081;&#1090;&#1080;</button>
+              <button class="btn" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();showPage('activity')">&#1051;&#1086;&#1075;</button>
+              <button class="btn" style="font-size:11px;padding:3px 10px;border-color:var(--yellow);color:var(--yellow)" onclick="event.stopPropagation();showPage('worker-detail')">&#1055;&#1086;&#1084;&#1086;&#1095;&#1100;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session 4 -->
+        <div class="alert-item clickable" style="cursor:pointer;padding:16px 20px" onclick="showPage('worker-detail')">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <span style="color:var(--blue);font-size:14px">&#9679;</span>
+              <code style="font-size:13px;font-weight:600;color:var(--accent)">ses_004</code>
+              <span style="font-weight:600;font-size:13px">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:12px;color:var(--text-dim)">Deepal S07</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:13px">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; com.deepal.hvac &#8594; AR</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-dim);margin-bottom:6px">
+              <span>&#1069;&#1090;&#1072;&#1087;: <span style="color:var(--blue)">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</span></span>
+              <span>&#127480;&#127462;</span>
+              <span>30/42 &#1089;&#1090;&#1088;&#1086;&#1082;</span>
+              <span>PR #21 draft</span>
+            </div>
+            <div style="font-size:12px;color:var(--yellow);margin-bottom:8px">
+              &#9888;&#65039; RTL &#1087;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;&#1072; &mdash; &#1078;&#1076;&#1105;&#1090; &#1074;&#1084;&#1077;&#1096;&#1072;&#1090;&#1077;&#1083;&#1100;&#1089;&#1090;&#1074;&#1072; &#1072;&#1076;&#1084;&#1080;&#1085;&#1072;
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();showPage('worker-detail')">&#1042;&#1086;&#1081;&#1090;&#1080;</button>
+              <button class="btn" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();showPage('activity')">&#1051;&#1086;&#1075;</button>
+              <button class="btn" style="font-size:11px;padding:3px 10px;border-color:var(--accent);color:var(--accent)" onclick="event.stopPropagation()">PR</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session 5 -->
+        <div class="alert-item clickable" style="cursor:pointer;padding:16px 20px" onclick="showPage('activity')">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <span style="color:var(--green);font-size:14px">&#9679;</span>
+              <code style="font-size:13px;font-weight:600;color:var(--accent)">ses_005</code>
+              <span style="font-weight:600;font-size:13px;color:var(--text-muted)">[&#1040;&#1075;&#1077;&#1085;&#1090;]</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:12px;color:var(--text-dim)">Deepal S07</span>
+              <span style="color:var(--text-muted);font-size:12px">&middot;</span>
+              <span style="font-size:13px">&#1060;&#1086;&#1085;&#1086;&#1074;&#1072;&#1103; &#1076;&#1077;&#1082;&#1086;&#1084;&#1087;&#1080;&#1083;&#1103;&#1094;&#1080;&#1103; navi, settings, phone</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-dim);margin-bottom:8px">
+              <span>&#1057;&#1087;&#1077;&#1082;&#1091;&#1083;&#1103;&#1090;&#1080;&#1074;&#1085;&#1086;&#1077; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1077;</span>
+              <span>3 APK &#1074; &#1086;&#1095;&#1077;&#1088;&#1077;&#1076;&#1080;</span>
+              <span style="color:var(--text-muted)">auto</span>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn" style="font-size:11px;padding:3px 10px" onclick="event.stopPropagation();showPage('activity')">&#1051;&#1086;&#1075;</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -2885,8 +3159,8 @@ function showPage(pageId, pushState) {
   const navMap = {
     'dashboard': 0, 'projects': 1, 'project-detail': 1,
     'workers': 2, 'worker-detail': 2, 'skills': 3, 'skill-detail': 3, 'devices': 4,
-    'activity': 5, 'questions': 6, 'onboarding': 7,
-    'knowledge': 8, 'builds': 9, 'delivery': 10, 'admin-claude': 11,
+    'activity': 5, 'sessions': 6, 'questions': 7, 'onboarding': 8,
+    'knowledge': 9, 'builds': 10, 'delivery': 11, 'admin-claude': 12,
     'stage-detail': 1, 'bug-detail': 1
   };
   const idx = navMap[pageId];
@@ -2913,6 +3187,7 @@ var pageTitles = {
   'skill-detail': 'apk-translate',
   'devices': 'Устройства',
   'activity': 'Лента активности',
+  'sessions': 'Сессии',
   'questions': 'Вопросы',
   'onboarding': 'Обучение',
   'knowledge': 'База знаний',
