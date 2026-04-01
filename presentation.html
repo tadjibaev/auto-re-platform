@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto RE Platform — Презентация</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #09090b;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --border: #27272a;
+    --text: #fafafa;
+    --text-dim: #a1a1aa;
+    --text-muted: #71717a;
+    --accent: #6366f1;
+    --accent2: #818cf8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #eab308;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --orange: #f97316;
+    --gradient1: linear-gradient(135deg, #6366f1, #a855f7);
+    --gradient2: linear-gradient(135deg, #22c55e, #3b82f6);
+    --gradient3: linear-gradient(135deg, #f97316, #ef4444);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  .slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 120px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Slide 1: Title */
+  .slide-title {
+    align-items: center;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 70%);
+  }
+
+  .logo-big {
+    width: 80px; height: 80px;
+    background: var(--gradient1);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 28px;
+    margin: 0 auto 40px;
+    box-shadow: 0 0 60px rgba(99,102,241,0.3);
+  }
+
+  .slide-title h1 {
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .slide-title .subtitle {
+    font-size: 22px;
+    color: var(--text-dim);
+    max-width: 700px;
+    margin: 0 auto 48px;
+    line-height: 1.6;
+  }
+
+  .tag-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tag-pill {
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  /* Slide headings */
+  .slide h2 {
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .slide .lead {
+    font-size: 18px;
+    color: var(--text-dim);
+    margin-bottom: 48px;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .accent-text {
+    background: var(--gradient1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Cards grid */
+  .cards-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .cards-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .card-p {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.2s;
+  }
+
+  .card-p:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .card-p .card-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .card-p h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .card-p p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* Pipeline */
+  .pipeline {
+    display: flex;
+    gap: 0;
+    position: relative;
+    margin-bottom: 40px;
+  }
+
+  .pipeline::before {
+    content: '';
+    position: absolute;
+    top: 32px;
+    left: 40px;
+    right: 40px;
+    height: 2px;
+    background: var(--border);
+  }
+
+  .pipeline-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pipeline-num {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 700;
+    margin: 0 auto 16px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+  }
+
+  .pipeline-step.active .pipeline-num {
+    background: var(--gradient1);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(99,102,241,0.3);
+  }
+
+  .pipeline-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .pipeline-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    max-width: 100px;
+    margin: 0 auto;
+  }
+
+  /* Big number stats */
+  .big-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+
+  .big-stat {
+    text-align: center;
+  }
+
+  .big-stat-val {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .big-stat-label {
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  /* Architecture diagram */
+  .arch-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 900px;
+  }
+
+  .arch-layer {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .arch-layer-label {
+    width: 160px;
+    flex-shrink: 0;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .arch-layer-content {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .arch-chip {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+  }
+
+  .arch-layer.highlight {
+    border-color: var(--accent);
+    background: rgba(99,102,241,0.05);
+  }
+
+  .arch-layer.highlight .arch-chip {
+    border-color: rgba(99,102,241,0.3);
+    background: rgba(99,102,241,0.1);
+  }
+
+  .arch-arrow {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 18px;
+  }
+
+  /* Feature list */
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .feature-check {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Comparison table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+
+  .compare-table th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .compare-table td {
+    padding: 16px 20px;
+    font-size: 15px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .compare-table tr:last-child td { border-bottom: none; }
+
+  .compare-table .old { color: var(--text-muted); }
+  .compare-table .new { color: var(--green); font-weight: 500; }
+
+  /* Quote block */
+  .quote-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 28px 32px;
+    margin: 32px 0;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 700px;
+  }
+
+  /* Slide numbers */
+  .slide-num {
+    position: absolute;
+    bottom: 32px;
+    right: 40px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* Skills showcase */
+  .skills-showcase {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .skill-mini {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .skill-mini-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .skill-mini-name {
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .skill-mini-desc {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* Screen mockup */
+  .screen-mockup {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .screen-topbar {
+    height: 36px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 6px;
+  }
+
+  .screen-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .screen-body {
+    padding: 20px;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    line-height: 1.8;
+    min-height: 240px;
+  }
+
+  .screen-body .prompt { color: var(--green); }
+  .screen-body .ai { color: var(--accent2); }
+  .screen-body .dim { color: var(--text-muted); }
+  .screen-body .tool { color: var(--yellow); }
+
+  /* Section label */
+  .section-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 0 0 32px 32px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 8px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+
+  .timeline-item .tl-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .timeline-item .tl-time {
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .timeline-item .tl-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* Protection visual */
+  .protection-layers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .prot-layer {
+    width: 100%;
+    max-width: 600px;
+    padding: 16px 24px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .prot-layer:nth-child(1) { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
+  .prot-layer:nth-child(2) { background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); max-width: 520px; }
+  .prot-layer:nth-child(3) { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: var(--yellow); max-width: 440px; }
+  .prot-layer:nth-child(4) { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); color: var(--accent2); max-width: 360px; }
+  .prot-layer:nth-child(5) { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: var(--green); max-width: 280px; }
+
+  .prot-arrow {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* Skill levels */
+  .skill-levels {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 1000px;
+  }
+
+  .skill-level {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .skill-level-header {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .skill-level-header.l1 { border-left: 3px solid var(--green); }
+  .skill-level-header.l2 { border-left: 3px solid var(--blue); }
+  .skill-level-header.l3 { border-left: 3px solid var(--purple); }
+  .skill-level-header.l4 { border-left: 3px solid var(--red); }
+
+  .sl-num { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 4px; }
+  .l1 .sl-num { color: var(--green); }
+  .l2 .sl-num { color: var(--blue); }
+  .l3 .sl-num { color: var(--purple); }
+  .l4 .sl-num { color: var(--red); }
+
+  .sl-name { font-size: 16px; font-weight: 600; }
+
+  .skill-level-body {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sl-desc { font-size: 14px; color: var(--text-dim); line-height: 1.5; }
+
+  .sl-flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+
+  .fb { padding: 5px 12px; border-radius: 6px; font-weight: 500; font-size: 12px; }
+  .fb-local { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); color: var(--green); }
+  .fb-mcp { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); color: var(--blue); }
+  .fb-agent { background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); color: var(--purple); }
+  .fb-hidden { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--red); }
+  .fa { color: var(--text-muted); font-size: 14px; }
+
+  .sl-examples { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ex-chip {
+    padding: 3px 10px; border-radius: 4px; font-size: 11px;
+    background: var(--bg3); border: 1px solid var(--border); color: var(--text-dim);
+  }
+
+  .sl-vis { display: flex; gap: 16px; font-size: 12px; }
+  .vis-y { color: var(--green); }
+  .vis-n { color: var(--red); }
+
+  /* Multi-agent diagram */
+  .ma-diagram {
+    padding: 28px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ma-row { display: flex; gap: 16px; align-items: center; }
+
+  .ma-box {
+    padding: 10px 18px; border-radius: 8px;
+    font-size: 13px; font-weight: 500; text-align: center; min-width: 120px;
+  }
+
+  .ma-orch { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.4); color: var(--accent2); font-size: 14px; padding: 12px 28px; }
+  .ma-sub { background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); color: var(--purple); }
+  .ma-mcp { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: var(--blue); }
+  .ma-secret { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: var(--red); font-size: 11px; }
+  .ma-arrow { color: var(--text-muted); font-size: 16px; }
+  .ma-label { font-size: 11px; color: var(--text-muted); text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide slide-title">
+  <div class="logo-big">RE</div>
+  <h1>Auto RE Platform</h1>
+  <div class="subtitle">
+    ИИ-платформа для реверс-инжиниринга и адаптации автомобильного программного обеспечения
+  </div>
+  <div class="tag-row">
+    <div class="tag-pill">Qualcomm SA8155P / SA8295P</div>
+    <div class="tag-pill">Android Automotive</div>
+    <div class="tag-pill">QNX Hypervisor</div>
+    <div class="tag-pill">Claude AI</div>
+  </div>
+  <div class="slide-num">01</div>
+</div>
+
+<!-- SLIDE 2: Problem -->
+<div class="slide">
+  <div class="section-label">Проблема</div>
+  <h2>Адаптация китайских авто <br>для других рынков &mdash; <span class="accent-text">сложно и долго</span></h2>
+  <div class="lead">
+    Каждый автомобиль &mdash; это уникальная задача: десятки APK, закрытые системы, специфические платформы. Работа требует глубокой экспертизы, которую сложно масштабировать.
+  </div>
+
+  <div class="cards-3">
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(239,68,68,0.1);color:var(--red)">&#9201;</div>
+      <h3>Долгие сроки</h3>
+      <p>Адаптация одного автомобиля занимает недели ручной работы. Перевод 20+ APK, патчинг сервисов, тестирование &mdash; всё вручную.</p>
+    </div>
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(234,179,8,0.1);color:var(--yellow)">&#128274;</div>
+      <h3>Зависимость от экспертов</h3>
+      <p>Знания в головах 2-3 человек. Нанять нового &mdash; месяцы обучения. Потерять ключевого &mdash; потерять проект.</p>
+    </div>
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(249,115,22,0.1);color:var(--orange)">&#128257;</div>
+      <h3>Потеря знаний</h3>
+      <p>Каждая машина решается с нуля. Опыт по Deepal S07 не переносится на L07, хотя платформы похожи на 80%.</p>
+    </div>
+  </div>
+  <div class="slide-num">02</div>
+</div>
+
+<!-- SLIDE 3: Solution -->
+<div class="slide">
+  <div class="section-label">Решение</div>
+  <h2>ИИ-агенты, которые <span class="accent-text">помнят,<br>учатся и масштабируются</span></h2>
+  <div class="lead">
+    Платформа, где каждый проект делает систему умнее, а каждый новый сотрудник &mdash; сразу продуктивен.
+  </div>
+
+  <div class="cards-3">
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(99,102,241,0.1);color:var(--accent2)">&#129302;</div>
+      <h3>ИИ-скиллы для каждой задачи</h3>
+      <p>Специализированные ИИ-агенты для каждого этапа: взлом, перевод, виджеты, голосовое управление, защита. Работник просто описывает задачу.</p>
+    </div>
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(34,197,94,0.1);color:var(--green)">&#129504;</div>
+      <h3>Накопление знаний</h3>
+      <p>Каждая находка сохраняется. Решения по одной машине автоматически предлагаются для похожей. База знаний растёт с каждым проектом.</p>
+    </div>
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(168,85,247,0.1);color:var(--purple)">&#128640;</div>
+      <h3>Исполнитель вместо эксперта</h3>
+      <p>Система ведёт работника пошагово. Не нужно знать smali &mdash; достаточно описать проблему. ИИ подскажет что и как делать.</p>
+    </div>
+  </div>
+  <div class="slide-num">03</div>
+</div>
+
+<!-- SLIDE 4: How it works (Pipeline) -->
+<div class="slide">
+  <div class="section-label">Как это работает</div>
+  <h2>7 этапов &mdash; <span class="accent-text">от взлома до релиза</span></h2>
+  <div class="lead">
+    Один работник ведёт автомобиль от начала до конца. Система направляет на каждом шаге.
+  </div>
+
+  <div class="pipeline">
+    <div class="pipeline-step active">
+      <div class="pipeline-num">1</div>
+      <div class="pipeline-label">Взлом</div>
+      <div class="pipeline-desc">ADB, Root, уязвимости</div>
+    </div>
+    <div class="pipeline-step active">
+      <div class="pipeline-num">2</div>
+      <div class="pipeline-label">Перевод</div>
+      <div class="pipeline-desc">APK, smali, серверные строки</div>
+    </div>
+    <div class="pipeline-step active">
+      <div class="pipeline-num">3</div>
+      <div class="pipeline-label">Функционал</div>
+      <div class="pipeline-desc">Виджеты, сплит, голос</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">4</div>
+      <div class="pipeline-label">Тесты</div>
+      <div class="pipeline-desc">Ручное тестирование на машине</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">5</div>
+      <div class="pipeline-label">Защита</div>
+      <div class="pipeline-desc">Integrity, шифрование, активация</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">6</div>
+      <div class="pipeline-label">Платформа</div>
+      <div class="pipeline-desc">AVB, QNX, ядро</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">7</div>
+      <div class="pipeline-label">Релиз</div>
+      <div class="pipeline-desc">Сборка, прошивка, выпуск</div>
+    </div>
+  </div>
+
+  <div class="cards-2" style="max-width:1000px">
+    <!-- Terminal: ADB testing flow -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="screen-mockup">
+        <div class="screen-topbar">
+          <div class="screen-dot"></div>
+          <div class="screen-dot"></div>
+          <div class="screen-dot" style="margin-right:8px"></div>
+          <span style="font-size:11px;color:var(--text-muted)">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; + &#1058;&#1077;&#1089;&#1090;</span>
+        </div>
+        <div class="screen-body" style="min-height:auto;padding:16px 20px;font-size:12px;line-height:1.7">
+          <div><span class="prompt">&#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &gt;</span> &#1082;&#1083;&#1080;&#1084;&#1072;&#1090; &#1087;&#1086;&#1082;&#1072;&#1079;&#1099;&#1074;&#1072;&#1077;&#1090; &#1080;&#1077;&#1088;&#1086;&#1075;&#1083;&#1080;&#1092;&#1099; &#1085;&#1072; &#1101;&#1082;&#1088;&#1072;&#1085;&#1077; &#1079;&#1086;&#1085;</div>
+          <div><span class="tool">[adb-screen]</span> <span class="dim">&#1057;&#1082;&#1088;&#1080;&#1085;&#1096;&#1086;&#1090; &#1089; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1072; &#10003;</span></div>
+          <div><span class="ai">&#1048;&#1048; &gt;</span> com.deepal.hvac &mdash; &#1089;&#1090;&#1088;&#1086;&#1082;&#1072; &#1074; locale/ru/ &#1086;&#1090;&#1089;&#1091;&#1090;&#1089;&#1090;&#1074;&#1091;&#1077;&#1090;</div>
+          <div><span class="ai">&nbsp;&nbsp;&nbsp;</span> &#1044;&#1086;&#1073;&#1072;&#1074;&#1083;&#1103;&#1102;, &#1087;&#1077;&#1088;&#1077;&#1089;&#1086;&#1073;&#1080;&#1088;&#1072;&#1102;, &#1079;&#1072;&#1083;&#1080;&#1074;&#1072;&#1102; &#1085;&#1072; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1086;...</div>
+          <div><span class="tool">[apk-rebuild]</span> <span class="dim">&#1057;&#1086;&#1073;&#1088;&#1072;&#1085;, &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1072;&#1085; &#10003;</span></div>
+          <div><span class="tool">[adb-install]</span> <span class="dim">&#1059;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1083;&#1077;&#1085; &#1085;&#1072; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1086; &#10003;</span></div>
+          <div><span class="tool">[adb-launch]</span> <span class="dim">&#1047;&#1072;&#1087;&#1091;&#1097;&#1077;&#1085; com.deepal.hvac &#10003;</span></div>
+          <div><span class="ai">&#1048;&#1048; &gt;</span> &#1055;&#1088;&#1086;&#1074;&#1077;&#1088;&#1100; &#1101;&#1082;&#1088;&#1072;&#1085; &#1079;&#1086;&#1085; &#1085;&#1072; &#1084;&#1072;&#1096;&#1080;&#1085;&#1077;</div>
+        </div>
+      </div>
+
+      <div class="screen-mockup">
+        <div class="screen-topbar">
+          <div class="screen-dot"></div>
+          <div class="screen-dot"></div>
+          <div class="screen-dot" style="margin-right:8px"></div>
+          <span style="font-size:11px;color:var(--text-muted)">&#1044;&#1077;&#1073;&#1072;&#1075; + Scrapy</span>
+        </div>
+        <div class="screen-body" style="min-height:auto;padding:16px 20px;font-size:12px;line-height:1.7">
+          <div><span class="prompt">&#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &gt;</span> &#1085;&#1072;&#1074;&#1080;&#1075;&#1072;&#1094;&#1080;&#1103; &#1082;&#1088;&#1072;&#1096;&#1080;&#1090;&#1089;&#1103; &#1087;&#1088;&#1080; &#1079;&#1072;&#1087;&#1091;&#1089;&#1082;&#1077;</div>
+          <div><span class="tool">[adb-logcat]</span> <span class="dim">&#1057;&#1073;&#1086;&#1088; &#1083;&#1086;&#1075;&#1086;&#1074;...</span></div>
+          <div><span class="ai">&#1048;&#1048; &gt;</span> NullPointerException &#1074; NavigationService</div>
+          <div><span class="ai">&nbsp;&nbsp;&nbsp;</span> &#1055;&#1088;&#1080;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077; &#1086;&#1073;&#1088;&#1072;&#1097;&#1072;&#1077;&#1090;&#1089;&#1103; &#1082; api.deepal.com/navi/config</div>
+          <div><span class="tool">[scrapy-api]</span> <span class="dim">&#1057;&#1082;&#1072;&#1085;&#1080;&#1088;&#1091;&#1102; API &#1101;&#1085;&#1076;&#1087;&#1086;&#1080;&#1085;&#1090;&#1099;...</span></div>
+          <div><span class="ai">&#1048;&#1048; &gt;</span> API &#1074;&#1086;&#1079;&#1074;&#1088;&#1072;&#1097;&#1072;&#1077;&#1090; JSON &#1089; 23 &#1089;&#1090;&#1088;&#1086;&#1082;&#1072;&#1084;&#1080; UI</div>
+          <div><span class="ai">&nbsp;&nbsp;&nbsp;</span> &#1055;&#1072;&#1090;&#1095;&#1091; &#1083;&#1086;&#1082;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1082;&#1086;&#1085;&#1092;&#1080;&#1075;, &#1087;&#1077;&#1088;&#1077;&#1079;&#1072;&#1087;&#1091;&#1089;&#1082;&#1072;&#1102;...</div>
+          <div><span class="tool">[adb-restart]</span> <span class="dim">&#1055;&#1077;&#1088;&#1077;&#1079;&#1072;&#1087;&#1091;&#1097;&#1077;&#1085;&#1086; &#10003; &#1050;&#1088;&#1072;&#1096; &#1085;&#1077; &#1074;&#1086;&#1089;&#1087;&#1088;&#1086;&#1080;&#1079;&#1074;&#1086;&#1076;&#1080;&#1090;&#1089;&#1103;</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--green)">ADB &mdash; &#1084;&#1086;&#1089;&#1090; &#1082; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1091;</h3>
+        <p>&#1057;&#1082;&#1088;&#1080;&#1085;&#1096;&#1086;&#1090;&#1099;, &#1091;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1082;&#1072; APK, &#1083;&#1086;&#1075;&#1080;, &#1079;&#1072;&#1087;&#1091;&#1089;&#1082; &#1087;&#1088;&#1080;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1081;, &#1087;&#1077;&#1088;&#1077;&#1079;&#1072;&#1087;&#1091;&#1089;&#1082; &#1089;&#1077;&#1088;&#1074;&#1080;&#1089;&#1086;&#1074; &mdash; &#1074;&#1089;&#1105; &#1095;&#1077;&#1088;&#1077;&#1079; &#1048;&#1048;. &#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1085;&#1077; &#1087;&#1080;&#1096;&#1077;&#1090; adb &#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1099;.</p>
+      </div>
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--blue)">Scrapy &mdash; &#1088;&#1072;&#1079;&#1074;&#1077;&#1076;&#1082;&#1072; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1086;&#1074;</h3>
+        <p>&#1057;&#1082;&#1072;&#1085;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077; API &#1101;&#1085;&#1076;&#1087;&#1086;&#1080;&#1085;&#1090;&#1086;&#1074;, &#1089;&#1073;&#1086;&#1088; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1085;&#1099;&#1093; &#1089;&#1090;&#1088;&#1086;&#1082;, &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1082;&#1072; &#1086;&#1073;&#1085;&#1086;&#1074;&#1083;&#1077;&#1085;&#1080;&#1081; &#1087;&#1088;&#1086;&#1096;&#1080;&#1074;&#1086;&#1082;, &#1072;&#1085;&#1072;&#1083;&#1080;&#1079; &#1086;&#1073;&#1083;&#1072;&#1095;&#1085;&#1099;&#1093; &#1082;&#1086;&#1085;&#1092;&#1080;&#1075;&#1086;&#1074; &#1072;&#1074;&#1090;&#1086;.</p>
+      </div>
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--purple)">&#1040;&#1074;&#1090;&#1086;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;&#1081; &#1094;&#1080;&#1082;&#1083;</h3>
+        <p>&#1053;&#1072;&#1096;&#1105;&#1083; &#1073;&#1072;&#1075; &rarr; &#1083;&#1086;&#1075;&#1080; &#1089; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1072; &rarr; &#1072;&#1085;&#1072;&#1083;&#1080;&#1079; &rarr; &#1080;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077; &rarr; &#1089;&#1073;&#1086;&#1088;&#1082;&#1072; &rarr; &#1079;&#1072;&#1083;&#1080;&#1074;&#1082;&#1072; &#1085;&#1072; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1086; &rarr; &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1082;&#1072;. &#1042;&#1077;&#1089;&#1100; &#1094;&#1080;&#1082;&#1083; &#1074; &#1086;&#1076;&#1085;&#1086;&#1084; &#1076;&#1080;&#1072;&#1083;&#1086;&#1075;&#1077;.</p>
+      </div>
+      <div class="card-p" style="padding:20px 24px">
+        <h3 style="font-size:14px;margin-bottom:6px;color:var(--orange)">&#1060;&#1086;&#1090;&#1086; &#1073;&#1072;&#1075;&#1072; = &#1080;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077;</h3>
+        <p>&#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1086;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1077;&#1090; &#1087;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;&#1091;. ADB &#1090;&#1103;&#1085;&#1077;&#1090; &#1089;&#1082;&#1088;&#1080;&#1085;&#1096;&#1086;&#1090; + &#1083;&#1086;&#1075;&#1080;. &#1048;&#1048; &#1072;&#1085;&#1072;&#1083;&#1080;&#1079;&#1080;&#1088;&#1091;&#1077;&#1090;. Scrapy &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1103;&#1077;&#1090; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;. &#1060;&#1080;&#1082;&#1089;&#1080;&#1090;&#1089;&#1103; &#1080; &#1079;&#1072;&#1083;&#1080;&#1074;&#1072;&#1077;&#1090;&#1089;&#1103; &#1086;&#1073;&#1088;&#1072;&#1090;&#1085;&#1086;.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">04</div>
+</div>
+
+<!-- SLIDE 5: Skills -->
+<div class="slide">
+  <div class="section-label">&#1048;&#1048;-&#1089;&#1082;&#1080;&#1083;&#1083;&#1099;</div>
+  <h2>24 &#1089;&#1087;&#1077;&#1094;&#1080;&#1072;&#1083;&#1080;&#1079;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1099;&#1093; <span class="accent-text">&#1048;&#1048;-&#1072;&#1075;&#1077;&#1085;&#1090;&#1086;&#1074;</span></h2>
+  <div class="lead">
+    &#1050;&#1072;&#1078;&#1076;&#1099;&#1081; &#1089;&#1082;&#1080;&#1083;&#1083; &mdash; &#1101;&#1082;&#1089;&#1087;&#1077;&#1088;&#1090; &#1074; &#1089;&#1074;&#1086;&#1077;&#1081; &#1086;&#1073;&#1083;&#1072;&#1089;&#1090;&#1080;. &#1048;&#1079;&#1086;&#1083;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1099;&#1081; &#1082;&#1086;&#1085;&#1090;&#1077;&#1082;&#1089;&#1090;, &#1090;&#1086;&#1095;&#1085;&#1099;&#1077; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099;, &#1085;&#1072;&#1082;&#1086;&#1087;&#1083;&#1077;&#1085;&#1085;&#1099;&#1081; &#1086;&#1087;&#1099;&#1090;.
+  </div>
+
+  <div class="skills-showcase">
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--red)">&#128269;</div>
+      <div class="skill-mini-name">adb-finder</div>
+      <div class="skill-mini-desc">&#1055;&#1086;&#1080;&#1089;&#1082; ADB</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--red)">&#128272;</div>
+      <div class="skill-mini-name">root-helper</div>
+      <div class="skill-mini-desc">&#1056;&#1091;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--red)">&#128375;</div>
+      <div class="skill-mini-name">vuln-scanner</div>
+      <div class="skill-mini-desc">&#1059;&#1103;&#1079;&#1074;&#1080;&#1084;&#1086;&#1089;&#1090;&#1080;</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--blue)">&#127760;</div>
+      <div class="skill-mini-name">apk-translate</div>
+      <div class="skill-mini-desc">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; APK</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--blue)">&#128230;</div>
+      <div class="skill-mini-name">apk-rebuild</div>
+      <div class="skill-mini-desc">&#1057;&#1073;&#1086;&#1088;&#1082;&#1072; APK</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--blue)">&#128241;</div>
+      <div class="skill-mini-name">systemui-adapt</div>
+      <div class="skill-mini-desc">SystemUI</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--purple)">&#128444;</div>
+      <div class="skill-mini-name">widget-builder</div>
+      <div class="skill-mini-desc">&#1042;&#1080;&#1076;&#1078;&#1077;&#1090;&#1099;</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--purple)">&#127908;</div>
+      <div class="skill-mini-name">voice-setup</div>
+      <div class="skill-mini-desc">&#1043;&#1086;&#1083;&#1086;&#1089;&#1086;&#1074;&#1086;&#1077;</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--purple)">&#9998;</div>
+      <div class="skill-mini-name">split-screen</div>
+      <div class="skill-mini-desc">&#1057;&#1087;&#1083;&#1080;&#1090; &#1101;&#1082;&#1088;&#1072;&#1085;</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--orange)">&#128737;</div>
+      <div class="skill-mini-name">integrity-inject</div>
+      <div class="skill-mini-desc">&#1062;&#1077;&#1083;&#1086;&#1089;&#1090;&#1085;&#1086;&#1089;&#1090;&#1100;</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--orange)">&#128375;</div>
+      <div class="skill-mini-name">trojan-embed</div>
+      <div class="skill-mini-desc">&#1057;&#1082;&#1088;&#1099;&#1090;&#1099;&#1077; &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1082;&#1080;</div>
+    </div>
+    <div class="skill-mini">
+      <div class="skill-mini-icon" style="color:var(--orange)">&#128274;</div>
+      <div class="skill-mini-name">resource-encrypt</div>
+      <div class="skill-mini-desc">&#1064;&#1080;&#1092;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;</div>
+    </div>
+    <div class="skill-mini" style="border-color:rgba(34,197,94,0.3)">
+      <div class="skill-mini-icon" style="color:var(--green)">&#128241;</div>
+      <div class="skill-mini-name">adb-test</div>
+      <div class="skill-mini-desc">&#1058;&#1077;&#1089;&#1090; &#1085;&#1072; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1077;</div>
+    </div>
+    <div class="skill-mini" style="border-color:rgba(34,197,94,0.3)">
+      <div class="skill-mini-icon" style="color:var(--green)">&#128196;</div>
+      <div class="skill-mini-name">adb-debug</div>
+      <div class="skill-mini-desc">&#1051;&#1086;&#1075;&#1080; &#1080; &#1082;&#1088;&#1072;&#1096;&#1080;</div>
+    </div>
+    <div class="skill-mini" style="border-color:rgba(34,197,94,0.3)">
+      <div class="skill-mini-icon" style="color:var(--green)">&#128230;</div>
+      <div class="skill-mini-name">adb-deploy</div>
+      <div class="skill-mini-desc">&#1059;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1082;&#1072; APK</div>
+    </div>
+    <div class="skill-mini" style="border-color:rgba(59,130,246,0.3)">
+      <div class="skill-mini-icon" style="color:var(--blue)">&#127760;</div>
+      <div class="skill-mini-name">scrapy-api</div>
+      <div class="skill-mini-desc">&#1057;&#1082;&#1072;&#1085; API &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1072;</div>
+    </div>
+    <div class="skill-mini" style="border-color:rgba(59,130,246,0.3)">
+      <div class="skill-mini-icon" style="color:var(--blue)">&#128451;</div>
+      <div class="skill-mini-name">scrapy-firmware</div>
+      <div class="skill-mini-desc">&#1054;&#1073;&#1085;&#1086;&#1074;&#1083;&#1077;&#1085;&#1080;&#1103; &#1054;&#1045;&#1052;</div>
+    </div>
+  </div>
+  <div class="slide-num">05</div>
+</div>
+
+<!-- SLIDE 5.5: Skill Levels -->
+<div class="slide">
+  <div class="section-label">&#1040;&#1088;&#1093;&#1080;&#1090;&#1077;&#1082;&#1090;&#1091;&#1088;&#1072; &#1089;&#1082;&#1080;&#1083;&#1083;&#1086;&#1074;</div>
+  <h2>4 &#1091;&#1088;&#1086;&#1074;&#1085;&#1103; &#1089;&#1083;&#1086;&#1078;&#1085;&#1086;&#1089;&#1090;&#1080;: <span class="accent-text">&#1086;&#1090; &#1087;&#1088;&#1086;&#1084;&#1087;&#1090;&#1072;<br>&#1076;&#1086; &#1084;&#1091;&#1083;&#1100;&#1090;&#1080;-&#1072;&#1075;&#1077;&#1085;&#1090;&#1085;&#1086;&#1081; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1099;</span></h2>
+  <div class="lead">
+    &#1063;&#1077;&#1084; &#1089;&#1083;&#1086;&#1078;&#1085;&#1077;&#1077; &#1079;&#1072;&#1076;&#1072;&#1095;&#1072; &#1080;&#1083;&#1080; &#1094;&#1077;&#1085;&#1085;&#1077;&#1077; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103; &mdash; &#1090;&#1077;&#1084; &#1075;&#1083;&#1091;&#1073;&#1078;&#1077; &#1083;&#1086;&#1075;&#1080;&#1082;&#1072; &#1089;&#1087;&#1088;&#1103;&#1090;&#1072;&#1085;&#1072; &#1085;&#1072; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1077;.
+  </div>
+
+  <div class="skill-levels">
+
+    <!-- Level 1 -->
+    <div class="skill-level">
+      <div class="skill-level-header l1">
+        <div class="sl-num">&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; 1</div>
+        <div class="sl-name">&#1055;&#1088;&#1086;&#1089;&#1090;&#1086;&#1081; &#1089;&#1082;&#1080;&#1083;&#1083;</div>
+      </div>
+      <div class="skill-level-body">
+        <div class="sl-desc">&#1058;&#1086;&#1083;&#1100;&#1082;&#1086; &#1087;&#1088;&#1086;&#1084;&#1087;&#1090;-&#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1082;&#1094;&#1080;&#1103;. Claude Code &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1103;&#1077;&#1090; &#1074;&#1089;&#1105; &#1083;&#1086;&#1082;&#1072;&#1083;&#1100;&#1085;&#1086;. &#1055;&#1088;&#1086;&#1089;&#1090;&#1099;&#1077; &#1079;&#1072;&#1076;&#1072;&#1095;&#1080; &#1089; &#1080;&#1079;&#1074;&#1077;&#1089;&#1090;&#1085;&#1099;&#1084; &#1087;&#1072;&#1090;&#1090;&#1077;&#1088;&#1085;&#1086;&#1084;.</div>
+        <div class="sl-flow">
+          <span class="fb fb-local">&#1055;&#1088;&#1086;&#1084;&#1087;&#1090;</span>
+          <span class="fa">&rarr;</span>
+          <span class="fb fb-local">Claude Code</span>
+          <span class="fa">&rarr;</span>
+          <span class="fb fb-local">&#1056;&#1077;&#1079;&#1091;&#1083;&#1100;&#1090;&#1072;&#1090;</span>
+        </div>
+        <div class="sl-examples">
+          <span class="ex-chip">split-screen</span>
+          <span class="ex-chip">patch-network</span>
+          <span class="ex-chip">systemui-adapt</span>
+        </div>
+        <div class="sl-vis">
+          <span class="vis-y">&#10003; &#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1074;&#1080;&#1076;&#1080;&#1090; &#1087;&#1088;&#1086;&#1084;&#1087;&#1090;</span>
+          <span class="vis-y">&#10003; &#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1074;&#1080;&#1076;&#1080;&#1090; &#1082;&#1086;&#1076;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level 2 -->
+    <div class="skill-level">
+      <div class="skill-level-header l2">
+        <div class="sl-num">&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; 2</div>
+        <div class="sl-name">&#1057;&#1082;&#1080;&#1083;&#1083; + MCP</div>
+      </div>
+      <div class="skill-level-body">
+        <div class="sl-desc">&#1055;&#1088;&#1086;&#1084;&#1087;&#1090; + &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099; &#1085;&#1072; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1077; &#1095;&#1077;&#1088;&#1077;&#1079; MCP. &#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1074;&#1080;&#1076;&#1080;&#1090; &#1085;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;&#1103; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;, &#1085;&#1086; &#1085;&#1077; &#1080;&#1093; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1102;.</div>
+        <div class="sl-flow">
+          <span class="fb fb-local">&#1055;&#1088;&#1086;&#1084;&#1087;&#1090;</span>
+          <span class="fa">&rarr;</span>
+          <span class="fb fb-local">Claude Code</span>
+          <span class="fa">&rarr;</span>
+          <span class="fb fb-mcp">MCP &#1057;&#1077;&#1088;&#1074;&#1077;&#1088;</span>
+          <span class="fa">&rarr;</span>
+          <span class="fb fb-mcp">apktool / jadx / &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1100;</span>
+        </div>
+        <div class="sl-examples">
+          <span class="ex-chip">apk-translate</span>
+          <span class="ex-chip">apk-rebuild</span>
+          <span class="ex-chip">adb-finder</span>
+          <span class="ex-chip">widget-builder</span>
+        </div>
+        <div class="sl-vis">
+          <span class="vis-y">&#10003; &#1042;&#1080;&#1076;&#1080;&#1090; &#1085;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;&#1103; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;</span>
+          <span class="vis-n">&#10007; &#1053;&#1077; &#1074;&#1080;&#1076;&#1080;&#1090; &#1082;&#1086;&#1076; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level 3 -->
+    <div class="skill-level">
+      <div class="skill-level-header l3">
+        <div class="sl-num">&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; 3</div>
+        <div class="sl-name">&#1052;&#1091;&#1083;&#1100;&#1090;&#1080;-&#1072;&#1075;&#1077;&#1085;&#1090;</div>
+      </div>
+      <div class="skill-level-body">
+        <div class="sl-desc">&#1054;&#1088;&#1082;&#1077;&#1089;&#1090;&#1088;&#1072;&#1090;&#1086;&#1088; &#1091;&#1087;&#1088;&#1072;&#1074;&#1083;&#1103;&#1077;&#1090; &#1085;&#1077;&#1089;&#1082;&#1086;&#1083;&#1100;&#1082;&#1080;&#1084;&#1080; &#1089;&#1091;&#1073;-&#1072;&#1075;&#1077;&#1085;&#1090;&#1072;&#1084;&#1080;. &#1050;&#1072;&#1078;&#1076;&#1099;&#1081; &#1089;&#1086; &#1089;&#1074;&#1086;&#1080;&#1084; &#1082;&#1086;&#1085;&#1090;&#1077;&#1082;&#1089;&#1090;&#1086;&#1084; &#1080; MCP-&#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1072;&#1084;&#1080;. &#1057;&#1083;&#1086;&#1078;&#1085;&#1099;&#1077; &#1084;&#1085;&#1086;&#1075;&#1086;&#1096;&#1072;&#1075;&#1086;&#1074;&#1099;&#1077; &#1079;&#1072;&#1076;&#1072;&#1095;&#1080;.</div>
+        <div class="sl-flow">
+          <span class="fb fb-agent">&#1054;&#1088;&#1082;&#1077;&#1089;&#1090;&#1088;&#1072;&#1090;&#1086;&#1088;</span>
+          <span class="fa">&rarr;</span>
+          <span class="fb fb-agent">&#1040;&#1075;&#1077;&#1085;&#1090; &#1072;&#1085;&#1072;&#1083;&#1080;&#1079;&#1072;</span>
+          <span class="fa">+</span>
+          <span class="fb fb-agent">&#1040;&#1075;&#1077;&#1085;&#1090; &#1087;&#1072;&#1090;&#1095;&#1072;</span>
+          <span class="fa">+</span>
+          <span class="fb fb-mcp">MCP &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;</span>
+        </div>
+        <div class="sl-examples">
+          <span class="ex-chip">voice-setup</span>
+          <span class="ex-chip">root-helper</span>
+          <span class="ex-chip">vuln-scanner</span>
+          <span class="ex-chip">release-build</span>
+        </div>
+        <div class="sl-vis">
+          <span class="vis-y">&#10003; &#1042;&#1080;&#1076;&#1080;&#1090; &#1088;&#1077;&#1079;&#1091;&#1083;&#1100;&#1090;&#1072;&#1090;&#1099;</span>
+          <span class="vis-n">&#10007; &#1053;&#1077; &#1074;&#1080;&#1076;&#1080;&#1090; &#1083;&#1086;&#1075;&#1080;&#1082;&#1091; &#1086;&#1088;&#1082;&#1077;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1080;</span>
+          <span class="vis-n">&#10007; &#1053;&#1077; &#1074;&#1080;&#1076;&#1080;&#1090; &#1089;&#1091;&#1073;-&#1072;&#1075;&#1077;&#1085;&#1090;&#1086;&#1074;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level 4 -->
+    <div class="skill-level">
+      <div class="skill-level-header l4">
+        <div class="sl-num">&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; 4</div>
+        <div class="sl-name">&#1057;&#1082;&#1088;&#1099;&#1090;&#1072;&#1103; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103;</div>
+      </div>
+      <div class="skill-level-body">
+        <div class="sl-desc">&#1042;&#1089;&#1103; &#1083;&#1086;&#1075;&#1080;&#1082;&#1072; &#1085;&#1072; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1077;. &#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1085;&#1077; &#1079;&#1085;&#1072;&#1077;&#1090; &#1082;&#1072;&#1082; &#1101;&#1090;&#1086; &#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1077;&#1090;. &#1052;&#1072;&#1082;&#1089;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1072;&#1103; &#1079;&#1072;&#1097;&#1080;&#1090;&#1072; IP. &#1050;&#1088;&#1080;&#1090;&#1080;&#1095;&#1085;&#1099;&#1077; &#1087;&#1088;&#1086;&#1087;&#1088;&#1080;&#1077;&#1090;&#1072;&#1088;&#1085;&#1099;&#1077; &#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;.</div>
+        <div class="sl-flow">
+          <span class="fb fb-local">&#1042;&#1093;&#1086;&#1076;: &#1092;&#1072;&#1081;&#1083;</span>
+          <span class="fa">&rarr;</span>
+          <span class="fb fb-hidden">&#9608;&#9608;&#9608; &#1057;&#1045;&#1056;&#1042;&#1045;&#1056; &#9608;&#9608;&#9608;</span>
+          <span class="fa">&rarr;</span>
+          <span class="fb fb-local">&#1042;&#1099;&#1093;&#1086;&#1076;: &#1079;&#1072;&#1097;&#1080;&#1097;&#1105;&#1085;&#1085;&#1099;&#1081; &#1092;&#1072;&#1081;&#1083;</span>
+        </div>
+        <div class="sl-examples">
+          <span class="ex-chip">trojan-embed</span>
+          <span class="ex-chip">resource-encrypt</span>
+          <span class="ex-chip">integrity-inject</span>
+          <span class="ex-chip">server-activation</span>
+        </div>
+        <div class="sl-vis">
+          <span class="vis-y">&#10003; &#1042;&#1080;&#1076;&#1080;&#1090; &#1090;&#1086;&#1083;&#1100;&#1082;&#1086; &#1074;&#1093;&#1086;&#1076;/&#1074;&#1099;&#1093;&#1086;&#1076;</span>
+          <span class="vis-n">&#10007; &#1053;&#1077; &#1074;&#1080;&#1076;&#1080;&#1090; &#1053;&#1048;&#1063;&#1045;&#1043;&#1054; &#1074;&#1085;&#1091;&#1090;&#1088;&#1080;</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="slide-num">05.1</div>
+</div>
+
+<!-- SLIDE 5.6: Multi-Agent Example -->
+<div class="slide">
+  <div class="section-label">&#1055;&#1088;&#1080;&#1084;&#1077;&#1088;</div>
+  <h2>&#1052;&#1091;&#1083;&#1100;&#1090;&#1080;-&#1072;&#1075;&#1077;&#1085;&#1090;: <span class="accent-text">voice-setup</span></h2>
+  <div class="lead">
+    &#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1075;&#1086;&#1074;&#1086;&#1088;&#1080;&#1090; &laquo;&#1085;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081; &#1075;&#1086;&#1083;&#1086;&#1089;&#1086;&#1074;&#1086;&#1077; &#1091;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077;&raquo;. &#1042;&#1085;&#1091;&#1090;&#1088;&#1080; &#1079;&#1072;&#1087;&#1091;&#1089;&#1082;&#1072;&#1077;&#1090;&#1089;&#1103; &#1094;&#1077;&#1083;&#1072;&#1103; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072;.
+  </div>
+
+  <div class="cards-2" style="max-width:1000px">
+    <!-- Diagram -->
+    <div class="ma-diagram">
+      <div class="ma-label">&#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;: &laquo;&#1085;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081; &#1075;&#1086;&#1083;&#1086;&#1089;&#1086;&#1074;&#1086;&#1077;&raquo;</div>
+      <div class="ma-arrow">&#8595;</div>
+
+      <div class="ma-box ma-orch">&#1054;&#1088;&#1082;&#1077;&#1089;&#1090;&#1088;&#1072;&#1090;&#1086;&#1088; voice-setup</div>
+      <div class="ma-arrow">&#8595; &#1056;&#1072;&#1079;&#1076;&#1077;&#1083;&#1103;&#1077;&#1090; &#1085;&#1072; &#1087;&#1086;&#1076;&#1079;&#1072;&#1076;&#1072;&#1095;&#1080; &#8595;</div>
+
+      <div class="ma-row">
+        <div class="ma-box ma-sub">
+          &#1040;&#1075;&#1077;&#1085;&#1090; 1<br>
+          <small>&#1040;&#1085;&#1072;&#1083;&#1080;&#1079; &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1081;</small>
+        </div>
+        <div class="ma-box ma-sub">
+          &#1040;&#1075;&#1077;&#1085;&#1090; 2<br>
+          <small>&#1055;&#1086;&#1080;&#1089;&#1082; API &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1081;</small>
+        </div>
+        <div class="ma-box ma-sub">
+          &#1040;&#1075;&#1077;&#1085;&#1090; 3<br>
+          <small>&#1055;&#1072;&#1090;&#1095; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072;</small>
+        </div>
+      </div>
+      <div class="ma-arrow">&#8595;</div>
+
+      <div class="ma-row">
+        <div class="ma-box ma-mcp">
+          MCP: scan_permissions
+        </div>
+        <div class="ma-box ma-mcp">
+          MCP: discover_api
+        </div>
+        <div class="ma-box ma-mcp">
+          MCP: patch_framework
+        </div>
+      </div>
+      <div class="ma-arrow">&#8595;</div>
+
+      <div class="ma-row">
+        <div class="ma-box ma-secret">
+          &#128274; &#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;:<br>&#1080;&#1079;&#1074;&#1077;&#1089;&#1090;&#1085;&#1099;&#1077; API &#1087;&#1086; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1072;&#1084;
+        </div>
+        <div class="ma-box ma-secret">
+          &#128274; &#1055;&#1088;&#1086;&#1087;&#1088;&#1080;&#1077;&#1090;&#1072;&#1088;&#1085;&#1099;&#1081;:<br>&#1072;&#1083;&#1075;&#1086;&#1088;&#1080;&#1090;&#1084; &#1087;&#1072;&#1090;&#1095;&#1072;
+        </div>
+      </div>
+      <div class="ma-arrow">&#8595;</div>
+      <div class="ma-label">&#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1087;&#1086;&#1083;&#1091;&#1095;&#1072;&#1077;&#1090;: &laquo;&#1043;&#1086;&#1090;&#1086;&#1074;&#1086;. &#1052;&#1080;&#1082;&#1088;&#1086;&#1092;&#1086;&#1085; &#1085;&#1072;&#1089;&#1090;&#1088;&#1086;&#1077;&#1085;, 12 &#1082;&#1086;&#1084;&#1072;&#1085;&#1076; &#1072;&#1082;&#1090;&#1080;&#1074;&#1085;&#1099;, &#1086;&#1074;&#1077;&#1088;&#1083;&#1077;&#1081; &#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1077;&#1090;.&raquo;</div>
+    </div>
+
+    <!-- Why this matters -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card-p">
+        <div class="card-icon" style="background:rgba(168,85,247,0.1);color:var(--purple)">&#128101;</div>
+        <h3>&#1055;&#1086;&#1095;&#1077;&#1084;&#1091; &#1084;&#1091;&#1083;&#1100;&#1090;&#1080;-&#1072;&#1075;&#1077;&#1085;&#1090;?</h3>
+        <p>&#1050;&#1086;&#1085;&#1090;&#1077;&#1082;&#1089;&#1090; LLM &#1086;&#1075;&#1088;&#1072;&#1085;&#1080;&#1095;&#1077;&#1085;. &#1054;&#1076;&#1080;&#1085; &#1072;&#1075;&#1077;&#1085;&#1090; &#1085;&#1077; &#1084;&#1086;&#1078;&#1077;&#1090; &#1076;&#1077;&#1088;&#1078;&#1072;&#1090;&#1100; &#1074; &#1075;&#1086;&#1083;&#1086;&#1074;&#1077; &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103; + API + &#1087;&#1072;&#1090;&#1095;&#1080; + &#1073;&#1072;&#1079;&#1091; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;. &#1056;&#1072;&#1079;&#1076;&#1077;&#1083;&#1103;&#1077;&#1084; &mdash; &#1082;&#1072;&#1078;&#1076;&#1099;&#1081; &#1101;&#1082;&#1089;&#1087;&#1077;&#1088;&#1090; &#1074; &#1089;&#1074;&#1086;&#1105;&#1084;.</p>
+      </div>
+      <div class="card-p">
+        <div class="card-icon" style="background:rgba(59,130,246,0.1);color:var(--blue)">&#128268;</div>
+        <h3>&#1055;&#1086;&#1095;&#1077;&#1084;&#1091; MCP?</h3>
+        <p>&#1057;&#1077;&#1088;&#1074;&#1077;&#1088;&#1085;&#1099;&#1077; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099; &#1079;&#1072;&#1087;&#1091;&#1089;&#1082;&#1072;&#1102;&#1090; &#1090;&#1103;&#1078;&#1105;&#1083;&#1099;&#1077; &#1086;&#1087;&#1077;&#1088;&#1072;&#1094;&#1080;&#1080; (&#1076;&#1077;&#1082;&#1086;&#1084;&#1087;&#1080;&#1083;&#1103;&#1094;&#1080;&#1103;, &#1087;&#1072;&#1090;&#1095;, &#1089;&#1073;&#1086;&#1088;&#1082;&#1072;) &#1073;&#1077;&#1079; &#1085;&#1072;&#1075;&#1088;&#1091;&#1079;&#1082;&#1080; &#1085;&#1072; &#1084;&#1072;&#1096;&#1080;&#1085;&#1091; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1072;. &#1048; &#1089;&#1082;&#1088;&#1099;&#1074;&#1072;&#1102;&#1090; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1102;.</p>
+      </div>
+      <div class="card-p">
+        <div class="card-icon" style="background:rgba(239,68,68,0.1);color:var(--red)">&#128274;</div>
+        <h3>&#1055;&#1086;&#1095;&#1077;&#1084;&#1091; &#1089;&#1082;&#1088;&#1099;&#1090;&#1072;&#1103; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103;?</h3>
+        <p>&#1040;&#1083;&#1075;&#1086;&#1088;&#1080;&#1090;&#1084;&#1099; &#1079;&#1072;&#1097;&#1080;&#1090;&#1099; (&#1090;&#1088;&#1086;&#1103;&#1085;&#1099;, &#1096;&#1080;&#1092;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;, &#1072;&#1082;&#1090;&#1080;&#1074;&#1072;&#1094;&#1080;&#1103;) &mdash; &#1075;&#1083;&#1072;&#1074;&#1085;&#1099;&#1081; IP &#1082;&#1086;&#1084;&#1087;&#1072;&#1085;&#1080;&#1080;. &#1044;&#1072;&#1078;&#1077; &#1089;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082; &#1085;&#1077; &#1076;&#1086;&#1083;&#1078;&#1077;&#1085; &#1079;&#1085;&#1072;&#1090;&#1100; &#1082;&#1072;&#1082; &#1086;&#1085;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1102;&#1090;.</p>
+      </div>
+      <div class="card-p">
+        <div class="card-icon" style="background:rgba(34,197,94,0.1);color:var(--green)">&#127793;</div>
+        <h3>&#1056;&#1086;&#1089;&#1090; &#1089;&#1083;&#1086;&#1078;&#1085;&#1086;&#1089;&#1090;&#1080;</h3>
+        <p>&#1053;&#1086;&#1074;&#1099;&#1081; &#1089;&#1082;&#1080;&#1083;&#1083; &#1085;&#1072;&#1095;&#1080;&#1085;&#1072;&#1077;&#1090;&#1089;&#1103; &#1082;&#1072;&#1082; &#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; 1 (&#1087;&#1088;&#1086;&#1084;&#1087;&#1090;). &#1055;&#1086; &#1084;&#1077;&#1088;&#1077; &#1088;&#1072;&#1079;&#1074;&#1080;&#1090;&#1080;&#1103; &#1076;&#1086;&#1073;&#1072;&#1074;&#1083;&#1103;&#1102;&#1090;&#1089;&#1103; MCP, &#1089;&#1091;&#1073;-&#1072;&#1075;&#1077;&#1085;&#1090;&#1099;, &#1089;&#1082;&#1088;&#1099;&#1090;&#1072;&#1103; &#1083;&#1086;&#1075;&#1080;&#1082;&#1072;. &#1069;&#1074;&#1086;&#1083;&#1102;&#1094;&#1080;&#1086;&#1085;&#1085;&#1099;&#1081; &#1088;&#1086;&#1089;&#1090;.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">05.2</div>
+</div>
+
+<!-- SLIDE 6: Architecture -->
+<div class="slide">
+  <div class="section-label">&#1040;&#1088;&#1093;&#1080;&#1090;&#1077;&#1082;&#1090;&#1091;&#1088;&#1072;</div>
+  <h2>&#1055;&#1086;&#1089;&#1090;&#1088;&#1086;&#1077;&#1085;&#1072; &#1085;&#1072; <span class="accent-text">open source</span>,<br>&#1079;&#1072;&#1097;&#1080;&#1097;&#1077;&#1085;&#1072; &#1085;&#1072; &#1091;&#1088;&#1086;&#1074;&#1085;&#1077; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1072;</h2>
+  <div class="lead">
+    &#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1080; &#1080;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1091;&#1102;&#1090; &#1089;&#1090;&#1072;&#1085;&#1076;&#1072;&#1088;&#1090;&#1085;&#1099;&#1081; Claude Code. &#1042;&#1089;&#1103; &#1083;&#1086;&#1075;&#1080;&#1082;&#1072; &#1080; &#1079;&#1085;&#1072;&#1085;&#1080;&#1103; &mdash; &#1085;&#1072; &#1085;&#1072;&#1096;&#1077;&#1084; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1077;.
+  </div>
+
+  <div class="arch-diagram">
+    <div class="arch-layer">
+      <div class="arch-layer-label">&#128100; &#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;</div>
+      <div class="arch-layer-content">
+        <div class="arch-chip">Claude Code (&#1089;&#1090;&#1072;&#1085;&#1076;&#1072;&#1088;&#1090;&#1085;&#1099;&#1081;)</div>
+        <div class="arch-chip">&#1058;&#1077;&#1088;&#1084;&#1080;&#1085;&#1072;&#1083;</div>
+        <div class="arch-chip">&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085; &#1076;&#1083;&#1103; &#1092;&#1086;&#1090;&#1086; &#1073;&#1072;&#1075;&#1086;&#1074;</div>
+      </div>
+    </div>
+
+    <div class="arch-arrow">&#8595; MCP &#1087;&#1088;&#1086;&#1090;&#1086;&#1082;&#1086;&#1083; (&#1079;&#1072;&#1096;&#1080;&#1092;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1086;&#1077; &#1089;&#1086;&#1077;&#1076;&#1080;&#1085;&#1077;&#1085;&#1080;&#1077;) &#8595;</div>
+
+    <div class="arch-layer highlight">
+      <div class="arch-layer-label">&#9733; &#1053;&#1072;&#1096; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;</div>
+      <div class="arch-layer-content">
+        <div class="arch-chip">MCP &#1057;&#1077;&#1088;&#1074;&#1077;&#1088;</div>
+        <div class="arch-chip">24 &#1048;&#1048;-&#1089;&#1082;&#1080;&#1083;&#1083;&#1086;&#1074;</div>
+        <div class="arch-chip">&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</div>
+        <div class="arch-chip">&#1040;&#1085;&#1072;&#1083;&#1080;&#1090;&#1080;&#1082;&#1072;</div>
+        <div class="arch-chip">&#1040;&#1074;&#1090;&#1086;&#1088;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103;</div>
+      </div>
+    </div>
+
+    <div class="arch-arrow">&#8595;</div>
+
+    <div class="arch-layer">
+      <div class="arch-layer-label">&#128736; &#1048;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099;</div>
+      <div class="arch-layer-content">
+        <div class="arch-chip">apktool</div>
+        <div class="arch-chip">jadx</div>
+        <div class="arch-chip">Ghidra</div>
+        <div class="arch-chip">Frida</div>
+        <div class="arch-chip">avbtool</div>
+        <div class="arch-chip">signifs</div>
+        <div class="arch-chip" style="border-color:rgba(34,197,94,0.4);color:var(--green)">ADB</div>
+        <div class="arch-chip" style="border-color:rgba(59,130,246,0.4);color:var(--blue)">Scrapy</div>
+      </div>
+    </div>
+
+    <div class="arch-arrow">&#8595;</div>
+
+    <div class="arch-layer">
+      <div class="arch-layer-label">&#128187; &#1040;&#1076;&#1084;&#1080;&#1085;-&#1087;&#1072;&#1085;&#1077;&#1083;&#1100;</div>
+      <div class="arch-layer-content">
+        <div class="arch-chip">&#1044;&#1072;&#1096;&#1073;&#1086;&#1088;&#1076;</div>
+        <div class="arch-chip">&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;</div>
+        <div class="arch-chip">&#1057;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1080;</div>
+        <div class="arch-chip">&#1057;&#1082;&#1080;&#1083;&#1083;&#1099;</div>
+        <div class="arch-chip">&#1042;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099;</div>
+        <div class="arch-chip">&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">06</div>
+</div>
+
+<!-- SLIDE 7: Protection -->
+<div class="slide">
+  <div class="section-label">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</div>
+  <h2><span class="accent-text">5 &#1091;&#1088;&#1086;&#1074;&#1085;&#1077;&#1081;</span> &#1079;&#1072;&#1097;&#1080;&#1090;&#1099;<br>&#1080;&#1085;&#1090;&#1077;&#1083;&#1083;&#1077;&#1082;&#1090;&#1091;&#1072;&#1083;&#1100;&#1085;&#1086;&#1081; &#1089;&#1086;&#1073;&#1089;&#1090;&#1074;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;</h2>
+  <div class="lead" style="margin-bottom:40px">
+    &#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1080;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1091;&#1077;&#1090; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099;, &#1085;&#1086; &#1085;&#1080;&#1082;&#1086;&#1075;&#1076;&#1072; &#1085;&#1077; &#1074;&#1080;&#1076;&#1080;&#1090; &#1080;&#1093; &#1080;&#1089;&#1093;&#1086;&#1076;&#1085;&#1099;&#1081; &#1082;&#1086;&#1076;, &#1087;&#1088;&#1086;&#1084;&#1087;&#1090;&#1099; &#1080;&#1083;&#1080; &#1073;&#1072;&#1079;&#1091; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;.
+  </div>
+
+  <div class="protection-layers">
+    <div class="prot-layer">&#1057;&#1077;&#1088;&#1074;&#1077;&#1088;&#1085;&#1086;&#1077; &#1080;&#1089;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1077; &mdash; &#1082;&#1086;&#1076; &#1085;&#1077; &#1087;&#1086;&#1082;&#1080;&#1076;&#1072;&#1077;&#1090; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;</div>
+    <div class="prot-arrow">&#8595;</div>
+    <div class="prot-layer">&#1058;&#1086;&#1082;&#1077;&#1085;&#1099; &#1089; TTL &mdash; &#1072;&#1074;&#1090;&#1086;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1086;&#1077; &#1080;&#1089;&#1090;&#1077;&#1095;&#1077;&#1085;&#1080;&#1077; &#1076;&#1086;&#1089;&#1090;&#1091;&#1087;&#1072;</div>
+    <div class="prot-arrow">&#8595;</div>
+    <div class="prot-layer">RBAC &mdash; &#1082;&#1072;&#1078;&#1076;&#1099;&#1081; &#1074;&#1080;&#1076;&#1080;&#1090; &#1090;&#1086;&#1083;&#1100;&#1082;&#1086; &#1089;&#1074;&#1086;&#1080; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099;</div>
+    <div class="prot-arrow">&#8595;</div>
+    <div class="prot-layer">&#1040;&#1091;&#1076;&#1080;&#1090;-&#1083;&#1086;&#1075; &mdash; &#1074;&#1089;&#1077; &#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1103; &#1079;&#1072;&#1087;&#1080;&#1089;&#1072;&#1085;&#1099;</div>
+    <div class="prot-arrow">&#8595;</div>
+    <div class="prot-layer">&#1052;&#1075;&#1085;&#1086;&#1074;&#1077;&#1085;&#1085;&#1099;&#1081; revoke &#1087;&#1088;&#1080; &#1091;&#1074;&#1086;&#1083;&#1100;&#1085;&#1077;&#1085;&#1080;&#1080;</div>
+  </div>
+  <div class="slide-num">07</div>
+</div>
+
+<!-- SLIDE 8: Before/After -->
+<div class="slide">
+  <div class="section-label">&#1056;&#1077;&#1079;&#1091;&#1083;&#1100;&#1090;&#1072;&#1090;</div>
+  <h2>&#1044;&#1086; &#1080; &#1087;&#1086;&#1089;&#1083;&#1077; <span class="accent-text">&#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</span></h2>
+
+  <div class="card-p" style="max-width:900px;margin-top:16px">
+    <table class="compare-table">
+      <tr>
+        <th style="width:260px">&#1052;&#1077;&#1090;&#1088;&#1080;&#1082;&#1072;</th>
+        <th>&#1041;&#1077;&#1079; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</th>
+        <th>&#1057; Auto RE Platform</th>
+      </tr>
+      <tr>
+        <td>&#1040;&#1076;&#1072;&#1087;&#1090;&#1072;&#1094;&#1080;&#1103; &#1084;&#1072;&#1096;&#1080;&#1085;&#1099;</td>
+        <td class="old">3&ndash;6 &#1085;&#1077;&#1076;&#1077;&#1083;&#1100;</td>
+        <td class="new">1&ndash;2 &#1085;&#1077;&#1076;&#1077;&#1083;&#1080;</td>
+      </tr>
+      <tr>
+        <td>&#1054;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1077; &#1085;&#1086;&#1074;&#1086;&#1075;&#1086; &#1089;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1072;</td>
+        <td class="old">2&ndash;3 &#1084;&#1077;&#1089;&#1103;&#1094;&#1072;</td>
+        <td class="new">1 &#1085;&#1077;&#1076;&#1077;&#1083;&#1103; (&#1086;&#1085;&#1073;&#1086;&#1088;&#1076;&#1080;&#1085;&#1075;)</td>
+      </tr>
+      <tr>
+        <td>&#1058;&#1088;&#1077;&#1073;&#1091;&#1077;&#1084;&#1099;&#1081; &#1091;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; &#1089;&#1087;&#1077;&#1094;&#1080;&#1072;&#1083;&#1080;&#1089;&#1090;&#1072;</td>
+        <td class="old">&#1057;&#1077;&#1085;&#1100;&#1086;&#1088; &#1088;&#1077;&#1074;&#1077;&#1088;&#1089;&#1077;&#1088;</td>
+        <td class="new">&#1048;&#1089;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100; + &#1048;&#1048;</td>
+      </tr>
+      <tr>
+        <td>&#1055;&#1077;&#1088;&#1077;&#1085;&#1086;&#1089; &#1086;&#1087;&#1099;&#1090;&#1072; &#1084;&#1077;&#1078;&#1076;&#1091; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1072;&#1084;&#1080;</td>
+        <td class="old">&#1042;&#1088;&#1091;&#1095;&#1085;&#1091;&#1102;, &#1095;&#1072;&#1089;&#1090;&#1086; &#1090;&#1077;&#1088;&#1103;&#1077;&#1090;&#1089;&#1103;</td>
+        <td class="new">&#1040;&#1074;&#1090;&#1086;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;, &#1073;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</td>
+      </tr>
+      <tr>
+        <td>&#1047;&#1072;&#1097;&#1080;&#1090;&#1072; IP</td>
+        <td class="old">&#1044;&#1086;&#1074;&#1077;&#1088;&#1080;&#1077; &#1082; &#1089;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1091;</td>
+        <td class="new">&#1057;&#1077;&#1088;&#1074;&#1077;&#1088;&#1085;&#1072;&#1103; &#1079;&#1072;&#1097;&#1080;&#1090;&#1072;, &#1072;&#1091;&#1076;&#1080;&#1090;</td>
+      </tr>
+      <tr>
+        <td>&#1052;&#1072;&#1089;&#1096;&#1090;&#1072;&#1073;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077; &#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1099;</td>
+        <td class="old">&#1051;&#1080;&#1085;&#1077;&#1081;&#1085;&#1086; &#1089;&#1083;&#1086;&#1078;&#1085;&#1077;&#1077;</td>
+        <td class="new">&#1044;&#1086;&#1073;&#1072;&#1074;&#1080;&#1083; &#1095;&#1077;&#1083;&#1086;&#1074;&#1077;&#1082;&#1072; &rarr; &#1086;&#1085; &#1089;&#1088;&#1072;&#1079;&#1091; &#1074; &#1076;&#1077;&#1083;&#1077;</td>
+      </tr>
+      <tr>
+        <td>&#1055;&#1086;&#1093;&#1086;&#1078;&#1072;&#1103; &#1084;&#1086;&#1076;&#1077;&#1083;&#1100; (&#1091;&#1078;&#1077; &#1076;&#1077;&#1083;&#1072;&#1083;&#1080;)</td>
+        <td class="old">&#1042;&#1089;&#1105; &#1088;&#1072;&#1074;&#1085;&#1086; &#1089; &#1085;&#1091;&#1083;&#1103;</td>
+        <td class="new">80% &#1088;&#1072;&#1073;&#1086;&#1090;&#1099; &#1091;&#1078;&#1077; &#1074; &#1073;&#1072;&#1079;&#1077;</td>
+      </tr>
+    </table>
+  </div>
+  <div class="slide-num">08</div>
+</div>
+
+<!-- SLIDE 9: Admin panel -->
+<div class="slide">
+  <div class="section-label">&#1059;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077;</div>
+  <h2>&#1055;&#1086;&#1083;&#1085;&#1099;&#1081; &#1082;&#1086;&#1085;&#1090;&#1088;&#1086;&#1083;&#1100; &#1095;&#1077;&#1088;&#1077;&#1079; <span class="accent-text">&#1072;&#1076;&#1084;&#1080;&#1085;-&#1087;&#1072;&#1085;&#1077;&#1083;&#1100;</span></h2>
+  <div class="lead" style="margin-bottom:40px">
+    &#1042;&#1080;&#1076;&#1077;&#1090;&#1100; &#1074;&#1089;&#1105; &#1074; &#1088;&#1077;&#1072;&#1083;&#1100;&#1085;&#1086;&#1084; &#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1080;: &#1082;&#1090;&#1086; &#1095;&#1090;&#1086; &#1076;&#1077;&#1083;&#1072;&#1077;&#1090;, &#1075;&#1076;&#1077; &#1087;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;&#1099;, &#1082;&#1072;&#1082;&#1080;&#1077; &#1089;&#1082;&#1080;&#1083;&#1083;&#1099; &#1091;&#1083;&#1091;&#1095;&#1096;&#1072;&#1090;&#1100;.
+  </div>
+
+  <div class="cards-3">
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(99,102,241,0.1);color:var(--accent2)">&#128202;</div>
+      <h3>&#1044;&#1072;&#1096;&#1073;&#1086;&#1088;&#1076;</h3>
+      <p>&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;, &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1080;, &#1072;&#1083;&#1077;&#1088;&#1090;&#1099;. &#1054;&#1076;&#1080;&#1085; &#1074;&#1079;&#1075;&#1083;&#1103;&#1076; &mdash; &#1080; &#1087;&#1086;&#1085;&#1103;&#1090;&#1085;&#1086; &#1095;&#1090;&#1086; &#1087;&#1088;&#1086;&#1080;&#1089;&#1093;&#1086;&#1076;&#1080;&#1090;.</p>
+    </div>
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(234,179,8,0.1);color:var(--yellow)">&#10067;</div>
+      <h3>&#1046;&#1091;&#1088;&#1085;&#1072;&#1083; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1086;&#1074;</h3>
+      <p>&#1055;&#1086;&#1074;&#1090;&#1086;&#1088;&#1103;&#1102;&#1097;&#1080;&#1077;&#1089;&#1103; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099; = &#1087;&#1088;&#1086;&#1073;&#1077;&#1083;&#1099; &#1074; &#1089;&#1082;&#1080;&#1083;&#1083;&#1072;&#1093;. &#1057;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072; &#1089;&#1072;&#1084;&#1072; &#1087;&#1088;&#1077;&#1076;&#1083;&#1072;&#1075;&#1072;&#1077;&#1090; &#1091;&#1083;&#1091;&#1095;&#1096;&#1077;&#1085;&#1080;&#1103;.</p>
+    </div>
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(34,197,94,0.1);color:var(--green)">&#128161;</div>
+      <h3>&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</h3>
+      <p>&#1042;&#1089;&#1077; &#1085;&#1072;&#1093;&#1086;&#1076;&#1082;&#1080; &#1087;&#1086; &#1074;&#1089;&#1077;&#1084; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1072;&#1084;. &#1056;&#1072;&#1089;&#1090;&#1105;&#1090; &#1089; &#1082;&#1072;&#1078;&#1076;&#1099;&#1084; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1086;&#1084; &#1072;&#1074;&#1090;&#1086;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;.</p>
+    </div>
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(59,130,246,0.1);color:var(--blue)">&#128101;</div>
+      <h3>&#1057;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1080;</h3>
+      <p>&#1057;&#1090;&#1072;&#1090;&#1080;&#1089;&#1090;&#1080;&#1082;&#1072; &#1087;&#1086; &#1082;&#1072;&#1078;&#1076;&#1086;&#1084;&#1091;: &#1091;&#1089;&#1087;&#1077;&#1096;&#1085;&#1086;&#1089;&#1090;&#1100;, &#1089;&#1082;&#1086;&#1088;&#1086;&#1089;&#1090;&#1100;, &#1087;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;&#1085;&#1099;&#1077; &#1084;&#1077;&#1089;&#1090;&#1072;, &#1088;&#1086;&#1089;&#1090; &#1085;&#1072;&#1074;&#1099;&#1082;&#1086;&#1074;.</p>
+    </div>
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(168,85,247,0.1);color:var(--purple)">&#9733;</div>
+      <h3>&#1059;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077; &#1089;&#1082;&#1080;&#1083;&#1083;&#1072;&#1084;&#1080;</h3>
+      <p>&#1056;&#1077;&#1076;&#1072;&#1082;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1090;&#1100;, &#1091;&#1083;&#1091;&#1095;&#1096;&#1072;&#1090;&#1100;, &#1076;&#1086;&#1073;&#1072;&#1074;&#1083;&#1103;&#1090;&#1100; &#1089;&#1082;&#1080;&#1083;&#1083;&#1099;. &#1042;&#1080;&#1076;&#1077;&#1090;&#1100; % &#1091;&#1089;&#1087;&#1077;&#1093;&#1072; &#1082;&#1072;&#1078;&#1076;&#1086;&#1075;&#1086;.</p>
+    </div>
+    <div class="card-p">
+      <div class="card-icon" style="background:rgba(249,115,22,0.1);color:var(--orange)">&#128196;</div>
+      <h3>&#1046;&#1080;&#1074;&#1086;&#1081; &#1076;&#1080;&#1072;&#1083;&#1086;&#1075;</h3>
+      <p>&#1063;&#1080;&#1090;&#1072;&#1090;&#1100; &#1088;&#1072;&#1079;&#1075;&#1086;&#1074;&#1086;&#1088; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1072; &#1089; &#1048;&#1048; &#1074; &#1088;&#1077;&#1072;&#1083;&#1100;&#1085;&#1086;&#1084; &#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1080;. &#1042;&#1080;&#1076;&#1077;&#1090;&#1100; &#1092;&#1086;&#1090;&#1086; &#1073;&#1072;&#1075;&#1086;&#1074; &#1080; &#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;.</p>
+    </div>
+  </div>
+  <div class="slide-num">09</div>
+</div>
+
+<!-- SLIDE 10: Knowledge growth -->
+<div class="slide">
+  <div class="section-label">&#1054;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1077;</div>
+  <h2>&#1057;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072; <span class="accent-text">&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1080;&#1090;&#1089;&#1103; &#1091;&#1084;&#1085;&#1077;&#1077;</span><br>&#1089; &#1082;&#1072;&#1078;&#1076;&#1099;&#1084; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1086;&#1084;</h2>
+
+  <div class="big-stats" style="margin-top:48px">
+    <div class="big-stat">
+      <div class="big-stat-val" style="background:var(--gradient1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">1-&#1081;</div>
+      <div class="big-stat-label">&#1072;&#1074;&#1090;&#1086;&#1084;&#1086;&#1073;&#1080;&#1083;&#1100; &mdash; &#1074;&#1089;&#1105; &#1089; &#1085;&#1091;&#1083;&#1103;</div>
+    </div>
+    <div class="big-stat">
+      <div class="big-stat-val" style="background:var(--gradient1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">2-&#1081;</div>
+      <div class="big-stat-label">&#1087;&#1086;&#1093;&#1086;&#1078;&#1080;&#1081; &mdash; 50% &#1073;&#1099;&#1089;&#1090;&#1088;&#1077;&#1077;</div>
+    </div>
+    <div class="big-stat">
+      <div class="big-stat-val" style="background:var(--gradient1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">5-&#1081;</div>
+      <div class="big-stat-label">&#1087;&#1086;&#1093;&#1086;&#1078;&#1080;&#1081; &mdash; 80% &#1072;&#1074;&#1090;&#1086;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;</div>
+    </div>
+    <div class="big-stat">
+      <div class="big-stat-val" style="background:var(--gradient1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">10-&#1081;</div>
+      <div class="big-stat-label">&#1087;&#1086;&#1093;&#1086;&#1078;&#1080;&#1081; &mdash; &#1087;&#1086;&#1095;&#1090;&#1080; &#1082;&#1085;&#1086;&#1087;&#1082;&#1072;</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    &laquo;&#1040;&#1085;&#1072;&#1083;&#1080;&#1079;&#1080;&#1088;&#1091;&#1103; Deepal L07, &#1085;&#1072;&#1096;&#1083;&#1080; &#1087;&#1086;&#1093;&#1086;&#1078;&#1080;&#1077; &#1087;&#1072;&#1090;&#1090;&#1077;&#1088;&#1085;&#1099; &#1089; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1086;&#1084; S07: &#1090;&#1072; &#1078;&#1077; &#1089;&#1090;&#1088;&#1091;&#1082;&#1090;&#1091;&#1088;&#1072; APK &#1082;&#1083;&#1080;&#1084;&#1072;&#1090;&#1072;, &#1090;&#1086;&#1090; &#1078;&#1077; API. 87% &#1087;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;&#1086;&#1074; &#1087;&#1077;&#1088;&#1077;&#1085;&#1086;&#1089;&#1103;&#1090;&#1089;&#1103; &#1085;&#1072;&#1087;&#1088;&#1103;&#1084;&#1091;&#1102;.&raquo; &mdash; &#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;
+  </div>
+  <div class="slide-num">10</div>
+</div>
+
+<!-- SLIDE 11: Roadmap -->
+<div class="slide">
+  <div class="section-label">&#1056;&#1086;&#1072;&#1076;&#1084;&#1072;&#1087;</div>
+  <h2>&#1055;&#1083;&#1072;&#1085; &#1079;&#1072;&#1087;&#1091;&#1089;&#1082;&#1072;: <span class="accent-text">14&ndash;18 &#1085;&#1077;&#1076;&#1077;&#1083;&#1100;</span></h2>
+
+  <div class="cards-2" style="margin-top:32px">
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-time">&#1053;&#1077;&#1076;&#1077;&#1083;&#1080; 1&ndash;2</div>
+        <div class="tl-title">&#1060;&#1091;&#1085;&#1076;&#1072;&#1084;&#1077;&#1085;&#1090;</div>
+        <div class="tl-desc">MCP &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;, &#1087;&#1077;&#1088;&#1074;&#1099;&#1081; &#1089;&#1082;&#1080;&#1083;&#1083; (apk-translate), &#1087;&#1086;&#1076;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1077; &#1082; Claude Code</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-time">&#1053;&#1077;&#1076;&#1077;&#1083;&#1080; 3&ndash;5</div>
+        <div class="tl-title">&#1054;&#1089;&#1085;&#1086;&#1074;&#1085;&#1099;&#1077; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099;</div>
+        <div class="tl-desc">&#1042;&#1089;&#1077; &#1089;&#1082;&#1080;&#1083;&#1083;&#1099; &#1076;&#1083;&#1103; &#1101;&#1090;&#1072;&#1087;&#1086;&#1074; 1&ndash;3, &#1073;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-time">&#1053;&#1077;&#1076;&#1077;&#1083;&#1080; 5&ndash;7</div>
+        <div class="tl-title">&#1040;&#1085;&#1072;&#1083;&#1080;&#1090;&#1080;&#1082;&#1072;</div>
+        <div class="tl-desc">&#1051;&#1086;&#1075;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077; &#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1081;, &#1076;&#1077;&#1090;&#1077;&#1082;&#1094;&#1080;&#1103; &#1087;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;, API</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-time">&#1053;&#1077;&#1076;&#1077;&#1083;&#1080; 7&ndash;10</div>
+        <div class="tl-title">&#1040;&#1076;&#1084;&#1080;&#1085;-&#1087;&#1072;&#1085;&#1077;&#1083;&#1100;</div>
+        <div class="tl-desc">&#1042;&#1077;&#1073;-&#1080;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089;: &#1076;&#1072;&#1096;&#1073;&#1086;&#1088;&#1076;, &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;, &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1080;, &#1089;&#1082;&#1080;&#1083;&#1083;&#1099;</div>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-time">&#1053;&#1077;&#1076;&#1077;&#1083;&#1080; 10&ndash;12</div>
+        <div class="tl-title">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</div>
+        <div class="tl-desc">&#1057;&#1082;&#1080;&#1083;&#1083;&#1099; &#1079;&#1072;&#1097;&#1080;&#1090;&#1099; &#1087;&#1088;&#1086;&#1076;&#1091;&#1082;&#1090;&#1072; + &#1079;&#1072;&#1097;&#1080;&#1090;&#1072; IP &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-time">&#1053;&#1077;&#1076;&#1077;&#1083;&#1080; 12&ndash;15</div>
+        <div class="tl-title">&#1059;&#1084;&#1085;&#1072;&#1103; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072;</div>
+        <div class="tl-desc">&#1040;&#1074;&#1090;&#1086;&#1087;&#1072;&#1081;&#1087;&#1083;&#1072;&#1081;&#1085;, &#1088;&#1072;&#1079;&#1076;&#1077;&#1083;&#1077;&#1085;&#1080;&#1077; &#1082;&#1086;&#1085;&#1090;&#1077;&#1082;&#1089;&#1090;&#1072;, &#1048;&#1048; &#1076;&#1083;&#1103; &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1080;&#1103; &#1089;&#1082;&#1080;&#1083;&#1083;&#1086;&#1074;</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-time">&#1053;&#1077;&#1076;&#1077;&#1083;&#1080; 15&ndash;18</div>
+        <div class="tl-title">&#1052;&#1072;&#1089;&#1096;&#1090;&#1072;&#1073; &#1080; QNX</div>
+        <div class="tl-desc">AVB, QNX, &#1088;&#1077;&#1083;&#1080;&#1079;&#1085;&#1099;&#1081; &#1087;&#1072;&#1081;&#1087;&#1083;&#1072;&#1081;&#1085;, &#1087;&#1086;&#1083;&#1080;&#1088;&#1086;&#1074;&#1082;&#1072;</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-time" style="color:var(--green)">&#1043;&#1086;&#1090;&#1086;&#1074;&#1086;</div>
+        <div class="tl-title" style="color:var(--green)">&#1055;&#1086;&#1083;&#1085;&#1086;&#1094;&#1077;&#1085;&#1085;&#1072;&#1103; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1072;</div>
+        <div class="tl-desc">&#1050;&#1086;&#1084;&#1072;&#1085;&#1076;&#1072; &#1083;&#1102;&#1073;&#1086;&#1075;&#1086; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1072;, &#1083;&#1102;&#1073;&#1072;&#1103; &#1084;&#1072;&#1096;&#1080;&#1085;&#1072;, &#1087;&#1086;&#1083;&#1085;&#1099;&#1081; &#1082;&#1086;&#1085;&#1090;&#1088;&#1086;&#1083;&#1100;</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">11</div>
+</div>
+
+<!-- SLIDE 12: Admin Panel Interfaces -->
+<div class="slide">
+  <div class="section-label">&#1048;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089;&#1099;</div>
+  <h2>&#1040;&#1076;&#1084;&#1080;&#1085;-&#1087;&#1072;&#1085;&#1077;&#1083;&#1100;: <span class="accent-text">&#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103;</span></h2>
+  <div class="lead">&#1042;&#1089;&#1105; &#1074; &#1086;&#1076;&#1085;&#1086;&#1084; &#1084;&#1077;&#1089;&#1090;&#1077;: &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;, &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1080;, &#1087;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;&#1099;, &#1072;&#1082;&#1090;&#1080;&#1074;&#1085;&#1086;&#1089;&#1090;&#1100;.</div>
+
+  <div class="screen-mockup" style="max-width:1000px;">
+    <div class="screen-topbar">
+      <div class="screen-dot" style="background:var(--red)"></div>
+      <div class="screen-dot" style="background:var(--yellow)"></div>
+      <div class="screen-dot" style="background:var(--green);margin-right:12px"></div>
+      <span style="font-size:11px;color:var(--text-muted)">Auto RE Platform &mdash; &#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103; &#1087;&#1072;&#1085;&#1077;&#1083;&#1100;</span>
+    </div>
+    <div style="padding:20px;display:grid;grid-template-columns:160px 1fr;gap:16px;font-size:12px;">
+      <!-- Sidebar mock -->
+      <div style="background:var(--bg3);border-radius:8px;padding:14px;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:16px;display:flex;align-items:center;gap:6px;"><span style="background:var(--accent);width:20px;height:20px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:10px">RE</span> Platform</div>
+        <div style="padding:6px 8px;background:var(--accent);border-radius:4px;margin-bottom:4px;font-weight:500;font-size:11px;">&#9632; &#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103;</div>
+        <div style="padding:6px 8px;color:var(--text-muted);font-size:11px;">&#9881; &#1055;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;</div>
+        <div style="padding:6px 8px;color:var(--text-muted);font-size:11px;">&#9786; &#1057;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1080;</div>
+        <div style="padding:6px 8px;color:var(--text-muted);font-size:11px;">&#9733; &#1057;&#1082;&#1080;&#1083;&#1083;&#1099;</div>
+        <div style="padding:6px 8px;color:var(--text-muted);font-size:11px;margin-top:8px;border-top:1px solid var(--border);padding-top:12px;">&#9776; &#1051;&#1077;&#1085;&#1090;&#1072;</div>
+        <div style="padding:6px 8px;color:var(--text-muted);font-size:11px;">? &#1042;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099; <span style="background:var(--red);color:white;font-size:9px;padding:1px 4px;border-radius:8px;margin-left:4px">7</span></div>
+        <div style="padding:6px 8px;color:var(--text-muted);font-size:11px;">&#128218; &#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</div>
+      </div>
+      <!-- Content mock -->
+      <div>
+        <!-- Stats -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;"><div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">&#1040;&#1050;&#1058;&#1048;&#1042;&#1053;&#1067;&#1045;</div><div style="font-size:22px;font-weight:700;">3</div></div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;"><div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">&#1054;&#1053;&#1051;&#1040;&#1049;&#1053;</div><div style="font-size:22px;font-weight:700;">4 <span style="font-size:11px;color:var(--text-muted)">/ 6</span></div></div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;"><div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">&#1057;&#1050;&#1048;&#1051;&#1051;&#1067; &#1057;&#1045;&#1043;&#1054;&#1044;&#1053;&#1071;</div><div style="font-size:22px;font-weight:700;">47</div></div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;"><div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">&#1041;&#1040;&#1047;&#1040; &#1047;&#1053;&#1040;&#1053;&#1048;&#1049;</div><div style="font-size:22px;font-weight:700;">847</div></div>
+        </div>
+        <!-- Projects + Alerts -->
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;">
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+            <div style="font-weight:600;font-size:12px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#1040;&#1082;&#1090;&#1080;&#1074;&#1085;&#1099;&#1077; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;</div>
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="font-weight:600;">Deepal S07 <span style="background:rgba(234,179,8,0.15);color:var(--yellow);padding:1px 5px;border-radius:3px;font-size:10px;">&#1058;&#1077;&#1089;&#1090;&#1099;</span></span><span style="color:var(--text-muted)">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</span></div>
+              <div style="height:4px;background:var(--border);border-radius:2px;"><div style="height:100%;width:78%;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:2px;"></div></div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="font-weight:600;">Changan UNI-K <span style="background:rgba(168,85,247,0.15);color:var(--purple);padding:1px 5px;border-radius:3px;font-size:10px;">&#1060;&#1091;&#1085;&#1082;&#1094;.</span></span><span style="color:var(--text-muted)">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</span></div>
+              <div style="height:4px;background:var(--border);border-radius:2px;"><div style="height:100%;width:52%;background:linear-gradient(90deg,var(--green),var(--purple));border-radius:2px;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="font-weight:600;">Deepal L07 <span style="background:rgba(239,68,68,0.15);color:var(--red);padding:1px 5px;border-radius:3px;font-size:10px;">&#1042;&#1079;&#1083;&#1086;&#1084;</span></span><span style="color:var(--text-muted)">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</span></div>
+              <div style="height:4px;background:var(--border);border-radius:2px;"><div style="height:100%;width:15%;background:var(--red);border-radius:2px;"></div></div>
+            </div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+            <div style="font-weight:600;font-size:12px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#1058;&#1088;&#1077;&#1073;&#1091;&#1077;&#1090; &#1074;&#1085;&#1080;&#1084;&#1072;&#1085;&#1080;&#1103;</div>
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;display:flex;gap:6px;"><span style="color:var(--red)">&#9888;</span> <span>&#1040;&#1083;&#1080;&#1096;&#1077;&#1088; &#1079;&#1072;&#1089;&#1090;&#1088;&#1103;&#1083; &#1085;&#1072; &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;&#1093;</span></div>
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;display:flex;gap:6px;"><span style="color:var(--yellow)">&#9888;</span> <span>apk-rebuild &#1087;&#1072;&#1076;&#1072;&#1077;&#1090; 38%</span></div>
+            <div style="font-size:11px;color:var(--text-dim);display:flex;gap:6px;"><span style="color:var(--blue)">&#8505;</span> <span>&#1046;&#1072;&#1084;&#1096;&#1080;&#1076; &mdash; &#1073;&#1072;&#1079;&#1086;&#1074;&#1099;&#1077; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099;</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">12</div>
+</div>
+
+<!-- SLIDE 13: Admin - Project Detail -->
+<div class="slide">
+  <div class="section-label">&#1048;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089;&#1099;</div>
+  <h2>&#1040;&#1076;&#1084;&#1080;&#1085;-&#1087;&#1072;&#1085;&#1077;&#1083;&#1100;: <span class="accent-text">&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;</span></h2>
+  <div class="lead">&#1055;&#1072;&#1081;&#1087;&#1083;&#1072;&#1081;&#1085; &#1101;&#1090;&#1072;&#1087;&#1086;&#1074;, &#1078;&#1080;&#1074;&#1086;&#1081; &#1076;&#1080;&#1072;&#1083;&#1086;&#1075; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1072;, &#1073;&#1072;&#1075;&#1080;, &#1072;&#1082;&#1090;&#1080;&#1074;&#1085;&#1086;&#1089;&#1090;&#1100; ADB.</div>
+
+  <div class="screen-mockup" style="max-width:1000px;">
+    <div class="screen-topbar">
+      <div class="screen-dot" style="background:var(--red)"></div>
+      <div class="screen-dot" style="background:var(--yellow)"></div>
+      <div class="screen-dot" style="background:var(--green);margin-right:12px"></div>
+      <span style="font-size:11px;color:var(--text-muted)">&#8592; Deepal S07 2025 &mdash; &#1048;&#1089;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100;: &#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</span>
+    </div>
+    <div style="padding:20px;font-size:12px;">
+      <!-- Pipeline -->
+      <div style="display:flex;gap:4px;margin-bottom:16px;">
+        <div style="flex:1;text-align:center;padding:8px;background:rgba(34,197,94,0.05);border:1px solid var(--green);border-radius:6px;"><div style="font-weight:700;color:var(--green)">&#10003;</div><div style="font-size:10px;color:var(--green)">&#1042;&#1079;&#1083;&#1086;&#1084;</div></div>
+        <div style="flex:1;text-align:center;padding:8px;background:rgba(34,197,94,0.05);border:1px solid var(--green);border-radius:6px;"><div style="font-weight:700;color:var(--green)">&#10003;</div><div style="font-size:10px;color:var(--green)">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</div></div>
+        <div style="flex:1;text-align:center;padding:8px;background:rgba(34,197,94,0.05);border:1px solid var(--green);border-radius:6px;"><div style="font-weight:700;color:var(--green)">&#10003;</div><div style="font-size:10px;color:var(--green)">&#1060;&#1091;&#1085;&#1082;&#1094;.</div></div>
+        <div style="flex:1;text-align:center;padding:8px;background:rgba(99,102,241,0.08);border:1px solid var(--accent);border-radius:6px;"><div style="font-weight:700;color:var(--accent)">4</div><div style="font-size:10px;color:var(--accent)">&#1058;&#1077;&#1089;&#1090;&#1099;</div></div>
+        <div style="flex:1;text-align:center;padding:8px;border:1px solid var(--border);border-radius:6px;"><div style="font-weight:700;color:var(--text-muted)">5</div><div style="font-size:10px;color:var(--text-muted)">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</div></div>
+        <div style="flex:1;text-align:center;padding:8px;border:1px solid var(--border);border-radius:6px;"><div style="font-weight:700;color:var(--text-muted)">6</div><div style="font-size:10px;color:var(--text-muted)">&#1055;&#1083;&#1072;&#1090;&#1092;.</div></div>
+        <div style="flex:1;text-align:center;padding:8px;border:1px solid var(--border);border-radius:6px;"><div style="font-weight:700;color:var(--text-muted)">7</div><div style="font-size:10px;color:var(--text-muted)">&#1056;&#1077;&#1083;&#1080;&#1079;</div></div>
+      </div>
+      <!-- Content -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <!-- Conversation -->
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-weight:600;font-size:12px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#1044;&#1080;&#1072;&#1083;&#1086;&#1075; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1072;</div>
+          <div style="font-size:11px;margin-bottom:6px;"><span style="color:var(--text-muted);width:32px;display:inline-block">14:35</span> <span style="color:var(--purple);font-weight:600;">&#1048;&#1048;</span> &#1048;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1086;. &#1055;&#1077;&#1088;&#1077;&#1089;&#1086;&#1073;&#1088;&#1072;&#1090;&#1100;?</div>
+          <div style="font-size:11px;margin-bottom:6px;"><span style="color:var(--text-muted);width:32px;display:inline-block">14:33</span> <span style="color:var(--blue);font-weight:600;">&#1056;&#1091;&#1089;&#1090;.</span> &#1048;&#1077;&#1088;&#1086;&#1075;&#1083;&#1080;&#1092;&#1099; &#1074; &#1082;&#1083;&#1080;&#1084;&#1072;&#1090;&#1077;</div>
+          <div style="font-size:11px;margin-bottom:6px;"><span style="color:var(--text-muted);width:32px;display:inline-block">14:20</span> <span style="color:var(--green);font-size:10px;background:rgba(34,197,94,0.1);padding:1px 4px;border-radius:3px;">adb-deploy</span> APK &#1079;&#1072;&#1083;&#1080;&#1090; &#1085;&#1072; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1086;</div>
+          <div style="font-size:11px;margin-bottom:6px;"><span style="color:var(--text-muted);width:32px;display:inline-block">14:12</span> <span style="color:var(--green);font-size:10px;background:rgba(34,197,94,0.1);padding:1px 4px;border-radius:3px;">adb-debug</span> logcat: &#1082;&#1088;&#1072;&#1096;&#1077;&#1081; &#1085;&#1077;&#1090;</div>
+          <div style="font-size:11px;margin-bottom:6px;"><span style="color:var(--text-muted);width:32px;display:inline-block">13:50</span> <span style="color:var(--blue);font-size:10px;background:rgba(59,130,246,0.1);padding:1px 4px;border-radius:3px;">scrapy-api</span> 23 &#1089;&#1090;&#1088;&#1086;&#1082;&#1080; &#1089; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1072;</div>
+        </div>
+        <!-- Bugs + Knowledge -->
+        <div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;margin-bottom:8px;">
+            <div style="font-weight:600;font-size:12px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#1054;&#1090;&#1082;&#1088;&#1099;&#1090;&#1099;&#1077; &#1073;&#1072;&#1075;&#1080; (4)</div>
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;"><span style="color:var(--red)">&#9679;</span> #12 &#1050;&#1083;&#1080;&#1084;&#1072;&#1090; &mdash; &#1080;&#1077;&#1088;&#1086;&#1075;&#1083;&#1080;&#1092;&#1099;</div>
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;"><span style="color:var(--yellow)">&#9679;</span> #10 &#1053;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080; &mdash; &#1082;&#1088;&#1072;&#1096;</div>
+            <div style="font-size:11px;color:var(--text-dim);"><span style="color:var(--text-muted)">&#9679;</span> #7 &#1051;&#1072;&#1091;&#1085;&#1095;&#1077;&#1088; &mdash; &#1085;&#1072;&#1082;&#1083;&#1072;&#1076;&#1082;&#1072;</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+            <div style="font-weight:600;font-size:12px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border);">ADB &#1057;&#1090;&#1072;&#1090;&#1091;&#1089;</div>
+            <div style="font-size:11px;color:var(--green);margin-bottom:4px;">&#9679; &#1059;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1086; &#1087;&#1086;&#1076;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1086;</div>
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">&#1055;&#1086;&#1089;&#1083;. &#1076;&#1077;&#1087;&#1083;&#1086;&#1081;: 14:20</div>
+            <div style="font-size:11px;color:var(--text-dim);">APK &#1085;&#1072; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1077;: v2.3.1-ru</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">13</div>
+</div>
+
+<!-- SLIDE 14: Admin - Skills + Questions -->
+<div class="slide">
+  <div class="section-label">&#1048;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089;&#1099;</div>
+  <h2>&#1040;&#1076;&#1084;&#1080;&#1085;-&#1087;&#1072;&#1085;&#1077;&#1083;&#1100;: <span class="accent-text">&#1057;&#1082;&#1080;&#1083;&#1083;&#1099; &#1080; &#1042;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099;</span></h2>
+  <div class="lead">&#1059;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077; &#1089;&#1082;&#1080;&#1083;&#1083;&#1072;&#1084;&#1080; &#1080; &#1072;&#1085;&#1072;&#1083;&#1080;&#1079; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1086;&#1074; &#1076;&#1083;&#1103; &#1080;&#1093; &#1091;&#1083;&#1091;&#1095;&#1096;&#1077;&#1085;&#1080;&#1103;.</div>
+
+  <div class="cards-2" style="max-width:1000px">
+    <!-- Skills -->
+    <div class="screen-mockup">
+      <div class="screen-topbar">
+        <div class="screen-dot" style="background:var(--red)"></div>
+        <div class="screen-dot" style="background:var(--yellow)"></div>
+        <div class="screen-dot" style="background:var(--green);margin-right:12px"></div>
+        <span style="font-size:11px;color:var(--text-muted)">&#1059;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077; &#1089;&#1082;&#1080;&#1083;&#1083;&#1072;&#1084;&#1080;</span>
+      </div>
+      <div style="padding:16px;font-size:12px;">
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">&#1069;&#1090;&#1072;&#1087; 2: &#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+          <div style="background:var(--bg3);border-radius:6px;padding:10px;border:1px solid var(--border);">
+            <div style="font-weight:600;font-size:12px;">apk-translate</div>
+            <div style="font-size:10px;color:var(--text-muted);margin:4px 0;">&#1055;&#1086;&#1083;&#1085;&#1099;&#1081; &#1087;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; APK</div>
+            <div style="font-size:10px;display:flex;gap:10px;"><span>&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <b>127</b></span><span>&#1059;&#1089;&#1087;&#1077;&#1093;: <b style="color:var(--green)">94%</b></span></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:10px;border:1px solid rgba(239,68,68,0.3);">
+            <div style="font-weight:600;font-size:12px;">apk-rebuild</div>
+            <div style="font-size:10px;color:var(--text-muted);margin:4px 0;">&#1057;&#1073;&#1086;&#1088;&#1082;&#1072; + &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1100;</div>
+            <div style="font-size:10px;display:flex;gap:10px;"><span>&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <b>98</b></span><span>&#1059;&#1089;&#1087;&#1077;&#1093;: <b style="color:var(--red)">62%</b></span></div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">&#1069;&#1090;&#1072;&#1087; 4: &#1058;&#1077;&#1089;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div style="background:var(--bg3);border-radius:6px;padding:10px;border:1px solid rgba(34,197,94,0.3);">
+            <div style="font-weight:600;font-size:11px;color:var(--green)">adb-test</div>
+            <div style="font-size:10px;display:flex;gap:8px;margin-top:4px;"><span>&#1059;&#1089;&#1087;.: <b>91%</b></span></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:10px;border:1px solid rgba(34,197,94,0.3);">
+            <div style="font-weight:600;font-size:11px;color:var(--green)">adb-debug</div>
+            <div style="font-size:10px;display:flex;gap:8px;margin-top:4px;"><span>&#1059;&#1089;&#1087;.: <b>87%</b></span></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:10px;border:1px solid rgba(59,130,246,0.3);">
+            <div style="font-weight:600;font-size:11px;color:var(--blue)">scrapy-api</div>
+            <div style="font-size:10px;display:flex;gap:8px;margin-top:4px;"><span>&#1059;&#1089;&#1087;.: <b>82%</b></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Questions -->
+    <div class="screen-mockup">
+      <div class="screen-topbar">
+        <div class="screen-dot" style="background:var(--red)"></div>
+        <div class="screen-dot" style="background:var(--yellow)"></div>
+        <div class="screen-dot" style="background:var(--green);margin-right:12px"></div>
+        <span style="font-size:11px;color:var(--text-muted)">&#1046;&#1091;&#1088;&#1085;&#1072;&#1083; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1086;&#1074;</span>
+      </div>
+      <div style="padding:16px;font-size:12px;">
+        <div style="background:var(--bg3);border-radius:6px;padding:10px;margin-bottom:8px;">
+          <div style="font-size:11px;margin-bottom:4px;"><b>&laquo;RECORD_AUDIO &#1076;&#1083;&#1103; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1085;&#1086;&#1075;&#1086; &#1087;&#1088;&#1080;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1103;?&raquo;</b> <span style="background:var(--red);color:white;font-size:9px;padding:1px 5px;border-radius:8px;">5x</span></div>
+          <div style="font-size:10px;color:var(--text-muted);">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088; &middot; voice-setup &middot; <span style="color:var(--red)">&#1057;&#1082;&#1080;&#1083;&#1083; &#1085;&#1077; &#1087;&#1086;&#1082;&#1088;&#1099;&#1074;&#1072;&#1077;&#1090;</span></div>
+          <div style="font-size:10px;color:var(--accent);margin-top:4px;background:var(--bg);padding:4px 8px;border-radius:4px;">&#1055;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077;: &#1076;&#1086;&#1073;&#1072;&#1074;&#1080;&#1090;&#1100; &#1087;&#1072;&#1090;&#1095; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072; &#1082;&#1072;&#1082; &#1087;&#1086;&#1076;-&#1089;&#1082;&#1080;&#1083;&#1083;</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:10px;margin-bottom:8px;">
+          <div style="font-size:11px;margin-bottom:4px;"><b>&laquo;&#1054;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1080; &#1087;&#1088;&#1080; &#1089;&#1073;&#1086;&#1088;&#1082;&#1077;&raquo;</b> <span style="background:var(--red);color:white;font-size:9px;padding:1px 5px;border-radius:8px;">4x</span></div>
+          <div style="font-size:10px;color:var(--text-muted);">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;, &#1040;&#1083;&#1080;&#1096;&#1077;&#1088; &middot; apk-rebuild</div>
+          <div style="font-size:10px;color:var(--accent);margin-top:4px;background:var(--bg);padding:4px 8px;border-radius:4px;">&#1055;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077;: &#1072;&#1074;&#1090;&#1086;-&#1086;&#1087;&#1088;&#1077;&#1076;&#1077;&#1083;&#1077;&#1085;&#1080;&#1077; &#1082;&#1083;&#1102;&#1095;&#1072; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:10px;">
+          <div style="font-size:11px;margin-bottom:4px;"><b>&laquo;&#1063;&#1090;&#1086; &#1090;&#1072;&#1082;&#1086;&#1077; smali?&raquo;</b> <span style="background:var(--red);color:white;font-size:9px;padding:1px 5px;border-radius:8px;">3x</span></div>
+          <div style="font-size:10px;color:var(--text-muted);">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076; &middot; <span style="color:var(--blue)">&#1055;&#1088;&#1086;&#1073;&#1077;&#1083; &#1074; &#1086;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1080;</span></div>
+          <div style="font-size:10px;color:var(--accent);margin-top:4px;background:var(--bg);padding:4px 8px;border-radius:4px;">&#1055;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077;: &#1084;&#1086;&#1076;&#1091;&#1083;&#1100; &#1086;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1103; &#1087;&#1086; smali</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">14</div>
+</div>
+
+<!-- SLIDE 15: CTA -->
+<div class="slide slide-title" style="background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.12) 0%, transparent 70%);">
+  <div class="logo-big">RE</div>
+  <h1 style="font-size:52px">Auto RE Platform</h1>
+  <div class="subtitle">
+    &#1048;&#1048;-&#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1072;, &#1082;&#1086;&#1090;&#1086;&#1088;&#1072;&#1103; &#1087;&#1088;&#1077;&#1074;&#1088;&#1072;&#1097;&#1072;&#1077;&#1090; &#1101;&#1082;&#1089;&#1087;&#1077;&#1088;&#1090;&#1080;&#1079;&#1091; &#1074; &#1084;&#1072;&#1089;&#1096;&#1090;&#1072;&#1073;&#1080;&#1088;&#1091;&#1077;&#1084;&#1099;&#1081; &#1073;&#1080;&#1079;&#1085;&#1077;&#1089;
+  </div>
+
+  <div class="big-stats" style="max-width:800px;margin:0 auto 48px">
+    <div class="big-stat">
+      <div class="big-stat-val" style="color:var(--green)">3x</div>
+      <div class="big-stat-label">&#1073;&#1099;&#1089;&#1090;&#1088;&#1077;&#1077; &#1072;&#1076;&#1072;&#1087;&#1090;&#1072;&#1094;&#1080;&#1103;</div>
+    </div>
+    <div class="big-stat">
+      <div class="big-stat-val" style="color:var(--accent2)">18</div>
+      <div class="big-stat-label">&#1048;&#1048;-&#1089;&#1082;&#1080;&#1083;&#1083;&#1086;&#1074;</div>
+    </div>
+    <div class="big-stat">
+      <div class="big-stat-val" style="color:var(--purple)">5</div>
+      <div class="big-stat-label">&#1091;&#1088;&#1086;&#1074;&#1085;&#1077;&#1081; &#1079;&#1072;&#1097;&#1080;&#1090;&#1099; IP</div>
+    </div>
+    <div class="big-stat">
+      <div class="big-stat-val" style="color:var(--yellow)">&#8734;</div>
+      <div class="big-stat-label">&#1088;&#1086;&#1089;&#1090; &#1073;&#1072;&#1079;&#1099; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</div>
+    </div>
+  </div>
+
+  <div class="tag-row">
+    <div class="tag-pill" style="border-color:var(--accent);background:rgba(99,102,241,0.1)">Changan</div>
+    <div class="tag-pill" style="border-color:var(--accent);background:rgba(99,102,241,0.1)">Deepal</div>
+    <div class="tag-pill" style="border-color:var(--accent);background:rgba(99,102,241,0.1)">QNX + Android</div>
+    <div class="tag-pill" style="border-color:var(--accent);background:rgba(99,102,241,0.1)">Claude AI</div>
+    <div class="tag-pill" style="border-color:var(--accent);background:rgba(99,102,241,0.1)">Open Source &#1092;&#1091;&#1085;&#1076;&#1072;&#1084;&#1077;&#1085;&#1090;</div>
+    <div class="tag-pill" style="border-color:var(--green);background:rgba(34,197,94,0.1)">ADB</div>
+    <div class="tag-pill" style="border-color:var(--blue);background:rgba(59,130,246,0.1)">Scrapy</div>
+  </div>
+  <div class="slide-num">15</div>
+</div>
+
+</body>
+</html>

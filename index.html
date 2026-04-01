@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto RE Platform</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f1117;
+    --bg-card: #1a1d27;
+    --bg-card-hover: #1e2230;
+    --bg-sidebar: #141620;
+    --border: #2a2d3a;
+    --text: #e4e4e7;
+    --text-dim: #71717a;
+    --text-muted: #52525b;
+    --accent: #6366f1;
+    --accent-dim: #4f46e5;
+    --green: #22c55e;
+    --green-dim: #16a34a;
+    --green-bg: rgba(34,197,94,0.1);
+    --yellow: #eab308;
+    --yellow-bg: rgba(234,179,8,0.1);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.1);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,0.1);
+    --orange: #f97316;
+    --orange-bg: rgba(249,115,22,0.1);
+    --purple: #a855f7;
+    --purple-bg: rgba(168,85,247,0.1);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 250px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sidebar-logo .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+
+  .sidebar-logo span { font-weight: 600; font-size: 15px; }
+
+  .sidebar-nav {
+    padding: 12px 8px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-section {
+    padding: 16px 12px 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    transition: all 0.15s;
+  }
+  .nav-item:hover { background: var(--bg-card); color: var(--text); }
+  .nav-item.active { background: var(--accent); color: white; }
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .sidebar-user {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sidebar-user .avatar {
+    width: 32px; height: 32px;
+    background: var(--accent); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px;
+  }
+  .sidebar-user .user-info { font-size: 12px; }
+  .sidebar-user .user-name { font-weight: 600; font-size: 13px; }
+  .sidebar-user .user-role { color: var(--text-muted); }
+
+  .main { flex: 1; overflow-y: auto; overflow-x: hidden; }
+
+  .topbar {
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0;
+    background: var(--bg); z-index: 10;
+  }
+  .topbar h1 { font-size: 18px; font-weight: 600; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+  .btn {
+    padding: 7px 14px; border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-card); color: var(--text);
+    font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn:hover { border-color: var(--text-muted); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-dim); }
+
+  .content { padding: 24px 28px; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .stat-label {
+    font-size: 12px; color: var(--text-muted);
+    margin-bottom: 6px; text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .stat-value { font-size: 28px; font-weight: 700; line-height: 1.2; }
+  .stat-sub {
+    font-size: 12px; color: var(--text-dim);
+    margin-top: 4px; display: flex; align-items: center; gap: 4px;
+  }
+  .stat-sub .up { color: var(--green); }
+  .stat-sub .down { color: var(--red); }
+
+  .grid-2 {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-bottom: 24px;
+  }
+  .grid-2-1 {
+    display: grid; grid-template-columns: 2fr 1fr;
+    gap: 16px; margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    font-weight: 600; font-size: 14px;
+  }
+  .card-header .link {
+    font-size: 12px; color: var(--accent);
+    cursor: pointer; font-weight: 400;
+  }
+  .card-body { padding: 16px 20px; }
+
+  .project-row {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background 0.1s;
+  }
+  .project-row:last-child { border-bottom: none; }
+  .project-row:hover { background: var(--bg-card-hover); }
+
+  .project-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .project-name {
+    font-weight: 600; font-size: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .project-worker { font-size: 12px; color: var(--text-dim); }
+
+  .progress-bar {
+    height: 6px; background: var(--border);
+    border-radius: 3px; overflow: hidden; margin-bottom: 6px;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 3px; transition: width 0.3s;
+  }
+  .progress-info {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--text-dim);
+  }
+
+  .stage-badge {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 4px; font-size: 11px; font-weight: 500;
+  }
+  .stage-hack { background: var(--red-bg); color: var(--red); }
+  .stage-translate { background: var(--blue-bg); color: var(--blue); }
+  .stage-func { background: var(--purple-bg); color: var(--purple); }
+  .stage-test { background: var(--yellow-bg); color: var(--yellow); }
+  .stage-protect { background: var(--orange-bg); color: var(--orange); }
+  .stage-release { background: var(--green-bg); color: var(--green); }
+
+  .alert-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 12px;
+    font-size: 13px; line-height: 1.5;
+  }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-icon { flex-shrink: 0; margin-top: 2px; }
+  .alert-time { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+
+  .worker-item {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .worker-item:last-child { border-bottom: none; }
+
+  .worker-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 14px; flex-shrink: 0;
+  }
+  .worker-info { flex: 1; }
+  .worker-name { font-weight: 600; font-size: 13px; }
+  .worker-task { font-size: 12px; color: var(--text-dim); margin-top: 1px; }
+
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .status-dot.online { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-dot.away { background: var(--yellow); }
+  .status-dot.offline { background: var(--text-muted); }
+
+  .feed-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 12px; font-size: 13px;
+  }
+  .feed-item:last-child { border-bottom: none; }
+
+  .feed-time {
+    color: var(--text-muted); font-size: 11px;
+    white-space: nowrap; flex-shrink: 0; width: 44px; padding-top: 1px;
+  }
+  .feed-avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; flex-shrink: 0;
+  }
+  .feed-text { line-height: 1.4; }
+  .feed-text .highlight { color: var(--accent); font-weight: 500; }
+  .feed-text .tool {
+    background: var(--border); padding: 1px 6px;
+    border-radius: 3px; font-size: 12px; font-family: monospace;
+  }
+
+  .stages-pipeline {
+    display: flex; gap: 4px; margin-bottom: 24px;
+  }
+  .stage-item {
+    flex: 1; padding: 12px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px; text-align: center; font-size: 12px;
+  }
+  .stage-item.completed { border-color: var(--green); background: rgba(34,197,94,0.05); }
+  .stage-item.current { border-color: var(--accent); background: rgba(99,102,241,0.08); }
+  .stage-item .stage-num { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+  .stage-item.completed .stage-num { color: var(--green); }
+  .stage-item.current .stage-num { color: var(--accent); }
+  .stage-item .stage-label { color: var(--text-dim); }
+  .stage-item.completed .stage-label { color: var(--green); }
+  .stage-item.current .stage-label { color: var(--accent); }
+  .stage-item .stage-days { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  .convo-item {
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; display: flex; gap: 10px;
+  }
+  .convo-item:last-child { border-bottom: none; }
+  .convo-time {
+    color: var(--text-muted); font-size: 11px;
+    flex-shrink: 0; width: 38px; padding-top: 2px;
+  }
+  .convo-who { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+  .convo-who.worker { color: var(--blue); }
+  .convo-who.ai { color: var(--purple); }
+  .convo-who.system { color: var(--yellow); }
+  .convo-text { color: var(--text-dim); line-height: 1.4; }
+  .convo-photo {
+    margin-top: 6px; width: 180px; height: 100px;
+    background: var(--border); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); font-size: 11px;
+  }
+
+  .knowledge-item {
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; display: flex; gap: 8px;
+  }
+  .knowledge-item:last-child { border-bottom: none; }
+  .knowledge-cat {
+    flex-shrink: 0; font-size: 11px;
+    padding: 1px 6px; border-radius: 3px; font-weight: 500;
+  }
+
+  .skill-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .skill-card:hover { border-color: var(--accent); }
+  .skill-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .skill-card-name { font-weight: 600; font-size: 15px; }
+  .skill-card-stage { font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+  .skill-card-desc {
+    font-size: 13px; color: var(--text-dim);
+    margin-bottom: 14px; line-height: 1.4;
+  }
+  .skill-card-stats { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); }
+  .skill-card-stat span { color: var(--text); font-weight: 600; }
+
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 14px; margin-bottom: 24px;
+  }
+
+  .worker-detail-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px;
+    display: flex; align-items: center; gap: 20px;
+    margin-bottom: 16px; cursor: pointer; transition: all 0.15s;
+  }
+  .worker-detail-card:hover { border-color: var(--accent); }
+
+  .worker-big-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 600; flex-shrink: 0;
+  }
+  .worker-detail-info { flex: 1; }
+  .worker-detail-name { font-weight: 600; font-size: 16px; }
+  .worker-detail-role { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
+
+  .worker-detail-stats { display: flex; gap: 24px; text-align: center; }
+  .worker-detail-stat-val { font-size: 20px; font-weight: 700; }
+  .worker-detail-stat-label { font-size: 11px; color: var(--text-muted); }
+
+  .tabs {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .tab {
+    padding: 10px 18px; font-size: 13px;
+    color: var(--text-dim); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px; transition: all 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .question-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .question-item:last-child { border-bottom: none; }
+  .question-text { margin-bottom: 4px; }
+  .question-meta {
+    display: flex; gap: 12px;
+    font-size: 11px; color: var(--text-muted);
+  }
+  .question-freq {
+    background: var(--red-bg); color: var(--red);
+    padding: 1px 6px; border-radius: 3px;
+    font-size: 10px; font-weight: 600;
+  }
+
+  .tag {
+    display: inline-block; padding: 1px 6px;
+    border-radius: 3px; font-size: 11px; font-weight: 500;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">RE</div>
+    <span>Auto RE Platform</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="showPage('dashboard')">
+      <span class="nav-icon">&#9632;</span> &#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103;
+    </div>
+    <div class="nav-item" onclick="showPage('projects')">
+      <span class="nav-icon">&#9881;</span> &#1055;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="showPage('workers')">
+      <span class="nav-icon">&#9786;</span> &#1057;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1080;
+    </div>
+    <div class="nav-item" onclick="showPage('skills')">
+      <span class="nav-icon">&#9733;</span> &#1057;&#1082;&#1080;&#1083;&#1083;&#1099;
+    </div>
+
+    <div class="nav-section">&#1040;&#1085;&#1072;&#1083;&#1080;&#1090;&#1080;&#1082;&#1072;</div>
+    <div class="nav-item" onclick="showPage('activity')">
+      <span class="nav-icon">&#9776;</span> &#1051;&#1077;&#1085;&#1090;&#1072; &#1072;&#1082;&#1090;&#1080;&#1074;&#1085;&#1086;&#1089;&#1090;&#1080;
+    </div>
+    <div class="nav-item" onclick="showPage('questions')">
+      <span class="nav-icon">&#63;</span> &#1042;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099;
+      <span class="nav-badge">7</span>
+    </div>
+
+    <div class="nav-section">&#1057;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072;</div>
+    <div class="nav-item" onclick="showPage('knowledge')">
+      <span class="nav-icon">&#128218;</span> &#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#9881;</span> &#1053;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080;
+    </div>
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="avatar">U</div>
+    <div class="user-info">
+      <div class="user-name">&#1059;&#1083;&#1091;&#1075;&#1073;&#1077;&#1082;</div>
+      <div class="user-role">&#1040;&#1076;&#1084;&#1080;&#1085;&#1080;&#1089;&#1090;&#1088;&#1072;&#1090;&#1086;&#1088;</div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- ========== DASHBOARD ========== -->
+  <div class="page active" id="page-dashboard">
+    <div class="topbar">
+      <h1>&#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103; &#1087;&#1072;&#1085;&#1077;&#1083;&#1100;</h1>
+      <div class="topbar-right">
+        <button class="btn">&#1057;&#1077;&#1075;&#1086;&#1076;&#1085;&#1103;: 1 &#1072;&#1087;&#1088;&#1077;&#1083;&#1103; 2026</button>
+        <button class="btn btn-primary" onclick="showPage('projects')">+ &#1053;&#1086;&#1074;&#1099;&#1081; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">&#1040;&#1082;&#1090;&#1080;&#1074;&#1085;&#1099;&#1077; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;</div>
+          <div class="stat-value">3</div>
+          <div class="stat-sub"><span class="up">+1</span> &#1079;&#1072; &#1085;&#1077;&#1076;&#1077;&#1083;&#1102;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">&#1057;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1080; &#1086;&#1085;&#1083;&#1072;&#1081;&#1085;</div>
+          <div class="stat-value">4 <span style="font-size:14px;color:var(--text-muted)">/ 6</span></div>
+          <div class="stat-sub">2 &#1085;&#1072; &#1101;&#1090;&#1072;&#1087;&#1077; &#1090;&#1077;&#1089;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1103;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099; &#1089;&#1082;&#1080;&#1083;&#1083;&#1086;&#1074; &#1089;&#1077;&#1075;&#1086;&#1076;&#1085;&#1103;</div>
+          <div class="stat-value">47</div>
+          <div class="stat-sub"><span class="up">+12%</span> &#1086;&#1090; &#1074;&#1095;&#1077;&#1088;&#1072;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</div>
+          <div class="stat-value">847</div>
+          <div class="stat-sub"><span class="up">+5</span> &#1089;&#1077;&#1075;&#1086;&#1076;&#1085;&#1103;</div>
+        </div>
+      </div>
+
+      <div class="grid-2-1">
+        <div class="card">
+          <div class="card-header">
+            &#1040;&#1082;&#1090;&#1080;&#1074;&#1085;&#1099;&#1077; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;
+            <span class="link" onclick="showPage('projects')">&#1042;&#1089;&#1077; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;</span>
+          </div>
+
+          <div class="project-row" onclick="showPage('project-detail')">
+            <div class="project-top">
+              <div class="project-name">
+                Deepal S07 2025
+                <span class="stage-badge stage-test">&#1058;&#1077;&#1089;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;</span>
+              </div>
+              <div class="project-worker">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:78%; background: linear-gradient(90deg, var(--green), var(--accent))"></div>
+            </div>
+            <div class="progress-info">
+              <span>&#1069;&#1090;&#1072;&#1087; 4 &#1080;&#1079; 7 &mdash; &#1056;&#1091;&#1095;&#1085;&#1086;&#1077; &#1090;&#1077;&#1089;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;</span>
+              <span>78%</span>
+            </div>
+          </div>
+
+          <div class="project-row">
+            <div class="project-top">
+              <div class="project-name">
+                Changan UNI-K 2024
+                <span class="stage-badge stage-func">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span>
+              </div>
+              <div class="project-worker">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:52%; background: linear-gradient(90deg, var(--green), var(--purple))"></div>
+            </div>
+            <div class="progress-info">
+              <span>&#1069;&#1090;&#1072;&#1087; 3 &#1080;&#1079; 7 &mdash; &#1042;&#1080;&#1076;&#1078;&#1077;&#1090;&#1099; &#1080; &#1075;&#1086;&#1083;&#1086;&#1089;</span>
+              <span>52%</span>
+            </div>
+          </div>
+
+          <div class="project-row">
+            <div class="project-top">
+              <div class="project-name">
+                Deepal L07 2025
+                <span class="stage-badge stage-hack">&#1042;&#1079;&#1083;&#1086;&#1084;</span>
+              </div>
+              <div class="project-worker">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:15%; background: var(--red)"></div>
+            </div>
+            <div class="progress-info">
+              <span>&#1069;&#1090;&#1072;&#1087; 1 &#1080;&#1079; 7 &mdash; ADB &#1080; Root</span>
+              <span>15%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            &#1058;&#1088;&#1077;&#1073;&#1091;&#1077;&#1090; &#1074;&#1085;&#1080;&#1084;&#1072;&#1085;&#1080;&#1103;
+            <span class="nav-badge">3</span>
+          </div>
+
+          <div class="alert-item">
+            <span class="alert-icon" style="color:var(--red)">&#9888;</span>
+            <div>
+              <div><strong>&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</strong> &#1079;&#1072;&#1089;&#1090;&#1088;&#1103;&#1083; &#1085;&#1072; &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;&#1093; &#1075;&#1086;&#1083;&#1086;&#1089;&#1086;&#1074;&#1086;&#1075;&#1086; &#1091;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1103; &mdash; &#1086;&#1076;&#1080;&#1085; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089; 4 &#1088;&#1072;&#1079;&#1072; &#1079;&#1072; 2 &#1095;&#1072;&#1089;&#1072;</div>
+              <div class="alert-time">35 &#1084;&#1080;&#1085; &#1085;&#1072;&#1079;&#1072;&#1076;</div>
+            </div>
+          </div>
+
+          <div class="alert-item">
+            <span class="alert-icon" style="color:var(--yellow)">&#9888;</span>
+            <div>
+              <div>&#1057;&#1082;&#1080;&#1083;&#1083; <strong>apk-rebuild</strong> &#1087;&#1072;&#1076;&#1072;&#1077;&#1090; &#1074; 38% &#1089;&#1083;&#1091;&#1095;&#1072;&#1077;&#1074; &mdash; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1080; &#1085;&#1072; APK &#1086;&#1090; Changan</div>
+              <div class="alert-time">1 &#1095;&#1072;&#1089; &#1085;&#1072;&#1079;&#1072;&#1076;</div>
+            </div>
+          </div>
+
+          <div class="alert-item">
+            <span class="alert-icon" style="color:var(--blue)">&#8505;</span>
+            <div>
+              <div><strong>&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</strong> &#1079;&#1072;&#1076;&#1072;&#1105;&#1090; &#1073;&#1072;&#1079;&#1086;&#1074;&#1099;&#1077; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099; &#1087;&#1088;&#1086; smali &mdash; &#1085;&#1091;&#1078;&#1085;&#1086; &#1086;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1077; &#1080;&#1083;&#1080; &#1091;&#1087;&#1088;&#1086;&#1097;&#1105;&#1085;&#1085;&#1099;&#1081; &#1089;&#1082;&#1080;&#1083;&#1083;</div>
+              <div class="alert-time">2 &#1095;&#1072;&#1089;&#1072; &#1085;&#1072;&#1079;&#1072;&#1076;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            &#1057;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1080;
+            <span class="link" onclick="showPage('workers')">&#1059;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077;</span>
+          </div>
+
+          <div class="worker-item">
+            <span class="status-dot online"></span>
+            <div class="worker-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
+            <div class="worker-info">
+              <div class="worker-name">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</div>
+              <div class="worker-task">Deepal S07 &mdash; &#1090;&#1077;&#1089;&#1090;&#1080;&#1088;&#1091;&#1077;&#1090; &#1087;&#1088;&#1080;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077; &#1082;&#1083;&#1080;&#1084;&#1072;&#1090;&#1072;</div>
+            </div>
+            <span style="font-size:12px;color:var(--text-muted)">12 &#1084;&#1080;&#1085;</span>
+          </div>
+
+          <div class="worker-item">
+            <span class="status-dot online"></span>
+            <div class="worker-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
+            <div class="worker-info">
+              <div class="worker-name">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</div>
+              <div class="worker-task">UNI-K &mdash; &#1085;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1072; &#1075;&#1086;&#1083;&#1086;&#1089;&#1086;&#1074;&#1086;&#1075;&#1086; &#1091;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1103;</div>
+            </div>
+            <span style="font-size:12px;color:var(--yellow)">&#1079;&#1072;&#1089;&#1090;&#1088;&#1103;&#1083;</span>
+          </div>
+
+          <div class="worker-item">
+            <span class="status-dot online"></span>
+            <div class="worker-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
+            <div class="worker-info">
+              <div class="worker-name">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</div>
+              <div class="worker-task">Deepal L07 &mdash; &#1080;&#1097;&#1077;&#1090; &#1089;&#1087;&#1086;&#1089;&#1086;&#1073; &#1086;&#1090;&#1082;&#1088;&#1099;&#1090;&#1100; ADB</div>
+            </div>
+            <span style="font-size:12px;color:var(--text-muted)">1&#1095;</span>
+          </div>
+
+          <div class="worker-item">
+            <span class="status-dot online"></span>
+            <div class="worker-avatar" style="background:var(--orange-bg);color:var(--orange)">&#1044;</div>
+            <div class="worker-info">
+              <div class="worker-name">&#1044;&#1072;&#1074;&#1088;&#1086;&#1085;</div>
+              <div class="worker-task">&#1054;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1077; &mdash; &#1087;&#1088;&#1086;&#1093;&#1086;&#1076;&#1080;&#1090; &#1074;&#1074;&#1086;&#1076;&#1085;&#1099;&#1077; &#1084;&#1086;&#1076;&#1091;&#1083;&#1080;</div>
+            </div>
+            <span style="font-size:12px;color:var(--text-muted)">30&#1084;</span>
+          </div>
+
+          <div class="worker-item">
+            <span class="status-dot away"></span>
+            <div class="worker-avatar" style="background:var(--yellow-bg);color:var(--yellow)">&#1052;</div>
+            <div class="worker-info">
+              <div class="worker-name">&#1052;&#1072;&#1082;&#1089;&#1080;&#1084; <span class="tag" style="background:var(--accent);color:white">&#1051;&#1080;&#1076;</span></div>
+              <div class="worker-task">&#1055;&#1088;&#1086;&#1074;&#1077;&#1088;&#1103;&#1077;&#1090; &#1088;&#1077;&#1079;&#1091;&#1083;&#1100;&#1090;&#1072;&#1090;&#1099; &#1090;&#1077;&#1089;&#1090;&#1086;&#1074; &#1056;&#1091;&#1089;&#1090;&#1072;&#1084;&#1072; &#1087;&#1086; S07</div>
+            </div>
+            <span style="font-size:12px;color:var(--text-muted)">45&#1084;</span>
+          </div>
+
+          <div class="worker-item">
+            <span class="status-dot offline"></span>
+            <div class="worker-avatar" style="background:var(--border);color:var(--text-muted)">&#1057;</div>
+            <div class="worker-info">
+              <div class="worker-name">&#1057;&#1091;&#1083;&#1090;&#1072;&#1085; <span class="tag" style="background:var(--accent);color:white">&#1051;&#1080;&#1076;</span></div>
+              <div class="worker-task">&#1055;&#1086;&#1089;&#1083;&#1077;&#1076;&#1085;&#1080;&#1081; &#1074;&#1093;&#1086;&#1076;: &#1074;&#1095;&#1077;&#1088;&#1072;, &#1088;&#1077;&#1074;&#1100;&#1102; &#1079;&#1072;&#1097;&#1080;&#1090;&#1099; S07</div>
+            </div>
+            <span style="font-size:12px;color:var(--text-muted)">&#1086;&#1092;&#1092;&#1083;&#1072;&#1081;&#1085;</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            &#1051;&#1077;&#1085;&#1090;&#1072; &#1072;&#1082;&#1090;&#1080;&#1074;&#1085;&#1086;&#1089;&#1090;&#1080;
+            <span class="link" onclick="showPage('activity')">&#1042;&#1089;&#1103; &#1083;&#1077;&#1085;&#1090;&#1072;</span>
+          </div>
+
+          <div class="feed-item">
+            <div class="feed-time">14:32</div>
+            <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
+            <div class="feed-text">
+              &#1056;&#1091;&#1089;&#1090;&#1072;&#1084; &#1089;&#1082;&#1080;&#1085;&#1091;&#1083; <span class="highlight">&#1089;&#1082;&#1088;&#1080;&#1085;&#1096;&#1086;&#1090;</span> &#1073;&#1072;&#1075;&#1072; &#1074; &#1082;&#1083;&#1080;&#1084;&#1072;&#1090;&#1077;
+              <br><span class="tool">apk-translate</span> &#1085;&#1072;&#1096;&#1105;&#1083; &#1087;&#1088;&#1086;&#1087;&#1091;&#1097;&#1077;&#1085;&#1085;&#1091;&#1102; &#1089;&#1090;&#1088;&#1086;&#1082;&#1091; &#1074; locale/ru/
+            </div>
+          </div>
+
+          <div class="feed-item">
+            <div class="feed-time">14:28</div>
+            <div class="feed-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
+            <div class="feed-text">
+              &#1040;&#1083;&#1080;&#1096;&#1077;&#1088; &#1089;&#1087;&#1088;&#1086;&#1089;&#1080;&#1083;: <em>&laquo;&#1082;&#1072;&#1082; &#1087;&#1086;&#1083;&#1091;&#1095;&#1080;&#1090;&#1100; RECORD_AUDIO &#1074; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1085;&#1086;&#1084; &#1087;&#1088;&#1080;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1080;?&raquo;</em>
+              <br><span class="tool">voice-setup</span> &#1087;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1080;&#1083; &#1087;&#1072;&#1090;&#1095; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072;
+            </div>
+          </div>
+
+          <div class="feed-item">
+            <div class="feed-time">14:15</div>
+            <div class="feed-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
+            <div class="feed-text">
+              &#1046;&#1072;&#1084;&#1096;&#1080;&#1076; &#1080;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1083; <span class="tool">adb-finder</span> &#1085;&#1072; Deepal L07
+              <br>&#1053;&#1072;&#1096;&#1105;&#1083; &#1076;&#1080;&#1072;&#1075;&#1085;&#1086;&#1089;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;&#1081; &#1087;&#1086;&#1088;&#1090; &mdash; &#1087;&#1088;&#1086;&#1073;&#1091;&#1077;&#1090; &#1074;&#1082;&#1083;&#1102;&#1095;&#1080;&#1090;&#1100; ADB
+            </div>
+          </div>
+
+          <div class="feed-item">
+            <div class="feed-time">13:55</div>
+            <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
+            <div class="feed-text">
+              &#1056;&#1091;&#1089;&#1090;&#1072;&#1084; &#1079;&#1072;&#1074;&#1077;&#1088;&#1096;&#1080;&#1083; <span class="tool">apk-rebuild</span> &#1076;&#1083;&#1103; &#1084;&#1077;&#1076;&#1080;&#1072;&#1087;&#1083;&#1077;&#1077;&#1088;&#1072;
+              <br>APK &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1072;&#1085; &#1080; &#1075;&#1086;&#1090;&#1086;&#1074; &#1082; &#1090;&#1077;&#1089;&#1090;&#1091;
+            </div>
+          </div>
+
+          <div class="feed-item">
+            <div class="feed-time">13:40</div>
+            <div class="feed-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
+            <div class="feed-text">
+              &#1040;&#1083;&#1080;&#1096;&#1077;&#1088;: <em>&laquo;&#1074;&#1089;&#1105; &#1077;&#1097;&#1105; permission denied &#1076;&#1083;&#1103; &#1084;&#1080;&#1082;&#1088;&#1086;&#1092;&#1086;&#1085;&#1072;&raquo;</em>
+              <br><span style="color:var(--yellow)">&#1055;&#1086;&#1074;&#1090;&#1086;&#1088;&#1085;&#1099;&#1081; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089; &mdash; 3-&#1081; &#1088;&#1072;&#1079;</span>
+            </div>
+          </div>
+
+          <div class="feed-item">
+            <div class="feed-time">13:22</div>
+            <div class="feed-avatar" style="background:var(--orange-bg);color:var(--orange)">&#1044;</div>
+            <div class="feed-text">
+              &#1044;&#1072;&#1074;&#1088;&#1086;&#1085; &#1079;&#1072;&#1074;&#1077;&#1088;&#1096;&#1080;&#1083; <span class="highlight">&#1084;&#1086;&#1076;&#1091;&#1083;&#1100; 3</span>: &#1057;&#1090;&#1088;&#1091;&#1082;&#1090;&#1091;&#1088;&#1072; APK
+              <br>&#1054;&#1094;&#1077;&#1085;&#1082;&#1072;: 85% &mdash; &#1075;&#1086;&#1090;&#1086;&#1074; &#1082; &#1088;&#1077;&#1072;&#1083;&#1100;&#1085;&#1099;&#1084; &#1079;&#1072;&#1076;&#1072;&#1095;&#1072;&#1084;
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== PROJECT DETAIL ========== -->
+  <div class="page" id="page-project-detail">
+    <div class="topbar">
+      <h1><span style="cursor:pointer;color:var(--text-dim)" onclick="showPage('dashboard')">&#8592;</span>&nbsp;&nbsp;Deepal S07 2025</h1>
+      <div class="topbar-right">
+        <span style="font-size:13px;color:var(--text-dim)">&#1048;&#1089;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100;: <strong style="color:var(--text)">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</strong></span>
+        <button class="btn">&#1055;&#1077;&#1088;&#1077;&#1085;&#1072;&#1079;&#1085;&#1072;&#1095;&#1080;&#1090;&#1100;</button>
+        <button class="btn btn-primary">&#1054;&#1090;&#1082;&#1088;&#1099;&#1090;&#1100; &#1074; Claude Code</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="stages-pipeline">
+        <div class="stage-item completed">
+          <div class="stage-num">&#10003;</div>
+          <div class="stage-label">&#1042;&#1079;&#1083;&#1086;&#1084;</div>
+          <div class="stage-days">3 &#1076;&#1085;&#1103;</div>
+        </div>
+        <div class="stage-item completed">
+          <div class="stage-num">&#10003;</div>
+          <div class="stage-label">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</div>
+          <div class="stage-days">5 &#1076;&#1085;&#1077;&#1081;</div>
+        </div>
+        <div class="stage-item completed">
+          <div class="stage-num">&#10003;</div>
+          <div class="stage-label">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</div>
+          <div class="stage-days">4 &#1076;&#1085;&#1103;</div>
+        </div>
+        <div class="stage-item current">
+          <div class="stage-num">4</div>
+          <div class="stage-label">&#1058;&#1077;&#1089;&#1090;&#1099;</div>
+          <div class="stage-days">2 &#1076;&#1085;&#1103;...</div>
+        </div>
+        <div class="stage-item">
+          <div class="stage-num">5</div>
+          <div class="stage-label">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</div>
+          <div class="stage-days">&mdash;</div>
+        </div>
+        <div class="stage-item">
+          <div class="stage-num">6</div>
+          <div class="stage-label">&#1055;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1072;</div>
+          <div class="stage-days">&mdash;</div>
+        </div>
+        <div class="stage-item">
+          <div class="stage-num">7</div>
+          <div class="stage-label">&#1056;&#1077;&#1083;&#1080;&#1079;</div>
+          <div class="stage-days">&mdash;</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">&#1054;&#1073;&#1097;&#1077;&#1077; &#1074;&#1088;&#1077;&#1084;&#1103;</div>
+          <div class="stat-value">14&#1076;</div>
+          <div class="stat-sub">&#1053;&#1072;&#1095;&#1072;&#1083;&#1086;: 18 &#1084;&#1072;&#1088;&#1090;&#1072;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">APK &#1087;&#1077;&#1088;&#1077;&#1074;&#1077;&#1076;&#1077;&#1085;&#1086;</div>
+          <div class="stat-value">23</div>
+          <div class="stat-sub">4 200 &#1089;&#1090;&#1088;&#1086;&#1082;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">&#1041;&#1072;&#1075;&#1086;&#1074; &#1085;&#1072;&#1081;&#1076;&#1077;&#1085;&#1086;</div>
+          <div class="stat-value">12</div>
+          <div class="stat-sub"><span class="up">8 &#1080;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1086;</span> &middot; 4 &#1086;&#1090;&#1082;&#1088;&#1099;&#1090;&#1086;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099; &#1089;&#1082;&#1080;&#1083;&#1083;&#1086;&#1074;</div>
+          <div class="stat-value">156</div>
+          <div class="stat-sub">89% &#1091;&#1089;&#1087;&#1077;&#1096;&#1085;&#1099;&#1093;</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            &#1044;&#1080;&#1072;&#1083;&#1086;&#1075; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1072; (&#1078;&#1080;&#1074;&#1086;&#1081;)
+            <span class="link">&#1042;&#1089;&#1103; &#1080;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103;</span>
+          </div>
+
+          <div class="convo-item">
+            <div class="convo-time">14:35</div>
+            <div>
+              <div class="convo-who ai">&#1048;&#1048;</div>
+              <div class="convo-text">&#1048;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1086;. &#1057;&#1090;&#1088;&#1086;&#1082;&#1072; &laquo;&#36873;&#25321;&#21306;&#22495;&raquo; &#1076;&#1086;&#1073;&#1072;&#1074;&#1083;&#1077;&#1085;&#1072; &#1074; locale/ru/ &#1082;&#1072;&#1082; &laquo;&#1042;&#1099;&#1073;&#1086;&#1088; &#1079;&#1086;&#1085;&#1099;&raquo;. &#1055;&#1077;&#1088;&#1077;&#1089;&#1086;&#1073;&#1088;&#1072;&#1090;&#1100; APK?</div>
+            </div>
+          </div>
+
+          <div class="convo-item">
+            <div class="convo-time">14:33</div>
+            <div>
+              <div class="convo-who worker">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</div>
+              <div class="convo-text">&#1050;&#1083;&#1080;&#1084;&#1072;&#1090; &#1087;&#1086;&#1082;&#1072;&#1079;&#1099;&#1074;&#1072;&#1077;&#1090; &#1080;&#1077;&#1088;&#1086;&#1075;&#1083;&#1080;&#1092;&#1099; &#1085;&#1072; &#1101;&#1082;&#1088;&#1072;&#1085;&#1077; &#1074;&#1099;&#1073;&#1086;&#1088;&#1072; &#1079;&#1086;&#1085;</div>
+              <div class="convo-photo">&#128247; screenshot_climate.jpg</div>
+            </div>
+          </div>
+
+          <div class="convo-item">
+            <div class="convo-time">14:20</div>
+            <div>
+              <div class="convo-who system">&#1057;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072;</div>
+              <div class="convo-text" style="color:var(--green)">&#10003; APK &#1084;&#1077;&#1076;&#1080;&#1072;&#1087;&#1083;&#1077;&#1077;&#1088;&#1072; &#1087;&#1077;&#1088;&#1077;&#1089;&#1086;&#1073;&#1088;&#1072;&#1085; &#1080; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1072;&#1085; &#1091;&#1089;&#1087;&#1077;&#1096;&#1085;&#1086;</div>
+            </div>
+          </div>
+
+          <div class="convo-item">
+            <div class="convo-time">14:12</div>
+            <div>
+              <div class="convo-who worker">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</div>
+              <div class="convo-text">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; &#1084;&#1077;&#1076;&#1080;&#1072;&#1087;&#1083;&#1077;&#1077;&#1088;&#1072; &#1074;&#1099;&#1075;&#1083;&#1103;&#1076;&#1080;&#1090; &#1085;&#1086;&#1088;&#1084;, &#1089;&#1086;&#1073;&#1080;&#1088;&#1072;&#1081;</div>
+            </div>
+          </div>
+
+          <div class="convo-item">
+            <div class="convo-time">13:50</div>
+            <div>
+              <div class="convo-who ai">&#1048;&#1048;</div>
+              <div class="convo-text">&#1060;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082; &#1087;&#1088;&#1086;&#1087;&#1072;&#1090;&#1095;&#1077;&#1085;. &#1056;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1077; overlay &#1074;&#1099;&#1076;&#1072;&#1085;&#1086; &#1083;&#1072;&#1091;&#1085;&#1095;&#1077;&#1088;&#1091;. &#1055;&#1088;&#1086;&#1090;&#1077;&#1089;&#1090;&#1080;&#1088;&#1091;&#1081; &#1085;&#1072; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1077;.</div>
+            </div>
+          </div>
+
+          <div class="convo-item">
+            <div class="convo-time">13:45</div>
+            <div>
+              <div class="convo-who worker">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</div>
+              <div class="convo-text">&#1054;&#1074;&#1077;&#1088;&#1083;&#1077;&#1081; &#1085;&#1077; &#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1077;&#1090;, permission denied</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header">&#1054;&#1090;&#1082;&#1088;&#1099;&#1090;&#1099;&#1077; &#1073;&#1072;&#1075;&#1080; (4)</div>
+
+            <div class="alert-item">
+              <span style="color:var(--red)">&#9679;</span>
+              <div>
+                <div>#12 &#1050;&#1083;&#1080;&#1084;&#1072;&#1090; &mdash; &#1080;&#1077;&#1088;&#1086;&#1075;&#1083;&#1080;&#1092;&#1099; &#1085;&#1072; &#1101;&#1082;&#1088;&#1072;&#1085;&#1077; &#1079;&#1086;&#1085;</div>
+                <div class="alert-time">&#1053;&#1072;&#1081;&#1076;&#1077;&#1085; 12 &#1084;&#1080;&#1085; &#1085;&#1072;&#1079;&#1072;&#1076; &middot; &#1080;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1103;&#1077;&#1090;&#1089;&#1103;</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <span style="color:var(--yellow)">&#9679;</span>
+              <div>
+                <div>#10 &#1053;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080; &mdash; &#1082;&#1088;&#1072;&#1096; &#1087;&#1088;&#1080; &#1089;&#1084;&#1077;&#1085;&#1077; &#1103;&#1079;&#1099;&#1082;&#1072;</div>
+                <div class="alert-time">&#1053;&#1072;&#1081;&#1076;&#1077;&#1085; &#1074;&#1095;&#1077;&#1088;&#1072;</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <span style="color:var(--yellow)">&#9679;</span>
+              <div>
+                <div>#9 &#1052;&#1077;&#1076;&#1080;&#1072; &mdash; &#1085;&#1077; &#1075;&#1088;&#1091;&#1079;&#1080;&#1090;&#1089;&#1103; &#1086;&#1073;&#1083;&#1086;&#1078;&#1082;&#1072; &#1072;&#1083;&#1100;&#1073;&#1086;&#1084;&#1072;</div>
+                <div class="alert-time">&#1053;&#1072;&#1081;&#1076;&#1077;&#1085; &#1074;&#1095;&#1077;&#1088;&#1072;</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <span style="color:var(--text-muted)">&#9679;</span>
+              <div>
+                <div>#7 &#1051;&#1072;&#1091;&#1085;&#1095;&#1077;&#1088; &mdash; &#1074;&#1080;&#1076;&#1078;&#1077;&#1090;&#1099; &#1085;&#1072;&#1082;&#1083;&#1072;&#1076;&#1099;&#1074;&#1072;&#1102;&#1090;&#1089;&#1103; &#1087;&#1088;&#1080; &#1087;&#1086;&#1074;&#1086;&#1088;&#1086;&#1090;&#1077;</div>
+                <div class="alert-time">&#1053;&#1072;&#1081;&#1076;&#1077;&#1085; 3 &#1076;&#1085;&#1103; &#1085;&#1072;&#1079;&#1072;&#1076; &middot; &#1085;&#1080;&#1079;&#1082;&#1080;&#1081; &#1087;&#1088;&#1080;&#1086;&#1088;&#1080;&#1090;&#1077;&#1090;</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">&#1053;&#1072;&#1082;&#1086;&#1087;&#1083;&#1077;&#1085;&#1085;&#1099;&#1077; &#1079;&#1085;&#1072;&#1085;&#1080;&#1103;</div>
+            <div class="knowledge-item">
+              <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">ADB</span>
+              <span>&#1063;&#1077;&#1088;&#1077;&#1079; &#1076;&#1080;&#1072;&#1075;. &#1087;&#1086;&#1088;&#1090;, &#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1072;: diag_enter_adb</span>
+            </div>
+            <div class="knowledge-item">
+              <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">Root</span>
+              <span>Magisk 26.4 &#1095;&#1077;&#1088;&#1077;&#1079; fastboot boot patch</span>
+            </div>
+            <div class="knowledge-item">
+              <span class="knowledge-cat" style="background:var(--blue-bg);color:var(--blue)">APK</span>
+              <span>23 &#1087;&#1072;&#1082;&#1077;&#1090;&#1072; &#1079;&#1072;&#1084;&#1072;&#1087;&#1083;&#1077;&#1085;&#1099;, 4200 &#1089;&#1090;&#1088;&#1086;&#1082;</span>
+            </div>
+            <div class="knowledge-item">
+              <span class="knowledge-cat" style="background:var(--purple-bg);color:var(--purple)">API</span>
+              <span>&#1050;&#1083;&#1080;&#1084;&#1072;&#1090;: com.deepal.vehicle.climate</span>
+            </div>
+            <div class="knowledge-item">
+              <span class="knowledge-cat" style="background:var(--purple-bg);color:var(--purple)">API</span>
+              <span>&#1043;&#1086;&#1083;&#1086;&#1089;: &#1089;&#1090;&#1072;&#1085;&#1076;&#1072;&#1088;&#1090;&#1085;&#1099;&#1081; CarAudioManager + &#1082;&#1072;&#1089;&#1090;&#1086;&#1084; intents</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== SKILLS ========== -->
+  <div class="page" id="page-skills">
+    <div class="topbar">
+      <h1>&#1059;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077; &#1089;&#1082;&#1080;&#1083;&#1083;&#1072;&#1084;&#1080;</h1>
+      <div class="topbar-right">
+        <button class="btn">&#1048;&#1084;&#1087;&#1086;&#1088;&#1090; &#1089;&#1082;&#1080;&#1083;&#1083;&#1072;</button>
+        <button class="btn btn-primary">+ &#1057;&#1086;&#1079;&#1076;&#1072;&#1090;&#1100; &#1089;&#1082;&#1080;&#1083;&#1083;</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="tabs">
+        <div class="tab active">&#1042;&#1089;&#1077; &#1089;&#1082;&#1080;&#1083;&#1083;&#1099; (18)</div>
+        <div class="tab">&#1055;&#1086; &#1101;&#1090;&#1072;&#1087;&#1072;&#1084;</div>
+        <div class="tab">&#1055;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;&#1085;&#1099;&#1077;</div>
+        <div class="tab">&#1063;&#1077;&#1088;&#1085;&#1086;&#1074;&#1080;&#1082;&#1080;</div>
+      </div>
+
+      <div style="margin-bottom:8px;font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding-left:4px">
+        &#1069;&#1090;&#1072;&#1087; 1: &#1042;&#1079;&#1083;&#1086;&#1084; &#1080; Root
+      </div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">adb-finder</div>
+            <span class="skill-card-stage stage-badge stage-hack">&#1042;&#1079;&#1083;&#1086;&#1084;</span>
+          </div>
+          <div class="skill-card-desc">&#1055;&#1086;&#1080;&#1089;&#1082; &#1089;&#1087;&#1086;&#1089;&#1086;&#1073;&#1086;&#1074; &#1086;&#1090;&#1082;&#1088;&#1099;&#1090;&#1100; ADB: &#1076;&#1080;&#1072;&#1075;. &#1087;&#1086;&#1088;&#1090;&#1099;, &#1089;&#1082;&#1088;&#1099;&#1090;&#1099;&#1077; &#1084;&#1077;&#1085;&#1102;, &#1080;&#1085;&#1078;&#1077;&#1085;&#1077;&#1088;&#1085;&#1099;&#1077; &#1088;&#1077;&#1078;&#1080;&#1084;&#1099;, &#1080;&#1079;&#1074;&#1077;&#1089;&#1090;&#1085;&#1099;&#1077; &#1101;&#1082;&#1089;&#1087;&#1083;&#1086;&#1081;&#1090;&#1099;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>34</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">82%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>25&#1084;</span></div>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">root-helper</div>
+            <span class="skill-card-stage stage-badge stage-hack">&#1042;&#1079;&#1083;&#1086;&#1084;</span>
+          </div>
+          <div class="skill-card-desc">&#1055;&#1086;&#1084;&#1086;&#1097;&#1100; &#1074; &#1088;&#1091;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1080;: &#1087;&#1072;&#1090;&#1095; Magisk, &#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1099; fastboot, &#1088;&#1072;&#1079;&#1073;&#1083;&#1086;&#1082;&#1080;&#1088;&#1086;&#1074;&#1082;&#1072; &#1073;&#1091;&#1090;&#1083;&#1086;&#1072;&#1076;&#1077;&#1088;&#1072;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>28</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">91%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>40&#1084;</span></div>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">vuln-scanner</div>
+            <span class="skill-card-stage stage-badge stage-hack">&#1042;&#1079;&#1083;&#1086;&#1084;</span>
+          </div>
+          <div class="skill-card-desc">&#1057;&#1082;&#1072;&#1085;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077; &#1087;&#1088;&#1086;&#1096;&#1080;&#1074;&#1082;&#1080; &#1085;&#1072; &#1091;&#1103;&#1079;&#1074;&#1080;&#1084;&#1086;&#1089;&#1090;&#1080;, &#1086;&#1090;&#1082;&#1088;&#1099;&#1090;&#1099;&#1077; &#1089;&#1077;&#1088;&#1074;&#1080;&#1089;&#1099;, &#1089;&#1083;&#1072;&#1073;&#1099;&#1077; &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>19</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--yellow)">74%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>1&#1095;</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:8px;font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding-left:4px">
+        &#1069;&#1090;&#1072;&#1087; 2: &#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;
+      </div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">apk-translate</div>
+            <span class="skill-card-stage stage-badge stage-translate">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</span>
+          </div>
+          <div class="skill-card-desc">&#1055;&#1086;&#1083;&#1085;&#1099;&#1081; &#1087;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; APK: &#1088;&#1077;&#1089;&#1091;&#1088;&#1089;&#1099;, &#1093;&#1072;&#1088;&#1076;&#1082;&#1086;&#1076; &#1074; smali, &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1085;&#1099;&#1077; &#1089;&#1090;&#1088;&#1086;&#1082;&#1080; UI. &#1040;&#1074;&#1090;&#1086;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080; &#1088;&#1072;&#1089;&#1087;&#1086;&#1079;&#1085;&#1072;&#1105;&#1090; &#1072;&#1074;&#1090;&#1086;&#1084;&#1086;&#1073;&#1080;&#1083;&#1100;&#1085;&#1099;&#1077; &#1090;&#1077;&#1088;&#1084;&#1080;&#1085;&#1099;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>127</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">94%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>15&#1084;</span></div>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">apk-rebuild</div>
+            <span class="skill-card-stage stage-badge stage-translate">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</span>
+          </div>
+          <div class="skill-card-desc">&#1055;&#1077;&#1088;&#1077;&#1089;&#1073;&#1086;&#1088;&#1082;&#1072; APK &#1087;&#1086;&#1089;&#1083;&#1077; &#1084;&#1086;&#1076;&#1080;&#1092;&#1080;&#1082;&#1072;&#1094;&#1080;&#1081;: apktool build, zipalign, &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1100; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1077;&#1085;&#1085;&#1099;&#1084; &#1082;&#1083;&#1102;&#1095;&#1086;&#1084;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>98</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--red)">62%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>3&#1084;</span></div>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">systemui-adapt</div>
+            <span class="skill-card-stage stage-badge stage-translate">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</span>
+          </div>
+          <div class="skill-card-desc">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076; &#1080; &#1072;&#1076;&#1072;&#1087;&#1090;&#1072;&#1094;&#1080;&#1103; SystemUI: &#1089;&#1090;&#1072;&#1090;&#1091;&#1089; &#1073;&#1072;&#1088;, &#1073;&#1099;&#1089;&#1090;&#1088;&#1099;&#1077; &#1085;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080;, &#1091;&#1074;&#1077;&#1076;&#1086;&#1084;&#1083;&#1077;&#1085;&#1080;&#1103;, &#1085;&#1072;&#1074;&#1080;&#1075;&#1072;&#1094;&#1080;&#1103;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>31</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">87%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>45&#1084;</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:8px;font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding-left:4px">
+        &#1069;&#1090;&#1072;&#1087; 3: &#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;
+      </div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">widget-builder</div>
+            <span class="skill-card-stage stage-badge stage-func">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span>
+          </div>
+          <div class="skill-card-desc">&#1057;&#1086;&#1079;&#1076;&#1072;&#1085;&#1080;&#1077; &#1080; &#1074;&#1085;&#1077;&#1076;&#1088;&#1077;&#1085;&#1080;&#1077; &#1074;&#1080;&#1076;&#1078;&#1077;&#1090;&#1086;&#1074; &#1076;&#1083;&#1103; &#1083;&#1072;&#1091;&#1085;&#1095;&#1077;&#1088;&#1072;: &#1087;&#1086;&#1075;&#1086;&#1076;&#1072;, &#1084;&#1091;&#1079;&#1099;&#1082;&#1072;, &#1089;&#1090;&#1072;&#1090;&#1091;&#1089; &#1072;&#1074;&#1090;&#1086;, &#1103;&#1088;&#1083;&#1099;&#1082;&#1080;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>22</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">85%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>2&#1095;</span></div>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">voice-setup</div>
+            <span class="skill-card-stage stage-badge stage-func">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span>
+          </div>
+          <div class="skill-card-desc">&#1043;&#1086;&#1083;&#1086;&#1089;&#1086;&#1074;&#1086;&#1077; &#1091;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077; &#1095;&#1077;&#1088;&#1077;&#1079; &#1089;&#1090;&#1072;&#1085;&#1076;&#1072;&#1088;&#1090;&#1085;&#1099;&#1081; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1085;&#1099;&#1081; API: &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;, &#1087;&#1086;&#1080;&#1089;&#1082; &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1081;, &#1084;&#1080;&#1082;&#1088;&#1086;&#1092;&#1086;&#1085;, &#1086;&#1074;&#1077;&#1088;&#1083;&#1077;&#1081;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>18</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--red)">58%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>3&#1095;</span></div>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">split-screen</div>
+            <span class="skill-card-stage stage-badge stage-func">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span>
+          </div>
+          <div class="skill-card-desc">&#1040;&#1076;&#1072;&#1087;&#1090;&#1072;&#1094;&#1080;&#1103; &#1088;&#1072;&#1079;&#1076;&#1077;&#1083;&#1105;&#1085;&#1085;&#1086;&#1075;&#1086; &#1101;&#1082;&#1088;&#1072;&#1085;&#1072; &#1076;&#1083;&#1103; &#1072;&#1074;&#1090;&#1086;&#1084;&#1086;&#1073;&#1080;&#1083;&#1100;&#1085;&#1099;&#1093; &#1076;&#1080;&#1089;&#1087;&#1083;&#1077;&#1077;&#1074;: &#1083;&#1077;&#1081;&#1072;&#1091;&#1090;&#1099;, &#1091;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077; &#1072;&#1082;&#1090;&#1080;&#1074;&#1080;&#1090;&#1103;&#1084;&#1080;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>14</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">79%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>1.5&#1095;</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:8px;font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding-left:4px">
+        &#1069;&#1090;&#1072;&#1087; 5: &#1047;&#1072;&#1097;&#1080;&#1090;&#1072;
+      </div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">integrity-inject</div>
+            <span class="skill-card-stage stage-badge stage-protect">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</span>
+          </div>
+          <div class="skill-card-desc">&#1042;&#1085;&#1077;&#1076;&#1088;&#1077;&#1085;&#1080;&#1077; &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1086;&#1082; &#1094;&#1077;&#1083;&#1086;&#1089;&#1090;&#1085;&#1086;&#1089;&#1090;&#1080; &#1074; APK, &#1089;&#1077;&#1088;&#1074;&#1080;&#1089;&#1099;, &#1085;&#1072;&#1090;&#1080;&#1074;&#1085;&#1099;&#1077; &#1073;&#1080;&#1073;&#1083;&#1080;&#1086;&#1090;&#1077;&#1082;&#1080;. &#1055;&#1077;&#1088;&#1077;&#1082;&#1088;&#1105;&#1089;&#1090;&#1085;&#1072;&#1103; &#1074;&#1077;&#1088;&#1080;&#1092;&#1080;&#1082;&#1072;&#1094;&#1080;&#1103;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>41</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">92%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>30&#1084;</span></div>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">trojan-embed</div>
+            <span class="skill-card-stage stage-badge stage-protect">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</span>
+          </div>
+          <div class="skill-card-desc">&#1057;&#1082;&#1088;&#1099;&#1090;&#1099;&#1077; &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1082;&#1080; &#1074; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1085;&#1099;&#1093; &#1073;&#1080;&#1085;&#1072;&#1088;&#1085;&#1080;&#1082;&#1072;&#1093; (curl, sqlite &#1080; &#1076;&#1088;.). &#1047;&#1072;&#1084;&#1072;&#1089;&#1082;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1099; &#1087;&#1086;&#1076; &#1086;&#1073;&#1099;&#1095;&#1085;&#1099;&#1077; &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1080;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>15</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">88%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>1&#1095;</span></div>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-header">
+            <div class="skill-card-name">resource-encrypt</div>
+            <span class="skill-card-stage stage-badge stage-protect">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</span>
+          </div>
+          <div class="skill-card-desc">&#1064;&#1080;&#1092;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077; &#1080; &#1096;&#1072;&#1092;&#1083;&#1080;&#1085;&#1075; &#1088;&#1077;&#1089;&#1091;&#1088;&#1089;&#1086;&#1074; APK. &#1056;&#1072;&#1089;&#1096;&#1080;&#1092;&#1088;&#1086;&#1074;&#1082;&#1072; &#1095;&#1077;&#1088;&#1077;&#1079; native lib. &#1050;&#1083;&#1102;&#1095;&#1080; &#1087;&#1088;&#1080;&#1074;&#1103;&#1079;&#1072;&#1085;&#1099; &#1082; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1091;</div>
+          <div class="skill-card-stats">
+            <div class="skill-card-stat">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099;: <span>23</span></div>
+            <div class="skill-card-stat">&#1059;&#1089;&#1087;&#1077;&#1093;: <span style="color:var(--green)">95%</span></div>
+            <div class="skill-card-stat">&#1057;&#1088;. &#1074;&#1088;&#1077;&#1084;&#1103;: <span>20&#1084;</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== WORKERS ========== -->
+  <div class="page" id="page-workers">
+    <div class="topbar">
+      <h1>&#1057;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1080;</h1>
+      <div class="topbar-right">
+        <button class="btn btn-primary">+ &#1044;&#1086;&#1073;&#1072;&#1074;&#1080;&#1090;&#1100; &#1089;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1072;</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="worker-detail-card">
+        <div class="worker-big-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
+        <div class="worker-detail-info">
+          <div class="worker-detail-name">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084; <span class="status-dot online" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
+          <div class="worker-detail-role">&#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &middot; Deepal S07 2025 &middot; &#1069;&#1090;&#1072;&#1087; 4: &#1058;&#1077;&#1089;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;</div>
+        </div>
+        <div class="worker-detail-stats">
+          <div><div class="worker-detail-stat-val">156</div><div class="worker-detail-stat-label">&#1042;&#1099;&#1079;&#1086;&#1074;&#1086;&#1074;</div></div>
+          <div><div class="worker-detail-stat-val">89%</div><div class="worker-detail-stat-label">&#1059;&#1089;&#1087;&#1077;&#1093;</div></div>
+          <div><div class="worker-detail-stat-val">14&#1076;</div><div class="worker-detail-stat-label">&#1053;&#1072; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1077;</div></div>
+          <div><div class="worker-detail-stat-val">23</div><div class="worker-detail-stat-label">APK &#1075;&#1086;&#1090;&#1086;&#1074;&#1086;</div></div>
+        </div>
+      </div>
+
+      <div class="worker-detail-card">
+        <div class="worker-big-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
+        <div class="worker-detail-info">
+          <div class="worker-detail-name">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088; <span class="status-dot online" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
+          <div class="worker-detail-role">&#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &middot; Changan UNI-K &middot; &#1069;&#1090;&#1072;&#1087; 3: &#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083; <span style="color:var(--yellow)">&middot; &#1053;&#1091;&#1078;&#1085;&#1072; &#1087;&#1086;&#1084;&#1086;&#1097;&#1100;</span></div>
+        </div>
+        <div class="worker-detail-stats">
+          <div><div class="worker-detail-stat-val">87</div><div class="worker-detail-stat-label">&#1042;&#1099;&#1079;&#1086;&#1074;&#1086;&#1074;</div></div>
+          <div><div class="worker-detail-stat-val">71%</div><div class="worker-detail-stat-label">&#1059;&#1089;&#1087;&#1077;&#1093;</div></div>
+          <div><div class="worker-detail-stat-val">9&#1076;</div><div class="worker-detail-stat-label">&#1053;&#1072; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1077;</div></div>
+          <div><div class="worker-detail-stat-val" style="color:var(--red)">4</div><div class="worker-detail-stat-label">&#1055;&#1086;&#1074;&#1090;&#1086;&#1088;. &#1074;&#1086;&#1087;&#1088;.</div></div>
+        </div>
+      </div>
+
+      <div class="worker-detail-card">
+        <div class="worker-big-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
+        <div class="worker-detail-info">
+          <div class="worker-detail-name">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076; <span class="status-dot online" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
+          <div class="worker-detail-role">&#1056;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; (&#1052;&#1083;&#1072;&#1076;&#1096;&#1080;&#1081;) &middot; Deepal L07 &middot; &#1069;&#1090;&#1072;&#1087; 1: &#1042;&#1079;&#1083;&#1086;&#1084;</div>
+        </div>
+        <div class="worker-detail-stats">
+          <div><div class="worker-detail-stat-val">12</div><div class="worker-detail-stat-label">&#1042;&#1099;&#1079;&#1086;&#1074;&#1086;&#1074;</div></div>
+          <div><div class="worker-detail-stat-val">67%</div><div class="worker-detail-stat-label">&#1059;&#1089;&#1087;&#1077;&#1093;</div></div>
+          <div><div class="worker-detail-stat-val">2&#1076;</div><div class="worker-detail-stat-label">&#1053;&#1072; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1077;</div></div>
+          <div><div class="worker-detail-stat-val" style="color:var(--yellow)">6</div><div class="worker-detail-stat-label">&#1041;&#1072;&#1079;&#1086;&#1074;. &#1074;&#1086;&#1087;&#1088;.</div></div>
+        </div>
+      </div>
+
+      <div class="worker-detail-card">
+        <div class="worker-big-avatar" style="background:var(--orange-bg);color:var(--orange)">&#1044;</div>
+        <div class="worker-detail-info">
+          <div class="worker-detail-name">&#1044;&#1072;&#1074;&#1088;&#1086;&#1085; <span class="status-dot online" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
+          <div class="worker-detail-role">&#1057;&#1090;&#1072;&#1078;&#1105;&#1088; &middot; &#1054;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1077; &middot; &#1052;&#1086;&#1076;&#1091;&#1083;&#1100; 3/5 &#1087;&#1088;&#1086;&#1081;&#1076;&#1077;&#1085;</div>
+        </div>
+        <div class="worker-detail-stats">
+          <div><div class="worker-detail-stat-val">3/5</div><div class="worker-detail-stat-label">&#1052;&#1086;&#1076;&#1091;&#1083;&#1080;</div></div>
+          <div><div class="worker-detail-stat-val">85%</div><div class="worker-detail-stat-label">&#1054;&#1094;&#1077;&#1085;&#1082;&#1072;</div></div>
+          <div><div class="worker-detail-stat-val">5&#1076;</div><div class="worker-detail-stat-label">&#1054;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1077;</div></div>
+          <div><div class="worker-detail-stat-val" style="color:var(--green)">&#1043;&#1086;&#1090;&#1086;&#1074;</div><div class="worker-detail-stat-label">&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;</div></div>
+        </div>
+      </div>
+
+      <div class="worker-detail-card">
+        <div class="worker-big-avatar" style="background:var(--yellow-bg);color:var(--yellow)">&#1052;</div>
+        <div class="worker-detail-info">
+          <div class="worker-detail-name">&#1052;&#1072;&#1082;&#1089;&#1080;&#1084; <span class="tag" style="background:var(--accent);color:white">&#1051;&#1080;&#1076;</span> <span class="status-dot away" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
+          <div class="worker-detail-role">&#1058;&#1080;&#1084;&#1083;&#1080;&#1076; &middot; &#1050;&#1091;&#1088;&#1080;&#1088;&#1091;&#1077;&#1090; S07 + UNI-K</div>
+        </div>
+        <div class="worker-detail-stats">
+          <div><div class="worker-detail-stat-val">2</div><div class="worker-detail-stat-label">&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;&#1072;</div></div>
+          <div><div class="worker-detail-stat-val">12</div><div class="worker-detail-stat-label">&#1056;&#1077;&#1074;&#1100;&#1102;</div></div>
+          <div><div class="worker-detail-stat-val">3</div><div class="worker-detail-stat-label">&#1069;&#1089;&#1082;&#1072;&#1083;&#1072;&#1094;&#1080;&#1080;</div></div>
+        </div>
+      </div>
+
+      <div class="worker-detail-card">
+        <div class="worker-big-avatar" style="background:var(--border);color:var(--text-muted)">&#1057;</div>
+        <div class="worker-detail-info">
+          <div class="worker-detail-name">&#1057;&#1091;&#1083;&#1090;&#1072;&#1085; <span class="tag" style="background:var(--accent);color:white">&#1051;&#1080;&#1076;</span> <span class="status-dot offline" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
+          <div class="worker-detail-role">&#1058;&#1080;&#1084;&#1083;&#1080;&#1076; &middot; &#1055;&#1086;&#1089;&#1083;&#1077;&#1076;&#1085;&#1080;&#1081; &#1074;&#1093;&#1086;&#1076; &#1074;&#1095;&#1077;&#1088;&#1072; &middot; &#1057;&#1087;&#1077;&#1094;&#1080;&#1072;&#1083;&#1080;&#1089;&#1090; &#1087;&#1086; &#1079;&#1072;&#1097;&#1080;&#1090;&#1077;</div>
+        </div>
+        <div class="worker-detail-stats">
+          <div><div class="worker-detail-stat-val">1</div><div class="worker-detail-stat-label">&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;</div></div>
+          <div><div class="worker-detail-stat-val">8</div><div class="worker-detail-stat-label">&#1056;&#1077;&#1074;&#1100;&#1102;</div></div>
+          <div><div class="worker-detail-stat-val">0</div><div class="worker-detail-stat-label">&#1069;&#1089;&#1082;&#1072;&#1083;&#1072;&#1094;&#1080;&#1080;</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== QUESTIONS LOG ========== -->
+  <div class="page" id="page-questions">
+    <div class="topbar">
+      <h1>&#1046;&#1091;&#1088;&#1085;&#1072;&#1083; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1086;&#1074;</h1>
+      <div class="topbar-right">
+        <span style="font-size:13px;color:var(--text-dim)">&#1042;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099;, &#1091;&#1082;&#1072;&#1079;&#1099;&#1074;&#1072;&#1102;&#1097;&#1080;&#1077; &#1085;&#1072; &#1087;&#1088;&#1086;&#1073;&#1077;&#1083;&#1099; &#1074; &#1089;&#1082;&#1080;&#1083;&#1083;&#1072;&#1093; &#1080;&#1083;&#1080; &#1086;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1080;</span>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="tabs">
+        <div class="tab active">&#1055;&#1086;&#1074;&#1090;&#1086;&#1088;&#1103;&#1102;&#1097;&#1080;&#1077;&#1089;&#1103; (7)</div>
+        <div class="tab">&#1041;&#1077;&#1079; &#1086;&#1090;&#1074;&#1077;&#1090;&#1072; (3)</div>
+        <div class="tab">&#1042;&#1089;&#1077; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099;</div>
+        <div class="tab">&#1048;&#1076;&#1077;&#1080; &#1091;&#1083;&#1091;&#1095;&#1096;&#1077;&#1085;&#1080;&#1081;</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">&#1055;&#1086;&#1074;&#1090;&#1086;&#1088;&#1103;&#1102;&#1097;&#1080;&#1077;&#1089;&#1103; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099; &mdash; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1080; &#1089;&#1087;&#1088;&#1072;&#1096;&#1080;&#1074;&#1072;&#1102;&#1090; &#1086;&#1076;&#1085;&#1086; &#1080; &#1090;&#1086; &#1078;&#1077;</div>
+
+        <div class="question-item">
+          <div class="question-text">
+            <strong>&laquo;&#1050;&#1072;&#1082; &#1087;&#1086;&#1083;&#1091;&#1095;&#1080;&#1090;&#1100; RECORD_AUDIO &#1076;&#1083;&#1103; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1085;&#1086;&#1075;&#1086; &#1087;&#1088;&#1080;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1103; &#1073;&#1077;&#1079; &#1087;&#1072;&#1090;&#1095;&#1072; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072;?&raquo;</strong>
+            <span class="question-freq">5x</span>
+          </div>
+          <div class="question-meta">
+            <span>&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</span>
+            <span>&#1057;&#1082;&#1080;&#1083;&#1083;: voice-setup</span>
+            <span>&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;: Changan UNI-K</span>
+            <span style="color:var(--red)">&#1057;&#1082;&#1080;&#1083;&#1083; &#1085;&#1077; &#1087;&#1086;&#1082;&#1088;&#1099;&#1074;&#1072;&#1077;&#1090; &#1101;&#1090;&#1086;&#1090; &#1089;&#1094;&#1077;&#1085;&#1072;&#1088;&#1080;&#1081;</span>
+          </div>
+          <div style="margin-top:8px;padding:8px 12px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--accent)">
+            &#1055;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077;: &#1044;&#1086;&#1073;&#1072;&#1074;&#1080;&#1090;&#1100; &#1087;&#1072;&#1090;&#1095; &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1081; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072; &#1082;&#1072;&#1082; &#1087;&#1086;&#1076;-&#1089;&#1082;&#1080;&#1083;&#1083; voice-setup &#1089; &#1087;&#1086;&#1096;&#1072;&#1075;&#1086;&#1074;&#1086;&#1081; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1082;&#1094;&#1080;&#1077;&#1081; &#1076;&#1083;&#1103; &#1082;&#1072;&#1078;&#1076;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;
+          </div>
+        </div>
+
+        <div class="question-item">
+          <div class="question-text">
+            <strong>&laquo;APK &#1085;&#1077; &#1089;&#1086;&#1073;&#1080;&#1088;&#1072;&#1077;&#1090;&#1089;&#1103;, &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1080;&raquo;</strong>
+            <span class="question-freq">4x</span>
+          </div>
+          <div class="question-meta">
+            <span>&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;, &#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</span>
+            <span>&#1057;&#1082;&#1080;&#1083;&#1083;: apk-rebuild</span>
+            <span>&#1053;&#1077;&#1089;&#1082;&#1086;&#1083;&#1100;&#1082;&#1086; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1086;&#1074;</span>
+            <span style="color:var(--yellow)">&#1050;&#1083;&#1102;&#1095; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099; &#1088;&#1072;&#1079;&#1085;&#1099;&#1081; &#1085;&#1072; &#1088;&#1072;&#1079;&#1085;&#1099;&#1093; &#1084;&#1072;&#1096;&#1080;&#1085;&#1072;&#1093;</span>
+          </div>
+          <div style="margin-top:8px;padding:8px 12px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--accent)">
+            &#1055;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077;: apk-rebuild &#1076;&#1086;&#1083;&#1078;&#1077;&#1085; &#1072;&#1074;&#1090;&#1086;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080; &#1086;&#1087;&#1088;&#1077;&#1076;&#1077;&#1083;&#1103;&#1090;&#1100; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1077;&#1085;&#1085;&#1099;&#1081; &#1082;&#1083;&#1102;&#1095; &#1080;&#1079; /system/etc/security/ &#1087;&#1077;&#1088;&#1077;&#1076; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1100;&#1102;
+          </div>
+        </div>
+
+        <div class="question-item">
+          <div class="question-text">
+            <strong>&laquo;&#1063;&#1090;&#1086; &#1090;&#1072;&#1082;&#1086;&#1077; smali? &#1050;&#1072;&#1082; &#1077;&#1075;&#1086; &#1095;&#1080;&#1090;&#1072;&#1090;&#1100;?&raquo;</strong>
+            <span class="question-freq">3x</span>
+          </div>
+          <div class="question-meta">
+            <span>&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</span>
+            <span>&#1057;&#1082;&#1080;&#1083;&#1083;: apk-translate</span>
+            <span>&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;: Deepal L07</span>
+            <span style="color:var(--blue)">&#1055;&#1088;&#1086;&#1073;&#1077;&#1083; &#1074; &#1086;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1080; &mdash; &#1084;&#1083;&#1072;&#1076;&#1096;&#1080;&#1081; &#1089;&#1087;&#1077;&#1094;&#1080;&#1072;&#1083;&#1080;&#1089;&#1090;</span>
+          </div>
+          <div style="margin-top:8px;padding:8px 12px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--accent)">
+            &#1055;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077;: &#1057;&#1086;&#1079;&#1076;&#1072;&#1090;&#1100; &#1084;&#1086;&#1076;&#1091;&#1083;&#1100; &#1086;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1103; &#1087;&#1086; smali, &#1080;&#1083;&#1080; &#1089;&#1076;&#1077;&#1083;&#1072;&#1090;&#1100; apk-translate &#1090;&#1072;&#1082;, &#1095;&#1090;&#1086;&#1073;&#1099; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1091; &#1085;&#1077; &#1085;&#1091;&#1078;&#1085;&#1086; &#1073;&#1099;&#1083;&#1086; &#1087;&#1086;&#1085;&#1080;&#1084;&#1072;&#1090;&#1100; smali
+          </div>
+        </div>
+
+        <div class="question-item">
+          <div class="question-text">
+            <strong>&laquo;&#1054;&#1074;&#1077;&#1088;&#1083;&#1077;&#1081; &#1085;&#1077; &#1087;&#1086;&#1082;&#1072;&#1079;&#1099;&#1074;&#1072;&#1077;&#1090;&#1089;&#1103; &#1087;&#1086;&#1074;&#1077;&#1088;&#1093; &#1083;&#1072;&#1091;&#1085;&#1095;&#1077;&#1088;&#1072;&raquo;</strong>
+            <span class="question-freq">3x</span>
+          </div>
+          <div class="question-meta">
+            <span>&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;, &#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</span>
+            <span>&#1057;&#1082;&#1080;&#1083;&#1083;: voice-setup</span>
+            <span>&#1053;&#1077;&#1089;&#1082;&#1086;&#1083;&#1100;&#1082;&#1086; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1086;&#1074;</span>
+          </div>
+          <div style="margin-top:8px;padding:8px 12px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--accent)">
+            &#1055;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077;: voice-setup &#1076;&#1086;&#1083;&#1078;&#1077;&#1085; &#1072;&#1074;&#1090;&#1086;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080; &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1103;&#1090;&#1100; SYSTEM_ALERT_WINDOW &#1080; &#1087;&#1072;&#1090;&#1095;&#1080;&#1090;&#1100; &#1087;&#1088;&#1080; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086;&#1089;&#1090;&#1080; &#1076;&#1086; &#1101;&#1090;&#1072;&#1087;&#1072; &#1086;&#1074;&#1077;&#1088;&#1083;&#1077;&#1103;
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== ACTIVITY ========== -->
+  <div class="page" id="page-activity">
+    <div class="topbar">
+      <h1>&#1051;&#1077;&#1085;&#1090;&#1072; &#1072;&#1082;&#1090;&#1080;&#1074;&#1085;&#1086;&#1089;&#1090;&#1080;</h1>
+      <div class="topbar-right">
+        <button class="btn">&#1060;&#1080;&#1083;&#1100;&#1090;&#1088; &#1087;&#1086; &#1089;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1091;</button>
+        <button class="btn">&#1060;&#1080;&#1083;&#1100;&#1090;&#1088; &#1087;&#1086; &#1089;&#1082;&#1080;&#1083;&#1083;&#1091;</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card">
+        <div class="feed-item">
+          <div class="feed-time">14:35</div>
+          <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
+          <div class="feed-text">
+            <strong>&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</strong> &middot; Deepal S07
+            <br>&#1048;&#1048; &#1080;&#1089;&#1087;&#1088;&#1072;&#1074;&#1080;&#1083; &#1087;&#1088;&#1086;&#1087;&#1091;&#1097;&#1077;&#1085;&#1085;&#1091;&#1102; &#1089;&#1090;&#1088;&#1086;&#1082;&#1091; &#1074; &#1082;&#1083;&#1080;&#1084;&#1072;&#1090;&#1077;. <span class="tool">apk-translate</span> &rarr; <span class="tool">apk-rebuild</span>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-time">14:28</div>
+          <div class="feed-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
+          <div class="feed-text">
+            <strong>&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</strong> &middot; Changan UNI-K
+            <br>&#1057;&#1087;&#1088;&#1086;&#1089;&#1080;&#1083; &#1087;&#1088;&#1086; RECORD_AUDIO <span style="color:var(--yellow)">(5-&#1081; &#1088;&#1072;&#1079;)</span>. <span class="tool">voice-setup</span> &#1087;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1080;&#1083; &#1087;&#1072;&#1090;&#1095; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072;.
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-time">14:15</div>
+          <div class="feed-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
+          <div class="feed-text">
+            <strong>&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</strong> &middot; Deepal L07
+            <br>&#1048;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1083; <span class="tool">adb-finder</span> &mdash; &#1085;&#1072;&#1096;&#1105;&#1083; &#1076;&#1080;&#1072;&#1075;. &#1087;&#1086;&#1088;&#1090;. &#1055;&#1088;&#1086;&#1073;&#1091;&#1077;&#1090; &#1074;&#1082;&#1083;&#1102;&#1095;&#1080;&#1090;&#1100; ADB.
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-time">13:55</div>
+          <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
+          <div class="feed-text">
+            <strong>&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</strong> &middot; Deepal S07
+            <br><span class="tool">apk-rebuild</span> &#1079;&#1072;&#1074;&#1077;&#1088;&#1096;&#1105;&#1085; &#1076;&#1083;&#1103; &#1084;&#1077;&#1076;&#1080;&#1072;&#1087;&#1083;&#1077;&#1077;&#1088;&#1072;. &#1055;&#1086;&#1076;&#1087;&#1080;&#1089;&#1072;&#1085; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1077;&#1085;&#1085;&#1099;&#1084; &#1082;&#1083;&#1102;&#1095;&#1086;&#1084;.
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-time">13:40</div>
+          <div class="feed-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
+          <div class="feed-text">
+            <strong>&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</strong> &middot; Changan UNI-K
+            <br><span style="color:var(--red)">&#1055;&#1086;&#1074;&#1090;&#1086;&#1088;&#1085;&#1099;&#1081; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;</span>: &laquo;&#1074;&#1089;&#1105; &#1077;&#1097;&#1105; permission denied &#1076;&#1083;&#1103; &#1084;&#1080;&#1082;&#1088;&#1086;&#1092;&#1086;&#1085;&#1072;&raquo;. <span class="tool">voice-setup</span> &mdash; &#1090;&#1086;&#1090; &#1078;&#1077; &#1086;&#1090;&#1074;&#1077;&#1090;.
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-time">13:22</div>
+          <div class="feed-avatar" style="background:var(--orange-bg);color:var(--orange)">&#1044;</div>
+          <div class="feed-text">
+            <strong>&#1044;&#1072;&#1074;&#1088;&#1086;&#1085;</strong> &middot; &#1054;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1077;
+            <br>&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1080;&#1083; &#1084;&#1086;&#1076;&#1091;&#1083;&#1100; 3: &#1057;&#1090;&#1088;&#1091;&#1082;&#1090;&#1091;&#1088;&#1072; APK. &#1054;&#1094;&#1077;&#1085;&#1082;&#1072;: <span style="color:var(--green)">85%</span>. &#1055;&#1077;&#1088;&#1077;&#1093;&#1086;&#1076;&#1080;&#1090; &#1082; &#1084;&#1086;&#1076;&#1091;&#1083;&#1102; 4.
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-time">12:50</div>
+          <div class="feed-avatar" style="background:var(--yellow-bg);color:var(--yellow)">&#1052;</div>
+          <div class="feed-text">
+            <strong>&#1052;&#1072;&#1082;&#1089;&#1080;&#1084;</strong> (&#1051;&#1080;&#1076;)
+            <br>&#1055;&#1088;&#1086;&#1074;&#1077;&#1088;&#1080;&#1083; &#1074;&#1080;&#1076;&#1078;&#1077;&#1090;&#1099; &#1056;&#1091;&#1089;&#1090;&#1072;&#1084;&#1072; &#1076;&#1083;&#1103; S07. &#1054;&#1076;&#1086;&#1073;&#1088;&#1077;&#1085;&#1086; &#1089; &#1084;&#1077;&#1083;&#1082;&#1080;&#1084;&#1080; &#1079;&#1072;&#1084;&#1077;&#1095;&#1072;&#1085;&#1080;&#1103;&#1084;&#1080;.
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-time">12:15</div>
+          <div class="feed-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
+          <div class="feed-text">
+            <strong>&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</strong> &middot; Deepal L07
+            <br>&#1057;&#1087;&#1088;&#1086;&#1089;&#1080;&#1083;: <em>&laquo;&#1095;&#1090;&#1086; &#1090;&#1072;&#1082;&#1086;&#1077; smali?&raquo;</em> <span style="color:var(--yellow)">(3-&#1081; &#1088;&#1072;&#1079;)</span>. <span class="tool">apk-translate</span> &#1086;&#1073;&#1098;&#1103;&#1089;&#1085;&#1080;&#1083;, &#1085;&#1086; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082; &#1087;&#1091;&#1090;&#1072;&#1077;&#1090;&#1089;&#1103;.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== KNOWLEDGE ========== -->
+  <div class="page" id="page-knowledge">
+    <div class="topbar">
+      <h1>&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</h1>
+      <div class="topbar-right">
+        <button class="btn">&#1069;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090;</button>
+        <span style="font-size:13px;color:var(--text-dim)">847 &#1079;&#1072;&#1087;&#1080;&#1089;&#1077;&#1081; &#1087;&#1086; 5 &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1072;&#1084;</span>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="tabs">
+        <div class="tab active">&#1055;&#1086; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1072;&#1084;</div>
+        <div class="tab">&#1055;&#1086; &#1082;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1103;&#1084;</div>
+        <div class="tab">&#1053;&#1077;&#1076;&#1072;&#1074;&#1085;&#1080;&#1077;</div>
+        <div class="tab">&#1063;&#1072;&#1089;&#1090;&#1086; &#1080;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1091;&#1077;&#1084;&#1099;&#1077;</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">Deepal S07 &middot; 234 &#1079;&#1072;&#1087;&#1080;&#1089;&#1080;</div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">ADB</span>
+            <span>&#1063;&#1077;&#1088;&#1077;&#1079; &#1076;&#1080;&#1072;&#1075;. &#1087;&#1086;&#1088;&#1090; USB-C. &#1050;&#1086;&#1084;&#1072;&#1085;&#1076;&#1072;: <code>diag_enter_adb</code></span>
+          </div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">Root</span>
+            <span>Magisk 26.4 &#1095;&#1077;&#1088;&#1077;&#1079; <code>fastboot boot magisk_patched.img</code></span>
+          </div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--blue-bg);color:var(--blue)">APK</span>
+            <span>&#1050;&#1083;&#1080;&#1084;&#1072;&#1090;: com.deepal.hvac, 42 &#1089;&#1090;&#1088;&#1086;&#1082;&#1080; &#1076;&#1083;&#1103; &#1087;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;&#1072;</span>
+          </div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--blue-bg);color:var(--blue)">APK</span>
+            <span>&#1053;&#1072;&#1074;&#1080;&#1075;&#1072;&#1094;&#1080;&#1103;: com.deepal.navi, &#1089;&#1077;&#1088;&#1074;. &#1089;&#1090;&#1088;&#1086;&#1082;&#1080; &#1074; /assets/i18n/</span>
+          </div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--purple-bg);color:var(--purple)">&#1043;&#1086;&#1083;&#1086;&#1089;</span>
+            <span>&#1057;&#1090;&#1072;&#1085;&#1076;&#1072;&#1088;&#1090;&#1085;&#1099;&#1081; CarAudioManager API. &#1053;&#1091;&#1078;&#1077;&#1085; RECORD_AUDIO + &#1087;&#1072;&#1090;&#1095; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072;</span>
+          </div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--orange-bg);color:var(--orange)">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</span>
+            <span>&#1050;&#1083;&#1102;&#1095; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;: /system/etc/security/otacerts.zip</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Changan UNI-K &middot; 187 &#1079;&#1072;&#1087;&#1080;&#1089;&#1077;&#1081;</div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">ADB</span>
+            <span>&#1048;&#1085;&#1078;. &#1084;&#1077;&#1085;&#1102;: &#1079;&#1072;&#1078;&#1072;&#1090;&#1100; &#1082;&#1083;&#1080;&#1084;&#1072;&#1090; + &#1075;&#1088;&#1086;&#1084;&#1082;&#1086;&#1089;&#1090;&#1100; 5 &#1089;&#1077;&#1082;. &#1055;&#1077;&#1088;&#1077;&#1082;&#1083;&#1102;&#1095;&#1072;&#1090;&#1077;&#1083;&#1100; ADB &#1074;&#1085;&#1091;&#1090;&#1088;&#1080;.</span>
+          </div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">Root</span>
+            <span>Magisk &#1095;&#1077;&#1088;&#1077;&#1079; recovery. A/B &#1089;&#1083;&#1086;&#1090;&#1099; &mdash; &#1087;&#1072;&#1090;&#1095;&#1080;&#1090;&#1100; &#1087;&#1088;&#1072;&#1074;&#1080;&#1083;&#1100;&#1085;&#1099;&#1081; &#1089;&#1083;&#1086;&#1090;</span>
+          </div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--blue-bg);color:var(--blue)">APK</span>
+            <span>&#1044;&#1088;&#1091;&#1075;&#1086;&#1081; &#1085;&#1077;&#1081;&#1084;&#1080;&#1085;&#1075;: com.changan.* (&#1085;&#1077; com.deepal.*)</span>
+          </div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--purple-bg);color:var(--purple)">&#1043;&#1086;&#1083;&#1086;&#1089;</span>
+            <span>&#1050;&#1072;&#1089;&#1090;&#1086;&#1084;&#1085;&#1072;&#1103; &#1086;&#1073;&#1105;&#1088;&#1090;&#1082;&#1072; &#1085;&#1072;&#1076; &#1089;&#1090;&#1072;&#1085;&#1076;&#1072;&#1088;&#1090;&#1085;&#1099;&#1084; API. &#1053;&#1091;&#1078;&#1085;&#1099; &#1076;&#1086;&#1087;. &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;.</span>
+          </div>
+          <div class="knowledge-item">
+            <span class="knowledge-cat" style="background:var(--green-bg);color:var(--green)">&#1057;&#1077;&#1090;&#1100;</span>
+            <span>APN &#1079;&#1072;&#1083;&#1086;&#1095;&#1077;&#1085; &#1085;&#1072; China Mobile. &#1055;&#1072;&#1090;&#1095;: /system/etc/apns-conf.xml</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== PROJECTS LIST ========== -->
+  <div class="page" id="page-projects">
+    <div class="topbar">
+      <h1>&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;</h1>
+      <div class="topbar-right">
+        <button class="btn btn-primary">+ &#1053;&#1086;&#1074;&#1099;&#1081; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="tabs">
+        <div class="tab active">&#1040;&#1082;&#1090;&#1080;&#1074;&#1085;&#1099;&#1077; (3)</div>
+        <div class="tab">&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1105;&#1085;&#1085;&#1099;&#1077; (8)</div>
+        <div class="tab">&#1042;&#1089;&#1077;</div>
+      </div>
+
+      <div class="card">
+        <div class="project-row" onclick="showPage('project-detail')">
+          <div class="project-top">
+            <div class="project-name">
+              Deepal S07 2025
+              <span class="stage-badge stage-test">&#1069;&#1090;&#1072;&#1087; 4: &#1058;&#1077;&#1089;&#1090;&#1099;</span>
+            </div>
+            <div class="project-worker">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084; &middot; &#1053;&#1072;&#1095;&#1072;&#1083;&#1086; 18 &#1084;&#1072;&#1088;&#1090;&#1072;</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:78%; background: linear-gradient(90deg, var(--green), var(--accent))"></div>
+          </div>
+          <div class="progress-info">
+            <span>23 APK &#1087;&#1077;&#1088;&#1077;&#1074;&#1077;&#1076;&#1077;&#1085;&#1086; &middot; 12 &#1073;&#1072;&#1075;&#1086;&#1074; &middot; 8 &#1080;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1086;</span>
+            <span>78%</span>
+          </div>
+        </div>
+
+        <div class="project-row">
+          <div class="project-top">
+            <div class="project-name">
+              Changan UNI-K 2024
+              <span class="stage-badge stage-func">&#1069;&#1090;&#1072;&#1087; 3: &#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span>
+            </div>
+            <div class="project-worker">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088; &middot; &#1053;&#1072;&#1095;&#1072;&#1083;&#1086; 23 &#1084;&#1072;&#1088;&#1090;&#1072;</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:52%; background: linear-gradient(90deg, var(--green), var(--purple))"></div>
+          </div>
+          <div class="progress-info">
+            <span>18 APK &#1087;&#1077;&#1088;&#1077;&#1074;&#1077;&#1076;&#1077;&#1085;&#1086; &middot; &#1042;&#1080;&#1076;&#1078;&#1077;&#1090;&#1099; &#1075;&#1086;&#1090;&#1086;&#1074;&#1099; &middot; &#1043;&#1086;&#1083;&#1086;&#1089; &#1074; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077;</span>
+            <span>52%</span>
+          </div>
+        </div>
+
+        <div class="project-row">
+          <div class="project-top">
+            <div class="project-name">
+              Deepal L07 2025
+              <span class="stage-badge stage-hack">&#1069;&#1090;&#1072;&#1087; 1: &#1042;&#1079;&#1083;&#1086;&#1084;</span>
+            </div>
+            <div class="project-worker">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076; (&#1052;&#1083;&#1072;&#1076;&#1096;&#1080;&#1081;) &middot; &#1053;&#1072;&#1095;&#1072;&#1083;&#1086; 30 &#1084;&#1072;&#1088;&#1090;&#1072;</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:15%; background: var(--red)"></div>
+          </div>
+          <div class="progress-info">
+            <span>&#1053;&#1072;&#1096;&#1105;&#1083; &#1076;&#1080;&#1072;&#1075;. &#1087;&#1086;&#1088;&#1090; &middot; ADB &#1077;&#1097;&#1105; &#1085;&#1077; &#1086;&#1090;&#1082;&#1088;&#1099;&#1090;</span>
+            <span>15%</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + pageId);
+  if (target) target.classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = {
+    'dashboard': 0, 'projects': 1, 'project-detail': 1,
+    'workers': 2, 'skills': 3, 'activity': 4, 'questions': 5, 'knowledge': 6
+  };
+  const idx = navMap[pageId];
+  if (idx !== undefined) {
+    document.querySelectorAll('.sidebar-nav .nav-item')[idx].classList.add('active');
+  }
+}
+</script>
+
+</body>
+</html>
