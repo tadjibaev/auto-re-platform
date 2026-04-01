@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto RE Platform — Технический отчёт</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #09090b; --bg2: #111118; --bg3: #1a1a24;
+    --border: #27272a; --text: #e4e4e7; --dim: #a1a1aa; --muted: #71717a;
+    --accent: #6366f1; --green: #22c55e; --red: #ef4444;
+    --yellow: #eab308; --blue: #3b82f6; --purple: #a855f7; --orange: #f97316;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+  .container { max-width: 900px; margin: 0 auto; padding: 48px 32px; }
+  h1 { font-size: 36px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .subtitle { font-size: 16px; color: var(--dim); margin-bottom: 48px; }
+  h2 { font-size: 24px; font-weight: 700; margin: 48px 0 8px; padding-top: 32px; border-top: 1px solid var(--border); color: var(--accent); }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  h3 { font-size: 18px; font-weight: 600; margin: 28px 0 8px; }
+  h4 { font-size: 15px; font-weight: 600; margin: 20px 0 6px; color: var(--dim); }
+  p { margin-bottom: 14px; color: var(--dim); font-size: 15px; }
+  strong { color: var(--text); }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-right: 4px; }
+  .tag-red { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+  .tag-green { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+  .tag-blue { background: rgba(59,130,246,0.1); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); }
+  .tag-purple { background: rgba(168,85,247,0.1); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
+  .tag-yellow { background: rgba(234,179,8,0.1); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
+  .tag-orange { background: rgba(249,115,22,0.1); color: var(--orange); border: 1px solid rgba(249,115,22,0.2); }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin: 16px 0; }
+  .card-title { font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+  .card p { margin-bottom: 8px; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--dim); }
+  tr:last-child td { border-bottom: none; }
+  code { background: var(--bg3); padding: 2px 6px; border-radius: 4px; font-size: 13px; font-family: 'Courier New', monospace; }
+  pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-size: 13px; font-family: 'Courier New', monospace; overflow-x: auto; margin: 12px 0; color: var(--dim); line-height: 1.6; }
+  .toc { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+  .toc-title { font-weight: 700; font-size: 16px; margin-bottom: 12px; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 14px; display: block; padding: 4px 0; }
+  .toc a:hover { text-decoration: underline; }
+  .toc .sub { padding-left: 20px; color: var(--dim); }
+  .diagram { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 16px 0; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.5; white-space: pre; overflow-x: auto; color: var(--dim); }
+  .cost-highlight { font-size: 28px; font-weight: 800; color: var(--accent); }
+  .warning { background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 14px; color: var(--yellow); }
+  .key-point { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 14px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .container { padding: 24px 16px; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Auto RE Platform</h1>
+<p class="subtitle">Технический отчёт: архитектура, сложности и решения &mdash; Апрель 2026</p>
+
+<div class="toc">
+  <div class="toc-title">Содержание</div>
+  <a href="#1">1. Архитектура данных &mdash; сотни гигабайт прошивок</a>
+  <a href="#2">2. MCP-сервер и движок скиллов</a>
+  <a href="#3">3. База знаний и самообучение</a>
+  <a href="#4">4. Безопасность и защита IP</a>
+  <a href="#5">5. Инфраструктура и DevOps</a>
+  <a href="#6">6. Аналитика и мониторинг</a>
+  <a href="#7">7. Стоимость и масштабирование</a>
+  <a href="#8">8. Порядок реализации</a>
+</div>
+
+<!-- ===================== SECTION 1 ===================== -->
+<h2 id="1">1. Архитектура данных</h2>
+<p><span class="tag tag-red">Ключевая сложность</span> Один дамп прошивки = 8-64 ГБ. 50 автомобилей = 2-5 ТБ сырых данных, до 15 ТБ с распакованными и декомпилированными артефактами.</p>
+
+<h3>Двухуровневое хранилище</h3>
+<div class="card">
+  <div class="card-title">MinIO (S3-совместимый) &mdash; для всего тяжёлого</div>
+  <p>Сырые дампы, образы партиций, архивы декомпиляции. Дедупликация через content-addressable storage: хеширование блоков по 4 МБ. Одинаковые vendor-партиции Deepal S07 и L07 (70-85% совпадение) хранятся один раз.</p>
+</div>
+<div class="card">
+  <div class="card-title">XFS файловая система &mdash; рабочая область</div>
+  <p>Активные проекты: текущая декомпиляция, файлы под анализом. XFS оптимальна для миллионов мелких файлов (smali). Scratch-раздел минимум 128 ГБ на NVMe.</p>
+</div>
+
+<h3>Пайплайн распаковки прошивки</h3>
+<pre>
+simg2img super.img super.raw          # 2 мин на 8 ГБ
+    ↓
+lpunpack super.raw ./partitions/      # параллельно
+    ↓
+mount -o ro,loop → извлечение APK     # параллельно по партициям
+    ↓
+parallel -j$(nproc) apktool d {} :::  # полная параллелизация
+    ↓
+Индексация строк → полнотекстовый поиск
+</pre>
+
+<h3>Хранение декомпилированных APK</h3>
+<p>Один APK = 500-5000 файлов. 200+ APK на прошивку &times; 20 машин = <strong>миллионы файлов</strong>. Решение: хранить как <code>tar.zst</code> архивы в MinIO (smali сжимается в 10-15 раз). Распаковывать только для активного анализа.</p>
+
+<h3>Удалённый доступ через MCP</h3>
+<p>Воркеры НЕ скачивают гигабайты. MCP-инструменты работают на сервере, клиенту уходит только результат: текст, diff, список файлов. Трафик &mdash; килобайты вместо гигабайт.</p>
+
+<h3>Сравнение прошивок (diff)</h3>
+<p>Трёхуровневый подход: (1) хеши партиций &mdash; мгновенно, (2) файловый diff между образами &mdash; секунды, (3) diff smali-кода изменённых APK &mdash; минуты. Результаты кешируются в SQLite.</p>
+
+<h3>Масштаб хранения</h3>
+<table>
+  <tr><th>Параметр</th><th>5 машин</th><th>20 машин</th><th>50 машин</th></tr>
+  <tr><td>Сырые дампы</td><td>150 ГБ</td><td>600 ГБ</td><td>1.5 ТБ</td></tr>
+  <tr><td>Распаковано + декомп.</td><td>400 ГБ</td><td>1.5 ТБ</td><td>4 ТБ</td></tr>
+  <tr><td><strong>Итого (дедупл. 40%)</strong></td><td><strong>~350 ГБ</strong></td><td><strong>~1.3 ТБ</strong></td><td><strong>~3.5 ТБ</strong></td></tr>
+</table>
+
+<!-- ===================== SECTION 2 ===================== -->
+<h2 id="2">2. MCP-сервер и движок скиллов</h2>
+<p><span class="tag tag-purple">Ядро системы</span> Все инструменты, вся логика, вся защита IP &mdash; в одном серверном компоненте.</p>
+
+<h3>Архитектура</h3>
+<div class="diagram">Claude Code (worker) ──MCP/SSE──► MCP Server (Python, mcp SDK)
+                                        │
+                                   FastAPI (REST + WS)
+                                        │
+                             ┌──────────┼──────────┐
+                             ▼          ▼          ▼
+                         Redis      PostgreSQL   MinIO
+                       (очередь,     (скиллы,    (артефакты:
+                        сессии,      история,     APK, дампы,
+                        блокировки)  воркеры)     результаты)
+                             │
+                    Celery Workers (N=4)
+                             │
+                   ┌─────────┼─────────┐
+                   ▼         ▼         ▼
+              Docker      Docker     Docker
+             (apktool)   (jadx)    (ghidra)
+                             │
+                        Garage Server
+                       (ADB bridge, scrcpy,
+                        WireGuard)</div>
+
+<h3>Проблема длительных операций</h3>
+<p>MCP-протокол ожидает синхронный ответ. Декомпиляция &mdash; 3-10 минут. Ghidra &mdash; до 30 минут.</p>
+<div class="card">
+  <div class="card-title">Решение: submit + poll</div>
+  <p>Тяжёлый tool мгновенно возвращает <code>{"task_id": "abc123", "status": "queued"}</code>. Отдельный tool <code>task_status(id)</code> показывает прогресс. Claude Code сам решает когда проверить &mdash; это естественно для LLM-агента.</p>
+</div>
+
+<h3>Выполнение в Docker-контейнерах</h3>
+<table>
+  <tr><th>Операция</th><th>RAM</th><th>CPU</th><th>Время</th></tr>
+  <tr><td>apktool decode</td><td>1 ГБ</td><td>1 ядро</td><td>30 сек - 2 мин</td></tr>
+  <tr><td>jadx decompile</td><td>3 ГБ</td><td>2 ядра</td><td>2-10 мин</td></tr>
+  <tr><td>Ghidra headless</td><td>4 ГБ</td><td>2 ядра</td><td>5-30 мин</td></tr>
+  <tr><td>APK signing</td><td>512 МБ</td><td>0.5 ядра</td><td>5-10 сек</td></tr>
+</table>
+<p><strong>Concurrency = 4.</strong> Один воркер &mdash; максимум 2 тяжёлые задачи. Если очередь > 8 &mdash; новые отклоняются с сообщением.</p>
+
+<h3>Мульти-агентная оркестрация (Level 3)</h3>
+<p>Серверный оркестратор на Python. Каждый суб-шаг получает <strong>только свой срез контекста</strong>, а не всю историю. Между шагами &mdash; compressed state: не сырой вывод jadx (100 МБ), а structured summary. Для LLM-шагов &mdash; Claude API напрямую с сервера.</p>
+
+<h3>Hot-reload скиллов</h3>
+<p>Скиллы хранятся как данные в PostgreSQL (prompt, tool_config, версия). MCP читает текущую версию при каждом вызове (кеш 30 сек). Rollback = переключение <code>is_active</code>. A/B тестирование: часть воркеров на версии A, часть на B.</p>
+
+<!-- ===================== SECTION 3 ===================== -->
+<h2 id="3">3. База знаний и самообучение</h2>
+<p><span class="tag tag-green">Конкурентное преимущество</span> С каждым проектом система умнеет. 10-й похожий автомобиль &mdash; почти автоматически.</p>
+
+<h3>Гибридная модель данных</h3>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Структурированное ядро (PostgreSQL)</div>
+    <p>Таблицы: vehicles, apk_entries, access_methods, permissions, endpoints. Точные SQL-запросы: &laquo;все APK с хардкод на api.changan.com&raquo;.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">JSONB документы</div>
+    <p>Для знаний без фиксированной схемы. GIN-индексы для быстрого поиска по вложенным полям.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Векторные эмбеддинги (pgvector)</div>
+    <p>Паспорт автомобиля → эмбеддинг. При поступлении L07 → cosine similarity с S07 = 87%. HNSW-индекс, поиск < 5 мс на 15 000 записей.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Граф связей (adjacency list)</div>
+    <p>APK → Service → Permission → System. 3 уровня глубины. Рекурсивные CTE в PostgreSQL. Не Neo4j &mdash; объём мал, не оправдывает отдельный сервис.</p>
+  </div>
+</div>
+
+<h3>Автоматическое извлечение знаний</h3>
+<p><strong>Канал A:</strong> Structured output от MCP-скиллов &mdash; каждый tool возвращает JSON с метаданными. <strong>Канал B:</strong> Post-session hook &mdash; анализ файлов, извлечение URL, permissions. <strong>Канал C:</strong> Еженедельная суммаризация сессий через Claude Haiku.</p>
+
+<h3>Кросс-проектный трансфер</h3>
+<p>Новый проект → эмбеддинг метаданных → top-3 похожих проекта → для каждой записи вычисляется применимость (high/medium/low) → &laquo;стартовый пакет&raquo; из 50-80 релевантных записей с пометками что перепроверить.</p>
+
+<h3>Устаревание знаний</h3>
+<p>Confidence score: ручной ввод = 0.95, автоизвлечение = 0.7, трансфер = 0.5. Decay: при новой версии прошивки <code>confidence *= 0.8</code>. Через 3 версии без подтверждения → флаг &laquo;требует ревалидации&raquo;.</p>
+
+<div class="key-point">
+  <strong>Стек:</strong> PostgreSQL 16 + pgvector + JSONB. Одна БД, три типа индексов. Никакого Neo4j, никакого отдельного vector store. Простота &mdash; конкурентное преимущество.
+</div>
+
+<!-- ===================== SECTION 4 ===================== -->
+<h2 id="4">4. Безопасность и защита IP</h2>
+<p><span class="tag tag-red">Критично</span> Работник использует инструменты, но никогда не видит исходный код, промпты или базу знаний.</p>
+
+<h3>5 уровней защиты</h3>
+<table>
+  <tr><th>Уровень</th><th>Что защищает</th><th>Как</th></tr>
+  <tr><td><strong>1. Серверное исполнение</strong></td><td>Весь код инструментов</td><td>Код не покидает сервер. Worker видит только API.</td></tr>
+  <tr><td><strong>2. Prompt defense</strong></td><td>Системные промпты</td><td>Критическая логика в MCP-инструментах, не в промптах. Injection defense в системном промпте.</td></tr>
+  <tr><td><strong>3. MCP opacity</strong></td><td>Реализация tools</td><td>Минимальные описания. Агрегированные инструменты вместо гранулярных. Результат как ссылка, не файл.</td></tr>
+  <tr><td><strong>4. Токены + RBAC</strong></td><td>Доступ к данным</td><td>JWT с TTL 15 мин. Привязка к fingerprint машины. Per-project ACL.</td></tr>
+  <tr><td><strong>5. Аудит + revoke</strong></td><td>Утечки и увольнения</td><td>Append-only WORM лог. Мгновенный revoke при увольнении. Корпоративные устройства с MDM.</td></tr>
+</table>
+
+<h3>Защита алгоритмов (Level 4 скиллы)</h3>
+<div class="warning">
+  Полностью скрыть алгоритм от опытного реверсера невозможно. Задача &mdash; сделать анализ настолько дорогим, чтобы он превышал экономическую выгоду от кражи.
+</div>
+<p><strong>Полиморфизм:</strong> каждая сборка использует разные имена классов, разные точки встраивания. <strong>Многоуровневость:</strong> 15-20 проверок с разными механизмами (CRC, hash, signature, timing). <strong>Native:</strong> критические проверки в .so с anti-debug. <strong>Серверная валидация:</strong> часть проверок требует обращения к серверу активации.</p>
+
+<h3>Offboarding</h3>
+<p>Технически: мгновенный revoke токенов, удаление контейнера, стирание данных. Организационно: NDA с финансовыми последствиями. Ротация алгоритмов защиты после увольнения ключевого сотрудника. Корпоративные устройства с remote wipe.</p>
+
+<!-- ===================== SECTION 5 ===================== -->
+<h2 id="5">5. Инфраструктура и DevOps</h2>
+<p><span class="tag tag-blue">Ташкент, on-premise</span> Облако из Узбекистана &mdash; дорого и с высокой задержкой. ADB к машинам в гараже &mdash; только локально.</p>
+
+<h3>Серверное железо ($5 000 - 7 000)</h3>
+<table>
+  <tr><th>Компонент</th><th>Рекомендация</th></tr>
+  <tr><td>CPU</td><td>AMD EPYC 7443P (24 ядра / 48 потоков)</td></tr>
+  <tr><td>RAM</td><td>128 ГБ DDR4 ECC (4&times;32 ГБ)</td></tr>
+  <tr><td>NVMe</td><td>2&times; 2 ТБ Samsung 990 Pro (RAID1)</td></tr>
+  <tr><td>SATA SSD</td><td>2&times; 4 ТБ Samsung 870 EVO (архивы)</td></tr>
+  <tr><td>GPU</td><td>NVIDIA T1000 8 ГБ (опционально, для эмбеддингов)</td></tr>
+</table>
+
+<h3>Docker Compose &mdash; достаточно</h3>
+<p>Kubernetes избыточен до 20+ воркеров. 10 контейнеров: MCP server, PostgreSQL + pgvector, Redis, Admin panel, Nginx, Ghidra server (&times;3), Tool runner (&times;4), ADB bridge. Суммарно ~80-90 ГБ RAM, ~26 CPU.</p>
+
+<h3>ADB-сеть</h3>
+<p><strong>USB &mdash; предпочтительно.</strong> USB-хаб с 4-8 портами к серверу. Для удалённого доступа &mdash; USB/IP или VirtualHere. scrcpy: 1080p@30fps = 3-5 Mbps на поток. 4 одновременных = 12-20 Mbps.</p>
+
+<h3>Бэкапы</h3>
+<p>PostgreSQL: pg_dump каждые 6ч + WAL. Прошивки: rsync incremental при поступлении. Артефакты: restic ежедневно. Off-site: Backblaze B2 (500 ГБ = $2.50/мес). RTO: 4 часа.</p>
+
+<!-- ===================== SECTION 6 ===================== -->
+<h2 id="6">6. Аналитика и мониторинг</h2>
+<p><span class="tag tag-yellow">Обратная связь</span> Без аналитики нет улучшения скиллов, нет понимания эффективности команды.</p>
+
+<h3>Что собирать</h3>
+<p>Каждый MCP-вызов (инструмент, параметры, длительность, успех/провал, токены). Каждое сообщение воркера (текст для анализа вопросов). Каждая ADB-команда. Файловые операции. Сессионные события (начало/конец, idle).</p>
+
+<h3>Анализ вопросов &mdash; 3 уровня</h3>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Уровень 1: Эвристики</div>
+    <p>&laquo;Что такое X&raquo; = пробел в знаниях. &laquo;Не работает&raquo; = проблема скилла. Regex, мгновенно, бесплатно.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Уровень 2: Кластеризация</div>
+    <p>Embeddings + HDBSCAN раз в сутки. Растущий кластер = системная проблема.</p>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title">Уровень 3: LLM-классификация</div>
+  <p>Claude Haiku для неизвестных вопросов. Категория, серьёзность, рекомендация. ~$0.5/день на 500 вопросов.</p>
+</div>
+
+<h3>Движок алертов</h3>
+<p>SQL-запросы на скользящих окнах. Проверка каждые 30 сек. Примеры: воркер задаёт похожий вопрос 3+ раз за 2 часа → алерт админу. Скилл падает >30% → алерт. Воркер idle >1 час → алерт лиду.</p>
+
+<h3>Стоимость токенов</h3>
+<p>Перевод одного APK среднего размера: <strong>$2-8</strong> в токенах. Полный проект автомобиля (20+ APK + всё остальное): <strong>$50-200</strong>. Трекинг по воркеру, скиллу, проекту, клиенту.</p>
+
+<!-- ===================== SECTION 7 ===================== -->
+<h2 id="7">7. Стоимость и масштабирование</h2>
+
+<h3>Ежемесячные расходы (USD)</h3>
+<table>
+  <tr><th>Статья</th><th>6 воркеров</th><th>20 воркеров</th></tr>
+  <tr><td>Сервер (аморт. 36 мес)</td><td>$195</td><td>$390</td></tr>
+  <tr><td>Электричество</td><td>$15</td><td>$30</td></tr>
+  <tr><td>Интернет (100 Mbps)</td><td>$50-80</td><td>$80-120</td></tr>
+  <tr><td>Backblaze B2 бэкап</td><td>$5</td><td>$10</td></tr>
+  <tr><td>Домен + SSL</td><td>$3</td><td>$3</td></tr>
+  <tr><td style="font-weight:600">Инфраструктура итого</td><td style="font-weight:600">~$270</td><td style="font-weight:600">~$560</td></tr>
+  <tr><td>Claude API (оптимиз.)</td><td>~$1,500</td><td>~$5,000</td></tr>
+  <tr><td style="font-weight:700;color:var(--accent)">ИТОГО</td><td style="font-weight:700;color:var(--accent)">~$1,770</td><td style="font-weight:700;color:var(--accent)">~$5,560</td></tr>
+</table>
+
+<div class="warning">
+  <strong>Claude API &mdash; 85% расходов.</strong> Оптимизации: кеширование промптов (-30-40%), Haiku для тривиальных задач (10x дешевле), batch API для некритичных запросов (-50%).
+</div>
+
+<h3>Масштабирование</h3>
+<table>
+  <tr><th>Метрика</th><th>6 воркеров</th><th>20 воркеров</th><th>50 воркеров</th></tr>
+  <tr><td>CPU</td><td>32 ядра</td><td>64 ядра (2 сервера)</td><td>Kubernetes</td></tr>
+  <tr><td>RAM</td><td>128 ГБ</td><td>256 ГБ</td><td>512+ ГБ</td></tr>
+  <tr><td>Storage</td><td>4 ТБ</td><td>8 ТБ</td><td>NAS + NVMe cache</td></tr>
+  <tr><td>MCP Server</td><td>1 instance</td><td>3 + Load Balancer</td><td>K8s autoscaling</td></tr>
+  <tr><td>Оркестрация</td><td>Docker Compose</td><td>Docker Swarm</td><td>Kubernetes (k3s)</td></tr>
+</table>
+
+<!-- ===================== SECTION 8 ===================== -->
+<h2 id="8">8. Порядок реализации</h2>
+
+<h3>Фаза 0: MVP (2 недели)</h3>
+<div class="card">
+  <p><strong>Цель:</strong> один воркер может перевести APK через Claude Code + MCP.</p>
+  <p>MCP скелет (Python) + 3 tool-а: <code>apk_decode</code>, <code>adb_shell</code>, <code>task_status</code>. PostgreSQL. Redis. Docker Compose. Первый скилл: <code>apk-translate</code>.</p>
+</div>
+
+<h3>Фаза 1: Инструменты (3 недели)</h3>
+<div class="card">
+  <p>Celery + Docker execution для тяжёлых операций. Device lock manager (Redis). Все скиллы этапов 1-3 (Взлом, Перевод, Функционал). Knowledge DB (pgvector). ADB bridge.</p>
+</div>
+
+<h3>Фаза 2: Аналитика (2 недели)</h3>
+<div class="card">
+  <p>Логирование всех MCP-вызовов. Claude Code хуки. Детекция повторяющихся вопросов. API для дашборда. Алерты в Telegram.</p>
+</div>
+
+<h3>Фаза 3: Админ-панель (3 недели)</h3>
+<div class="card">
+  <p>Веб-интерфейс на Next.js. Все страницы из прототипа: дашборд, проекты, команда, скиллы, устройства, вопросы, база знаний. Живое обновление через WebSocket.</p>
+</div>
+
+<h3>Фаза 4: Защита (2 недели)</h3>
+<div class="card">
+  <p>Скиллы этапа 5 (integrity, троян, шифрование, активация). JWT + RBAC. Аудит-лог. Offboarding runbook.</p>
+</div>
+
+<h3>Фаза 5: Умная система (3 недели)</h3>
+<div class="card">
+  <p>Автопайплайн этапов. Кросс-проектный трансфер знаний. ИИ для создания скиллов из логов вопросов. Quality gates. Отчётность.</p>
+</div>
+
+<h3>Фаза 6: Масштаб (2 недели)</h3>
+<div class="card">
+  <p>AVB, QNX, релизный пайплайн. Полировка. Документация. Disaster recovery runbook.</p>
+</div>
+
+<div class="key-point" style="margin-top:32px">
+  <strong>Итого: 17 недель до полноценной платформы.</strong> MVP работает через 2 недели. Первый реальный проект можно вести с Фазы 1 (5 неделя). Полная система с аналитикой, защитой и self-learning &mdash; к 17 неделе.
+</div>
+
+<div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--border);text-align:center;color:var(--muted);font-size:13px;">
+  Auto RE Platform &mdash; Технический отчёт &mdash; Апрель 2026<br>
+  Подготовлено с помощью мульти-агентного анализа (6 параллельных агентов)
+</div>
+
+</div>
+</body>
+</html>
