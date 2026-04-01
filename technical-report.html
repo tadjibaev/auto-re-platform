@@ -424,13 +424,31 @@ parallel -j$(nproc) apktool d {} :::  # полная параллелизаци�
   <tr><td>Backblaze B2 бэкап</td><td>$5</td><td>$10</td></tr>
   <tr><td>Домен + SSL</td><td>$3</td><td>$3</td></tr>
   <tr><td style="font-weight:600">Инфраструктура итого</td><td style="font-weight:600">~$270</td><td style="font-weight:600">~$560</td></tr>
-  <tr><td>Claude API (оптимиз.)</td><td>~$1,500</td><td>~$5,000</td></tr>
-  <tr><td style="font-weight:700;color:var(--accent)">ИТОГО</td><td style="font-weight:700;color:var(--accent)">~$1,770</td><td style="font-weight:700;color:var(--accent)">~$5,560</td></tr>
+  <tr><td>Claude API (Haiku 35%)</td><td>~$30</td><td>~$100</td></tr>
+  <tr><td>Claude API (Sonnet 42%)</td><td>~$150</td><td>~$500</td></tr>
+  <tr><td>Claude API (Opus 23%)</td><td>~$160</td><td>~$530</td></tr>
+  <tr><td style="font-weight:600">Claude API итого</td><td style="font-weight:600">~$340</td><td style="font-weight:600">~$1,130</td></tr>
+  <tr><td style="font-weight:700;color:var(--accent)">ИТОГО</td><td style="font-weight:700;color:var(--accent)">~$610</td><td style="font-weight:700;color:var(--accent)">~$1,690</td></tr>
 </table>
 
-<div class="warning">
-  <strong>Claude API &mdash; 85% расходов.</strong> Оптимизации: кеширование промптов (-30-40%), Haiku для тривиальных задач (10x дешевле), batch API для некритичных запросов (-50%).
+<div class="key-point">
+  <strong>Claude API дешевле чем ожидалось.</strong> Детальный расчёт: ~$2.20/воркер/день, ~$50/воркер/мес. Ключ &mdash; 35% вызовов на Haiku ($0.25/M), 42% на Sonnet ($3/M), только 23% на Opus ($15/M). Prompt caching экономит ещё 30-40%.
 </div>
+
+<div class="card">
+  <div class="card-title">Стоимость по операциям</div>
+  <table>
+    <tr><th>Операция</th><th>Стоимость</th><th>Модель</th></tr>
+    <tr><td>Перевод 1 APK</td><td>$0.011</td><td>Haiku 70% + Sonnet 30%</td></tr>
+    <tr><td>Перевод 23 APK (весь автомобиль)</td><td>$0.24</td><td></td></tr>
+    <tr><td>Исследование бага (logcat + fix)</td><td>$0.08</td><td>Sonnet 85% + Opus 15%</td></tr>
+    <tr><td>Voice setup (мульти-агент)</td><td>$0.24</td><td>Opus 50% + Sonnet 40%</td></tr>
+    <tr><td>Полная защита (Level 4)</td><td>$0.44</td><td>Opus 80% + Sonnet 20%</td></tr>
+    <tr><td style="font-weight:600">Полный проект (1 машина, все 7 этапов)</td><td style="font-weight:600;color:var(--green)">~$15</td><td></td></tr>
+  </table>
+</div>
+
+<p><a href="architecture.html" style="color:var(--accent)">→ Полная схема архитектуры и DevOps</a></p>
 
 <h3>Масштабирование</h3>
 <table>

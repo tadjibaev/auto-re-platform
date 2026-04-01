@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto RE Platform — Архитектура системы</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #09090b; --bg2: #111118; --bg3: #1a1a24;
+    --border: #27272a; --text: #e4e4e7; --dim: #a1a1aa; --muted: #71717a;
+    --accent: #6366f1; --green: #22c55e; --red: #ef4444;
+    --yellow: #eab308; --blue: #3b82f6; --purple: #a855f7; --orange: #f97316;
+    --cyan: #06b6d4;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 48px 32px; }
+  h1 { font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.03em; }
+  .subtitle { font-size: 16px; color: var(--dim); margin-bottom: 48px; }
+  h2 { font-size: 26px; font-weight: 700; margin: 56px 0 16px; padding-top: 32px; border-top: 1px solid var(--border); }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  h3 { font-size: 18px; font-weight: 600; margin: 28px 0 12px; }
+  p { margin-bottom: 14px; color: var(--dim); font-size: 15px; }
+  strong { color: var(--text); }
+  code { background: var(--bg3); padding: 2px 6px; border-radius: 4px; font-size: 13px; font-family: 'Courier New', monospace; }
+
+  /* Tags */
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-right: 4px; }
+  .tag-green { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+  .tag-blue { background: rgba(59,130,246,0.12); color: var(--blue); border: 1px solid rgba(59,130,246,0.25); }
+  .tag-purple { background: rgba(168,85,247,0.12); color: var(--purple); border: 1px solid rgba(168,85,247,0.25); }
+  .tag-orange { background: rgba(249,115,22,0.12); color: var(--orange); border: 1px solid rgba(249,115,22,0.25); }
+  .tag-red { background: rgba(239,68,68,0.12); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+  .tag-yellow { background: rgba(234,179,8,0.12); color: var(--yellow); border: 1px solid rgba(234,179,8,0.25); }
+  .tag-cyan { background: rgba(6,182,212,0.12); color: var(--cyan); border: 1px solid rgba(6,182,212,0.25); }
+
+  /* Cards */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin: 16px 0; }
+  .card-title { font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+  .card p { margin-bottom: 8px; font-size: 14px; }
+
+  /* Grids */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--dim); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(99,102,241,0.04); }
+
+  /* Info blocks */
+  .key-point { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 14px; }
+  .warning { background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 14px; color: var(--yellow); }
+
+  /* TOC */
+  .toc { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+  .toc-title { font-weight: 700; font-size: 16px; margin-bottom: 12px; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 14px; display: block; padding: 4px 0; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* =================== NETWORK TOPOLOGY =================== */
+  .topo-canvas {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .topo-canvas::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 50% 30%, rgba(99,102,241,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Network nodes */
+  .net-zone {
+    border: 1px dashed;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+    position: relative;
+  }
+  .net-zone-title {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: var(--bg3);
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .zone-internet { border-color: var(--orange); }
+  .zone-internet .net-zone-title { color: var(--orange); }
+  .zone-dmz { border-color: var(--yellow); }
+  .zone-dmz .net-zone-title { color: var(--yellow); }
+  .zone-lan { border-color: var(--green); }
+  .zone-lan .net-zone-title { color: var(--green); }
+
+  .net-node {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 6px;
+    min-width: 130px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: default;
+    position: relative;
+  }
+  .net-node:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(99,102,241,0.15);
+    transform: translateY(-2px);
+  }
+  .net-node-icon { font-size: 28px; margin-bottom: 6px; }
+  .net-node-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .net-node-detail { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  .net-node-ip { font-size: 11px; color: var(--accent); font-family: monospace; margin-top: 4px; }
+
+  /* Connection lines (CSS) */
+  .conn-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0;
+    color: var(--muted);
+    font-size: 18px;
+    letter-spacing: 2px;
+    user-select: none;
+  }
+  .conn-line-label {
+    font-size: 11px;
+    color: var(--dim);
+    background: var(--bg3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 0 8px;
+  }
+  .conn-v { text-align: center; color: var(--muted); font-size: 14px; line-height: 1; padding: 2px 0; }
+
+  /* =================== DOCKER CONTAINERS =================== */
+  .docker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .docker-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    position: relative;
+    transition: all 0.2s;
+    overflow: hidden;
+  }
+  .docker-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 24px rgba(99,102,241,0.1);
+  }
+  .docker-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .docker-card.type-proxy::before { background: var(--orange); }
+  .docker-card.type-app::before { background: var(--accent); }
+  .docker-card.type-db::before { background: var(--blue); }
+  .docker-card.type-cache::before { background: var(--red); }
+  .docker-card.type-storage::before { background: var(--cyan); }
+  .docker-card.type-worker::before { background: var(--purple); }
+  .docker-card.type-tool::before { background: var(--green); }
+  .docker-card.type-hw::before { background: var(--yellow); }
+
+  .docker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .docker-name {
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .docker-name .icon { font-size: 18px; }
+  .health-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+  }
+  .health-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .health-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .docker-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin: 8px 0;
+  }
+  .docker-stat {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .docker-stat strong {
+    color: var(--dim);
+    font-weight: 600;
+  }
+  .docker-vol {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--bg3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-top: 8px;
+    font-family: monospace;
+  }
+  .docker-deps {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--dim);
+  }
+  .docker-deps .dep-arrow { color: var(--accent); margin: 0 2px; }
+
+  /* =================== DATA FLOW =================== */
+  .flow-container {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 12px 0;
+  }
+  .flow-node {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    text-align: center;
+    min-width: 140px;
+    transition: all 0.2s;
+  }
+  .flow-node:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 16px rgba(99,102,241,0.12);
+  }
+  .flow-node-name { font-size: 13px; font-weight: 600; }
+  .flow-node-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .flow-arrow {
+    color: var(--accent);
+    font-size: 24px;
+    margin: 0 8px;
+    user-select: none;
+  }
+  .flow-arrow-down {
+    text-align: center;
+    color: var(--accent);
+    font-size: 20px;
+    margin: 4px 0;
+    user-select: none;
+  }
+  .flow-label {
+    font-size: 11px;
+    color: var(--dim);
+    text-align: center;
+    margin: 2px 0;
+  }
+
+  /* =================== COST TABLE =================== */
+  .cost-table { margin: 24px 0; }
+  .cost-table table { background: var(--bg2); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .cost-table th { background: var(--bg3); padding: 14px 16px; }
+  .cost-table td { padding: 12px 16px; }
+  .cost-total td { font-weight: 700; color: var(--accent) !important; font-size: 16px; background: rgba(99,102,241,0.06); }
+  .cost-section td { color: var(--text) !important; font-weight: 600; background: var(--bg3); border-bottom: 2px solid var(--border) !important; }
+  .cost-api td { background: rgba(168,85,247,0.04); }
+
+  /* =================== TIMELINE =================== */
+  .timeline {
+    position: relative;
+    margin: 32px 0;
+    padding-left: 0;
+  }
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 24px;
+    margin-bottom: 0;
+    position: relative;
+  }
+  .timeline-phase {
+    text-align: right;
+    padding: 20px 0;
+    position: relative;
+  }
+  .timeline-phase::after {
+    content: '';
+    position: absolute;
+    right: -13px;
+    top: 26px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 3px solid;
+    background: var(--bg);
+    z-index: 2;
+  }
+  .phase-1 .timeline-phase::after { border-color: var(--green); }
+  .phase-2 .timeline-phase::after { border-color: var(--blue); }
+  .phase-3 .timeline-phase::after { border-color: var(--purple); }
+  .timeline-phase-label {
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .timeline-phase-date {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .timeline-content {
+    border-left: 2px solid var(--border);
+    padding: 16px 0 16px 24px;
+    position: relative;
+  }
+  .timeline-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .timeline-card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .timeline-card p {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .timeline-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .timeline-spec {
+    font-size: 11px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+    color: var(--dim);
+  }
+
+  /* =================== BACKUP DIAGRAM =================== */
+  .backup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .backup-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    position: relative;
+    border-left: 3px solid;
+  }
+  .backup-card.bc-db { border-left-color: var(--blue); }
+  .backup-card.bc-files { border-left-color: var(--cyan); }
+  .backup-card.bc-config { border-left-color: var(--green); }
+  .backup-card.bc-dr { border-left-color: var(--red); }
+  .backup-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .backup-flow {
+    font-size: 12px;
+    color: var(--dim);
+    font-family: monospace;
+    line-height: 1.6;
+  }
+  .backup-flow .arr { color: var(--accent); }
+
+  /* =================== MONITORING =================== */
+  .monitor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .monitor-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .monitor-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .monitor-icon { font-size: 36px; margin-bottom: 8px; }
+  .monitor-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .monitor-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .monitor-targets {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+  .monitor-target {
+    font-size: 11px;
+    background: var(--bg3);
+    border-radius: 4px;
+    padding: 2px 8px;
+    color: var(--dim);
+  }
+
+  /* =================== SVG ARROWS =================== */
+  .svg-arrow-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: -4px 0;
+  }
+
+  /* =================== LEGEND =================== */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 16px 0;
+    padding: 12px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--dim);
+  }
+  .legend-color {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+  }
+
+  /* =================== RESPONSIVE =================== */
+  @media (max-width: 1024px) {
+    .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+    .docker-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .docker-grid { grid-template-columns: 1fr; }
+    .container { padding: 24px 16px; }
+    h1 { font-size: 28px; }
+    .timeline-row { grid-template-columns: 1fr; }
+    .timeline-phase { text-align: left; }
+    .flow-row { flex-direction: column; align-items: center; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+
+  /* =================== ANIMATED ACCENTS =================== */
+  .glow-accent {
+    box-shadow: 0 0 30px rgba(99,102,241,0.08);
+  }
+  .border-glow:hover {
+    box-shadow: 0 0 24px rgba(99,102,241,0.12);
+  }
+
+  /* Server rack visual */
+  .server-rack {
+    background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+  }
+  .rack-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .rack-led {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 4px var(--green);
+    animation: pulse 2s infinite;
+  }
+  .rack-title { font-size: 14px; font-weight: 700; }
+  .rack-subtitle { font-size: 11px; color: var(--muted); }
+  .rack-services {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .rack-service {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--dim);
+    padding: 4px 8px;
+    background: var(--bg);
+    border-radius: 4px;
+    font-family: monospace;
+  }
+  .rack-service .port {
+    color: var(--accent);
+    min-width: 48px;
+  }
+
+  /* Stat pill in topology */
+  .stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: var(--dim);
+    margin: 2px;
+  }
+  .stat-pill .val { color: var(--text); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<h1>Auto RE Platform</h1>
+<p class="subtitle">Полная архитектура инфраструктуры &mdash; Ташкент, Узбекистан &mdash; Апрель 2026</p>
+
+<div class="toc">
+  <div class="toc-title">Содержание</div>
+  <a href="#s1" style="color:var(--orange)">1. Сетевая топология</a>
+  <a href="#s2" style="color:var(--purple)">2. Docker-контейнеры</a>
+  <a href="#s3" style="color:var(--blue)">3. Потоки данных</a>
+  <a href="#s4" style="color:var(--green)">4. Стоимость (breakdown)</a>
+  <a href="#s5" style="color:var(--accent)">5. Дорожная карта масштабирования</a>
+  <a href="#s6" style="color:var(--red)">6. Бэкапы и аварийное восстановление</a>
+  <a href="#s7" style="color:var(--yellow)">7. Мониторинг</a>
+</div>
+
+<!-- ═══════════════════ SECTION 1: NETWORK TOPOLOGY ═══════════════════ -->
+<h2 id="s1" style="color:var(--orange)">1. Сетевая топология</h2>
+<p><span class="tag tag-orange">Физическая + логическая сеть</span> On-premise офис в Ташкенте, один сервер, 6 рабочих станций, гаражный сервер для подключения автомобилей.</p>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-color" style="background:var(--orange)"></div> Внешняя сеть</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--yellow)"></div> DMZ / Периметр</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--green)"></div> Офисная LAN</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--blue)"></div> Вычислительные ресурсы</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--purple)"></div> Хранилище данных</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--cyan)"></div> Подключение устройств</div>
+</div>
+
+<div class="topo-canvas">
+
+  <!-- INTERNET ZONE -->
+  <div class="net-zone zone-internet" style="margin-top:0">
+    <div class="net-zone-title">Интернет / Внешняя зона</div>
+    <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;padding:8px 0">
+      <div class="net-node">
+        <div class="net-node-icon">&#127760;</div>
+        <div class="net-node-name">Интернет</div>
+        <div class="net-node-detail">Клиенты, API</div>
+      </div>
+      <div style="font-size:24px;color:var(--orange)">&#10230;</div>
+      <div class="net-node" style="border-color:var(--orange)">
+        <div class="net-node-icon">&#9729;&#65039;</div>
+        <div class="net-node-name">Cloudflare</div>
+        <div class="net-node-detail">DNS + DDoS защита<br>SSL терминация</div>
+      </div>
+      <div style="font-size:24px;color:var(--orange)">&#10230;</div>
+      <div class="net-node" style="border-color:var(--purple)">
+        <div class="net-node-icon">&#128272;</div>
+        <div class="net-node-name">WireGuard VPN</div>
+        <div class="net-node-detail">Удалённые воркеры<br>AES-256, UDP :51820</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conn-v">&#9475;<br>&#9475;</div>
+
+  <!-- DMZ ZONE -->
+  <div class="net-zone zone-dmz">
+    <div class="net-zone-title">Периметр / Роутер</div>
+    <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;padding:8px 0">
+      <div class="net-node" style="border-color:var(--yellow)">
+        <div class="net-node-icon">&#128225;</div>
+        <div class="net-node-name">Роутер</div>
+        <div class="net-node-detail">MikroTik / Keenetic<br>100 Mbps, NAT, Firewall</div>
+        <div class="net-node-ip">WAN: DHCP / Static</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-left:16px">
+        <div class="stat-pill">&#128274; Порты: <span class="val">443, 51820</span></div>
+        <div class="stat-pill">&#128203; DHCP: <span class="val">10.0.0.100-200</span></div>
+        <div class="stat-pill">&#128268; Резерв: <span class="val">10.0.0.10-20</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conn-v">&#9475;<br>&#9475;</div>
+
+  <!-- LAN ZONE -->
+  <div class="net-zone zone-lan">
+    <div class="net-zone-title">Офисная LAN &mdash; 10.0.0.0/24</div>
+
+    <!-- Main Server -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px">
+      <div class="server-rack glow-accent">
+        <div class="rack-header">
+          <div class="rack-led"></div>
+          <div>
+            <div class="rack-title">&#128421; Основной сервер</div>
+            <div class="rack-subtitle">10.0.0.10 &mdash; AMD EPYC 7443P 24c/48t &mdash; 128 ГБ RAM &mdash; 4 ТБ NVMe RAID1</div>
+          </div>
+        </div>
+        <div class="rack-services">
+          <div class="rack-service"><span class="port">:443</span> nginx (reverse proxy, SSL)</div>
+          <div class="rack-service"><span class="port">:3000</span> mcp-server (Python + FastAPI)</div>
+          <div class="rack-service"><span class="port">:5432</span> postgresql + pgvector</div>
+          <div class="rack-service"><span class="port">:6379</span> redis (сессии, очереди, блокировки)</div>
+          <div class="rack-service"><span class="port">:9000</span> minio (S3 хранилище прошивок)</div>
+          <div class="rack-service"><span class="port">:3001</span> admin-panel (Next.js)</div>
+          <div class="rack-service"><span class="port">:5555</span> celery-worker x4 (фоновые задачи)</div>
+          <div class="rack-service"><span class="port">:13100</span> ghidra-server x3 (headless анализ)</div>
+          <div class="rack-service"><span class="port">:5037</span> adb-bridge (USB устройства)</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:12px">
+          <div class="stat-pill">CPU <span class="val">24 ядра</span></div>
+          <div class="stat-pill">RAM <span class="val">128 ГБ</span></div>
+          <div class="stat-pill">NVMe <span class="val">4 ТБ RAID1</span></div>
+          <div class="stat-pill">SATA <span class="val">8 ТБ (архивы)</span></div>
+          <div class="stat-pill">OS <span class="val">Ubuntu 22.04</span></div>
+        </div>
+      </div>
+
+      <!-- Garage Server -->
+      <div>
+        <div class="server-rack" style="border-color: rgba(6,182,212,0.3); margin-bottom: 16px;">
+          <div class="rack-header">
+            <div class="rack-led" style="background:var(--cyan);box-shadow:0 0 4px var(--cyan)"></div>
+            <div>
+              <div class="rack-title">&#128663; Гаражный сервер</div>
+              <div class="rack-subtitle">10.0.0.20 &mdash; RPi 4 / Mini PC &mdash; USB Hub</div>
+            </div>
+          </div>
+          <div class="rack-services">
+            <div class="rack-service"><span class="port">USB</span> Hub 7-port &rarr; 4 автомобиля</div>
+            <div class="rack-service"><span class="port">:5037</span> ADB forwarding</div>
+            <div class="rack-service"><span class="port">:8080</span> scrcpy streaming (1080p@30)</div>
+            <div class="rack-service"><span class="port">:51820</span> WireGuard tunnel</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:12px">
+            <div class="stat-pill">&#128663; Слот 1 <span class="val" style="color:var(--green)">Deepal S07</span></div>
+            <div class="stat-pill">&#128663; Слот 2 <span class="val" style="color:var(--green)">Deepal L07</span></div>
+            <div class="stat-pill">&#128663; Слот 3 <span class="val" style="color:var(--muted)">свободен</span></div>
+            <div class="stat-pill">&#128663; Слот 4 <span class="val" style="color:var(--muted)">свободен</span></div>
+          </div>
+        </div>
+
+        <!-- Workers -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px;">&#128187; Рабочие станции (6 шт.)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div class="rack-service"><span class="port" style="color:var(--green)">10.0.0.101</span> Воркер #1</div>
+            <div class="rack-service"><span class="port" style="color:var(--green)">10.0.0.102</span> Воркер #2</div>
+            <div class="rack-service"><span class="port" style="color:var(--green)">10.0.0.103</span> Воркер #3</div>
+            <div class="rack-service"><span class="port" style="color:var(--green)">10.0.0.104</span> Воркер #4</div>
+            <div class="rack-service"><span class="port" style="color:var(--green)">10.0.0.105</span> Воркер #5</div>
+            <div class="rack-service"><span class="port" style="color:var(--green)">10.0.0.106</span> Воркер #6</div>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Каждый ПК: Claude Code + MCP Client, VPN-клиент, SSH ключ</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Network stats -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;justify-content:center">
+      <div class="stat-pill">&#128268; LAN: <span class="val">1 Gbps (switch)</span></div>
+      <div class="stat-pill">&#127760; WAN: <span class="val">100 Mbps</span></div>
+      <div class="stat-pill">&#128272; VPN: <span class="val">WireGuard UDP</span></div>
+      <div class="stat-pill">&#128274; Firewall: <span class="val">443, 51820 only</span></div>
+      <div class="stat-pill">&#128225; scrcpy: <span class="val">3-5 Mbps/поток</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 2: DOCKER CONTAINERS ═══════════════════ -->
+<h2 id="s2" style="color:var(--purple)">2. Docker-контейнеры</h2>
+<p><span class="tag tag-purple">Docker Compose</span> 10 сервисов, ~80-90 ГБ RAM, ~26 CPU ядер. Все контейнеры на одном хосте (10.0.0.10).</p>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-color" style="background:var(--orange)"></div> Прокси</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--accent)"></div> Приложение</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--blue)"></div> База данных</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--red)"></div> Кеш / Очереди</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--cyan)"></div> Хранилище</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--purple)"></div> Воркеры</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--green)"></div> Инструменты</div>
+  <div class="legend-item"><div class="legend-color" style="background:var(--yellow)"></div> Железо</div>
+  <div class="legend-item"><span class="health-dot health-green" style="animation:none"></span> Healthy</div>
+  <div class="legend-item"><span class="health-dot health-yellow" style="animation:none"></span> Degraded</div>
+</div>
+
+<div class="docker-grid">
+
+  <!-- nginx -->
+  <div class="docker-card type-proxy">
+    <div class="docker-header">
+      <div class="docker-name"><span class="icon">&#9881;&#65039;</span> nginx</div>
+      <span class="health-dot health-green"></span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Reverse proxy + SSL терминация + rate limiting</div>
+    <div class="docker-stats">
+      <div class="docker-stat"><strong>RAM:</strong> 512 МБ</div>
+      <div class="docker-stat"><strong>CPU:</strong> 1 ядро</div>
+      <div class="docker-stat"><strong>Порт:</strong> 443 (HTTPS)</div>
+      <div class="docker-stat"><strong>Образ:</strong> nginx:alpine</div>
+    </div>
+    <div class="docker-vol">volumes: /etc/nginx/conf.d, /etc/letsencrypt</div>
+    <div class="docker-deps"><span class="dep-arrow">&#9654;</span> mcp-server <span class="dep-arrow">&#9654;</span> admin-panel</div>
+  </div>
+
+  <!-- mcp-server -->
+  <div class="docker-card type-app">
+    <div class="docker-header">
+      <div class="docker-name"><span class="icon">&#9889;</span> mcp-server</div>
+      <span class="health-dot health-green"></span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Ядро платформы: MCP Protocol + FastAPI + REST/WS</div>
+    <div class="docker-stats">
+      <div class="docker-stat"><strong>RAM:</strong> 4 ГБ</div>
+      <div class="docker-stat"><strong>CPU:</strong> 4 ядра</div>
+      <div class="docker-stat"><strong>Порт:</strong> 3000</div>
+      <div class="docker-stat"><strong>Образ:</strong> python:3.12</div>
+    </div>
+    <div class="docker-vol">volumes: /app/skills, /app/config</div>
+    <div class="docker-deps"><span class="dep-arrow">&#9654;</span> postgres <span class="dep-arrow">&#9654;</span> redis <span class="dep-arrow">&#9654;</span> minio <span class="dep-arrow">&#9654;</span> celery</div>
+  </div>
+
+  <!-- postgres -->
+  <div class="docker-card type-db">
+    <div class="docker-header">
+      <div class="docker-name"><span class="icon">&#128451;</span> postgresql</div>
+      <span class="health-dot health-green"></span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">PostgreSQL 16 + pgvector + JSONB + GIN-индексы</div>
+    <div class="docker-stats">
+      <div class="docker-stat"><strong>RAM:</strong> 8 ГБ</div>
+      <div class="docker-stat"><strong>CPU:</strong> 2 ядра</div>
+      <div class="docker-stat"><strong>Порт:</strong> 5432</div>
+      <div class="docker-stat"><strong>Образ:</strong> pgvector/pgvector:pg16</div>
+    </div>
+    <div class="docker-vol">volumes: pgdata:/var/lib/postgresql/data (NVMe persistent)</div>
+    <div class="docker-deps" style="color:var(--green)">&#128274; Health: pg_isready -U postgres</div>
+  </div>
+
+  <!-- redis -->
+  <div class="docker-card type-cache">
+    <div class="docker-header">
+      <div class="docker-name"><span class="icon">&#128293;</span> redis</div>
+      <span class="health-dot health-green"></span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Сессии, очередь задач Celery, блокировки устройств</div>
+    <div class="docker-stats">
+      <div class="docker-stat"><strong>RAM:</strong> 1 ГБ</div>
+      <div class="docker-stat"><strong>CPU:</strong> 1 ядро</div>
+      <div class="docker-stat"><strong>Порт:</strong> 6379</div>
+      <div class="docker-stat"><strong>Образ:</strong> redis:7-alpine</div>
+    </div>
+    <div class="docker-vol">volumes: redis-data:/data (AOF persistence)</div>
+    <div class="docker-deps" style="color:var(--green)">&#128274; Health: redis-cli ping</div>
+  </div>
+
+  <!-- minio -->
+  <div class="docker-card type-storage">
+    <div class="docker-header">
+      <div class="docker-name"><span class="icon">&#128230;</span> minio</div>
+      <span class="health-dot health-green"></span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">S3-совместимое хранилище: прошивки, дампы, артефакты</div>
+    <div class="docker-stats">
+      <div class="docker-stat"><strong>RAM:</strong> 4 ГБ</div>
+      <div class="docker-stat"><strong>CPU:</strong> 2 ядра</div>
+      <div class="docker-stat"><strong>Порт:</strong> 9000 / 9001</div>
+      <div class="docker-stat"><strong>Образ:</strong> minio/minio</div>
+    </div>
+    <div class="docker-vol">volumes: minio-data:/data (SATA SSD 8 ТБ)</div>
+    <div class="docker-deps" style="color:var(--green)">&#128274; Health: mc ready local</div>
+  </div>
+
+  <!-- admin-panel -->
+  <div class="docker-card type-app">
+    <div class="docker-header">
+      <div class="docker-name"><span class="icon">&#128202;</span> admin-panel</div>
+      <span class="health-dot health-green"></span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Веб-панель управления: дашборд, проекты, команда, скиллы</div>
+    <div class="docker-stats">
+      <div class="docker-stat"><strong>RAM:</strong> 1 ГБ</div>
+      <div class="docker-stat"><strong>CPU:</strong> 1 ядро</div>
+      <div class="docker-stat"><strong>Порт:</strong> 3001</div>
+      <div class="docker-stat"><strong>Образ:</strong> node:20-alpine</div>
+    </div>
+    <div class="docker-vol">volumes: /app/.next (build cache)</div>
+    <div class="docker-deps"><span class="dep-arrow">&#9654;</span> postgres (read) <span class="dep-arrow">&#9654;</span> redis (sessions)</div>
+  </div>
+
+  <!-- celery-worker x4 -->
+  <div class="docker-card type-worker">
+    <div class="docker-header">
+      <div class="docker-name"><span class="icon">&#9881;</span> celery-worker x4</div>
+      <span class="health-dot health-green"></span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Фоновые задачи: декомпиляция, сборка, анализ, перевод</div>
+    <div class="docker-stats">
+      <div class="docker-stat"><strong>RAM:</strong> 8 ГБ x4 = 32 ГБ</div>
+      <div class="docker-stat"><strong>CPU:</strong> 4 ядра x4 = 16</div>
+      <div class="docker-stat"><strong>Порт:</strong> 5555 (Flower)</div>
+      <div class="docker-stat"><strong>Образ:</strong> python:3.12</div>
+    </div>
+    <div class="docker-vol">volumes: /var/run/docker.sock (Docker-in-Docker)</div>
+    <div class="docker-deps"><span class="dep-arrow">&#9654;</span> redis (broker) <span class="dep-arrow">&#9654;</span> minio (artifacts) <span class="dep-arrow">&#9654;</span> postgres (results)</div>
+  </div>
+
+  <!-- ghidra-server x3 -->
+  <div class="docker-card type-tool">
+    <div class="docker-header">
+      <div class="docker-name"><span class="icon">&#128269;</span> ghidra-server x3</div>
+      <span class="health-dot health-yellow"></span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Headless анализ бинарей: .so, нативные библиотеки, firmware</div>
+    <div class="docker-stats">
+      <div class="docker-stat"><strong>RAM:</strong> 16 ГБ (total)</div>
+      <div class="docker-stat"><strong>CPU:</strong> 8 ядер (total)</div>
+      <div class="docker-stat"><strong>Порт:</strong> 13100-13102</div>
+      <div class="docker-stat"><strong>Образ:</strong> ghidra-headless:11</div>
+    </div>
+    <div class="docker-vol">volumes: ghidra-projects:/projects, /shared/firmware</div>
+    <div class="docker-deps"><span class="dep-arrow">&#9654;</span> minio (binaries) <span class="dep-arrow">&#9654;</span> postgres (results)</div>
+  </div>
+
+  <!-- adb-bridge -->
+  <div class="docker-card type-hw">
+    <div class="docker-header">
+      <div class="docker-name"><span class="icon">&#128268;</span> adb-bridge</div>
+      <span class="health-dot health-green"></span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">USB проброс, привилегированный контейнер, device lock</div>
+    <div class="docker-stats">
+      <div class="docker-stat"><strong>RAM:</strong> 512 МБ</div>
+      <div class="docker-stat"><strong>CPU:</strong> 1 ядро</div>
+      <div class="docker-stat"><strong>Порт:</strong> 5037</div>
+      <div class="docker-stat"><strong>Режим:</strong> --privileged</div>
+    </div>
+    <div class="docker-vol">volumes: /dev/bus/usb (USB passthrough)</div>
+    <div class="docker-deps"><span class="dep-arrow">&#9654;</span> redis (device locks) <span class="dep-arrow">&#9654;</span> garage-server (USB/IP)</div>
+  </div>
+
+</div>
+
+<!-- Resource summary -->
+<div class="key-point">
+  <strong>Суммарные ресурсы:</strong> CPU = ~26 ядер из 48 (54%), RAM = ~82 ГБ из 128 (64%), NVMe = 4 ТБ RAID1 (данные), SATA = 8 ТБ (MinIO архив). Запас на пиковые нагрузки: ~22 ядра, ~46 ГБ RAM.
+</div>
+
+<!-- Dependency graph -->
+<h3>Граф зависимостей контейнеров</h3>
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:24px;margin:16px 0;font-family:'Courier New',monospace;font-size:13px;line-height:1.6;color:var(--dim);overflow-x:auto;white-space:pre">
+                         <span style="color:var(--orange)">nginx :443</span>
+                        /          \
+                       v            v
+            <span style="color:var(--accent)">mcp-server :3000</span>    <span style="color:var(--accent)">admin-panel :3001</span>
+            /     |     \              |
+           v      v      v             v
+   <span style="color:var(--blue)">postgres</span>   <span style="color:var(--red)">redis</span>   <span style="color:var(--cyan)">minio</span>      <span style="color:var(--blue)">postgres</span> (read)
+   <span style="color:var(--blue)">:5432</span>    <span style="color:var(--red)">:6379</span>   <span style="color:var(--cyan)">:9000</span>      <span style="color:var(--red)">redis</span> (sessions)
+              |       |
+              v       v
+      <span style="color:var(--purple)">celery-worker x4</span>            <span style="color:var(--yellow)">adb-bridge :5037</span>
+        :5555 (Flower)               |
+        /           \                v
+       v             v          <span style="color:var(--cyan)">garage-server</span>
+  <span style="color:var(--green)">ghidra x3</span>     Docker exec      (USB/IP tunnel)
+  <span style="color:var(--green)">:13100-02</span>   (apktool, jadx,        |
+               signing, etc.)    <span style="color:var(--cyan)">&#9581;&#9472; 4 автомобиля</span>
+</div>
+
+
+<!-- ═══════════════════ SECTION 3: DATA FLOW ═══════════════════ -->
+<h2 id="s3" style="color:var(--blue)">3. Потоки данных</h2>
+<p><span class="tag tag-blue">Синхронный + асинхронный</span> Два типа потоков: быстрые команды (< 30 сек) и фоновые задачи (до 30 мин).</p>
+
+<h3>Основной поток (синхронный)</h3>
+<div class="flow-container">
+  <div class="flow-row">
+    <div class="flow-node" style="border-color:var(--green)">
+      <div class="flow-node-name" style="color:var(--green)">&#128187; Воркер</div>
+      <div class="flow-node-sub">Claude Code CLI</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--accent)">
+      <div class="flow-node-name" style="color:var(--accent)">&#9889; MCP Server</div>
+      <div class="flow-node-sub">SSE / WebSocket</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--purple)">
+      <div class="flow-node-name" style="color:var(--purple)">&#9881; Tool Runner</div>
+      <div class="flow-node-sub">Docker exec</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--blue)">
+      <div class="flow-node-name" style="color:var(--blue)">&#128451; Хранилище</div>
+      <div class="flow-node-sub">PG / Redis / MinIO</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--green)">
+      <div class="flow-node-name" style="color:var(--green)">&#128172; Результат</div>
+      <div class="flow-node-sub">JSON / diff / файл</div>
+    </div>
+  </div>
+  <div class="flow-label" style="margin-top:8px">Время: 100ms &mdash; 30 сек &bull; Трафик: килобайты &bull; Тяжёлые данные не покидают сервер</div>
+</div>
+
+<h3>Асинхронный поток (фоновые задачи)</h3>
+<div class="flow-container">
+  <div class="flow-row">
+    <div class="flow-node" style="border-color:var(--green)">
+      <div class="flow-node-name" style="color:var(--green)">&#128187; Запрос</div>
+      <div class="flow-node-sub">"декомпилируй X"</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--accent)">
+      <div class="flow-node-name" style="color:var(--accent)">&#9889; MCP Server</div>
+      <div class="flow-node-sub">task_id=abc123</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--red)">
+      <div class="flow-node-name" style="color:var(--red)">&#128293; Redis Queue</div>
+      <div class="flow-node-sub">Celery broker</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--purple)">
+      <div class="flow-node-name" style="color:var(--purple)">&#9881; Celery Worker</div>
+      <div class="flow-node-sub">Docker container</div>
+    </div>
+  </div>
+  <div class="flow-label" style="margin:8px 0">&#9660; мгновенный ответ (100ms): {"task_id": "abc123", "status": "queued"}</div>
+  <div style="display:flex;justify-content:center;gap:32px;margin-top:12px;flex-wrap:wrap">
+    <div class="flow-node" style="border-color:var(--yellow);min-width:200px">
+      <div class="flow-node-name" style="color:var(--yellow)">&#128276; Нотификация</div>
+      <div class="flow-node-sub">MCP notification / Telegram<br>"abc123 готов! 42 строки найдено"</div>
+    </div>
+    <div class="flow-node" style="border-color:var(--green);min-width:200px">
+      <div class="flow-node-name" style="color:var(--green)">&#128260; Smart Polling</div>
+      <div class="flow-node-sub">check_tasks() между<br>другими операциями</div>
+    </div>
+    <div class="flow-node" style="border-color:var(--orange);min-width:200px">
+      <div class="flow-node-name" style="color:var(--orange)">&#128172; Telegram Bot</div>
+      <div class="flow-node-sub">Для длинных задач (Ghidra)<br>Push-уведомление воркеру</div>
+    </div>
+  </div>
+</div>
+
+<h3>Поток данных ADB (устройства)</h3>
+<div class="flow-container">
+  <div class="flow-row">
+    <div class="flow-node" style="border-color:var(--green)">
+      <div class="flow-node-name" style="color:var(--green)">&#128187; Воркер</div>
+      <div class="flow-node-sub">adb_shell("pm list")</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--accent)">
+      <div class="flow-node-name" style="color:var(--accent)">&#9889; MCP Server</div>
+      <div class="flow-node-sub">device lock check</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--red)">
+      <div class="flow-node-name" style="color:var(--red)">&#128293; Redis Lock</div>
+      <div class="flow-node-sub">device:S07 = worker_3</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--yellow)">
+      <div class="flow-node-name" style="color:var(--yellow)">&#128268; ADB Bridge</div>
+      <div class="flow-node-sub">adb -s SERIAL shell</div>
+    </div>
+    <div class="flow-arrow">&#10230;</div>
+    <div class="flow-node" style="border-color:var(--cyan)">
+      <div class="flow-node-name" style="color:var(--cyan)">&#128663; Автомобиль</div>
+      <div class="flow-node-sub">Deepal S07 HU</div>
+    </div>
+  </div>
+  <div class="flow-label" style="margin-top:8px">Блокировка устройства через Redis: один воркер = одно устройство, TTL 30 мин</div>
+</div>
+
+<h3>Конвейер прошивки</h3>
+<div class="flow-container">
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;text-align:center">
+    <div class="flow-node" style="border-color:var(--cyan);padding:10px 8px;min-width:auto">
+      <div class="flow-node-name" style="color:var(--cyan);font-size:12px">&#128230; Дамп</div>
+      <div class="flow-node-sub">super.img 8 ГБ</div>
+    </div>
+    <div class="flow-node" style="border-color:var(--blue);padding:10px 8px;min-width:auto">
+      <div class="flow-node-name" style="color:var(--blue);font-size:12px">&#128260; simg2img</div>
+      <div class="flow-node-sub">~2 мин</div>
+    </div>
+    <div class="flow-node" style="border-color:var(--purple);padding:10px 8px;min-width:auto">
+      <div class="flow-node-name" style="color:var(--purple);font-size:12px">&#128193; lpunpack</div>
+      <div class="flow-node-sub">параллельно</div>
+    </div>
+    <div class="flow-node" style="border-color:var(--green);padding:10px 8px;min-width:auto">
+      <div class="flow-node-name" style="color:var(--green);font-size:12px">&#128194; mount</div>
+      <div class="flow-node-sub">извлечение APK</div>
+    </div>
+    <div class="flow-node" style="border-color:var(--orange);padding:10px 8px;min-width:auto">
+      <div class="flow-node-name" style="color:var(--orange);font-size:12px">&#9881; apktool</div>
+      <div class="flow-node-sub">parallel -j$(nproc)</div>
+    </div>
+    <div class="flow-node" style="border-color:var(--accent);padding:10px 8px;min-width:auto">
+      <div class="flow-node-name" style="color:var(--accent);font-size:12px">&#128269; Индекс</div>
+      <div class="flow-node-sub">полнотекст. поиск</div>
+    </div>
+  </div>
+  <div class="flow-label" style="margin-top:10px">&#10230; &#10230; &#10230; Полный пайплайн: 15-30 мин от дампа до полнотекстового индекса 200+ APK</div>
+</div>
+
+
+<!-- ═══════════════════ SECTION 4: COST BREAKDOWN ═══════════════════ -->
+<h2 id="s4" style="color:var(--green)">4. Стоимость (детальный breakdown)</h2>
+<p><span class="tag tag-green">Ежемесячные расходы в USD</span> Для двух сценариев: 6 воркеров (старт) и 20 воркеров (рост).</p>
+
+<div class="cost-table">
+<table>
+  <tr><th style="width:45%">Статья расходов</th><th style="width:18%;text-align:right">6 воркеров</th><th style="width:18%;text-align:right">20 воркеров</th><th style="width:19%">Примечание</th></tr>
+
+  <tr class="cost-section"><td colspan="4">&#128421; Инфраструктура</td></tr>
+  <tr><td>Сервер (аморт. 36 мес.)</td><td style="text-align:right">$195</td><td style="text-align:right">$390</td><td style="font-size:12px;color:var(--muted)">$7,000 / 36 мес, x2 серверов</td></tr>
+  <tr><td>Электричество (500W 24/7)</td><td style="text-align:right">$15</td><td style="text-align:right">$30</td><td style="font-size:12px;color:var(--muted)">$0.04/кВтч, 360 кВтч/мес</td></tr>
+  <tr><td>Интернет (100 Mbps, Ташкент)</td><td style="text-align:right">$60</td><td style="text-align:right">$100</td><td style="font-size:12px;color:var(--muted)">Uztelecom / TPS</td></tr>
+  <tr><td>Backblaze B2 (бэкап)</td><td style="text-align:right">$5</td><td style="text-align:right">$15</td><td style="font-size:12px;color:var(--muted)">500 ГБ &rarr; 1.5 ТБ</td></tr>
+  <tr><td>Домен + SSL (Cloudflare)</td><td style="text-align:right">$3</td><td style="text-align:right">$3</td><td style="font-size:12px;color:var(--muted)">Let's Encrypt (бесплатно)</td></tr>
+  <tr style="font-weight:600"><td style="color:var(--text)">&#128202; Итого инфраструктура</td><td style="text-align:right;color:var(--text)">$278</td><td style="text-align:right;color:var(--text)">$538</td><td></td></tr>
+
+  <tr class="cost-section"><td colspan="4">&#129302; Claude API (оптимизированный)</td></tr>
+  <tr class="cost-api"><td>Claude Haiku (тривиальные задачи)</td><td style="text-align:right">$150</td><td style="text-align:right">$500</td><td style="font-size:12px;color:var(--muted)">$0.25/$1.25 за 1M токенов</td></tr>
+  <tr class="cost-api"><td>Claude Sonnet (основная работа)</td><td style="text-align:right">$800</td><td style="text-align:right">$2,700</td><td style="font-size:12px;color:var(--muted)">$3/$15 за 1M токенов</td></tr>
+  <tr class="cost-api"><td>Claude Opus (сложный анализ)</td><td style="text-align:right">$400</td><td style="text-align:right">$1,300</td><td style="font-size:12px;color:var(--muted)">$15/$75 за 1M токенов</td></tr>
+  <tr class="cost-api"><td>Кеширование промптов (-30%)</td><td style="text-align:right;color:var(--green)">-$200</td><td style="text-align:right;color:var(--green)">-$650</td><td style="font-size:12px;color:var(--muted)">Prompt caching скидка</td></tr>
+  <tr class="cost-api"><td>Batch API (-50%, некритичное)</td><td style="text-align:right;color:var(--green)">-$100</td><td style="text-align:right;color:var(--green)">-$350</td><td style="font-size:12px;color:var(--muted)">Batch для фоновых задач</td></tr>
+  <tr style="font-weight:600"><td style="color:var(--text)">&#128202; Итого Claude API</td><td style="text-align:right;color:var(--purple)">$1,050</td><td style="text-align:right;color:var(--purple)">$3,500</td><td></td></tr>
+
+  <tr class="cost-section"><td colspan="4">&#128100; Персонал (опционально)</td></tr>
+  <tr><td>DevOps / SysAdmin (частичная занятость)</td><td style="text-align:right">$300</td><td style="text-align:right">$800</td><td style="font-size:12px;color:var(--muted)">Аутсорс или 0.5 FTE</td></tr>
+  <tr><td>Рабочие станции (аморт. 24 мес.)</td><td style="text-align:right">$150</td><td style="text-align:right">$500</td><td style="font-size:12px;color:var(--muted)">$600/ПК x6/x20</td></tr>
+
+  <tr class="cost-total"><td>&#128176; ИТОГО (без персонала)</td><td style="text-align:right">~$1,330</td><td style="text-align:right">~$4,040</td><td></td></tr>
+  <tr class="cost-total"><td>&#128176; ИТОГО (с персоналом)</td><td style="text-align:right">~$1,780</td><td style="text-align:right">~$5,340</td><td></td></tr>
+</table>
+</div>
+
+<div class="warning">
+  <strong>Claude API = 75-85% расходов.</strong> Основные оптимизации: (1) кеширование промптов для повторяющихся скиллов, (2) Haiku для тривиальных операций (10x дешевле Sonnet), (3) Batch API для некритичных задач. Без оптимизации API-расходы могут быть в 2x выше.
+</div>
+
+<div class="grid-2" style="margin-top:16px">
+  <div class="card">
+    <div class="card-title">Стоимость на одного воркера в месяц</div>
+    <p><span style="font-size:28px;font-weight:800;color:var(--accent)">$220-270</span></p>
+    <p>при 6 воркерах (без учёта зарплат)</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Стоимость одного проекта (автомобиль)</div>
+    <p><span style="font-size:28px;font-weight:800;color:var(--green)">$50-200</span></p>
+    <p>Claude API токены за полный цикл RE</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ SECTION 5: SCALING ROADMAP ═══════════════════ -->
+<h2 id="s5" style="color:var(--accent)">5. Дорожная карта масштабирования</h2>
+<p><span class="tag tag-purple">3 фазы роста</span> От Docker Compose до Kubernetes, от 1 сервера до кластера.</p>
+
+<div class="timeline">
+
+  <!-- Phase 1 -->
+  <div class="timeline-row phase-1">
+    <div class="timeline-phase">
+      <div class="timeline-phase-label" style="color:var(--green)">Фаза 1</div>
+      <div class="timeline-phase-date">6 воркеров</div>
+      <div class="timeline-phase-date">Месяцы 1-6</div>
+    </div>
+    <div class="timeline-content">
+      <div class="timeline-card" style="border-left:3px solid var(--green)">
+        <h4 style="color:var(--green)">&#128994; Один сервер, Docker Compose</h4>
+        <p style="color:var(--dim)">Минимальная жизнеспособная инфраструктура. Всё на одном хосте. Простота управления &mdash; один docker-compose.yml, один ssh.</p>
+        <div class="timeline-specs">
+          <div class="timeline-spec">1 сервер EPYC 24c</div>
+          <div class="timeline-spec">128 ГБ RAM</div>
+          <div class="timeline-spec">4 ТБ NVMe RAID1</div>
+          <div class="timeline-spec">Docker Compose v2</div>
+          <div class="timeline-spec">Nginx reverse proxy</div>
+          <div class="timeline-spec">Backblaze B2 backup</div>
+          <div class="timeline-spec">WireGuard VPN</div>
+          <div class="timeline-spec">Uptime Kuma</div>
+        </div>
+        <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+          <strong style="color:var(--green)">Бюджет:</strong> ~$1,800/мес &bull;
+          <strong style="color:var(--green)">Сложность:</strong> Низкая &bull;
+          <strong style="color:var(--green)">Отказоустойчивость:</strong> Нет (single point of failure)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="timeline-row phase-2">
+    <div class="timeline-phase">
+      <div class="timeline-phase-label" style="color:var(--blue)">Фаза 2</div>
+      <div class="timeline-phase-date">20 воркеров</div>
+      <div class="timeline-phase-date">Месяцы 6-12</div>
+    </div>
+    <div class="timeline-content">
+      <div class="timeline-card" style="border-left:3px solid var(--blue)">
+        <h4 style="color:var(--blue)">&#128309; Два сервера, Docker Swarm + HAProxy</h4>
+        <p style="color:var(--dim)">Горизонтальное масштабирование. Разделение: Сервер 1 = приложения + DB, Сервер 2 = воркеры + Ghidra. HAProxy балансирует MCP-запросы.</p>
+        <div class="timeline-specs">
+          <div class="timeline-spec">2 сервера EPYC 24c</div>
+          <div class="timeline-spec">256 ГБ RAM (total)</div>
+          <div class="timeline-spec">8 ТБ NVMe + 16 ТБ SATA</div>
+          <div class="timeline-spec">Docker Swarm</div>
+          <div class="timeline-spec">HAProxy LB</div>
+          <div class="timeline-spec">PG streaming replica</div>
+          <div class="timeline-spec">Redis Sentinel</div>
+          <div class="timeline-spec">Centralized logging</div>
+        </div>
+        <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+          <strong style="color:var(--blue)">Бюджет:</strong> ~$5,500/мес &bull;
+          <strong style="color:var(--blue)">Сложность:</strong> Средняя &bull;
+          <strong style="color:var(--blue)">Отказоустойчивость:</strong> Частичная (DB failover)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="timeline-row phase-3">
+    <div class="timeline-phase">
+      <div class="timeline-phase-label" style="color:var(--purple)">Фаза 3</div>
+      <div class="timeline-phase-date">50 воркеров</div>
+      <div class="timeline-phase-date">Месяцы 12-24</div>
+    </div>
+    <div class="timeline-content">
+      <div class="timeline-card" style="border-left:3px solid var(--purple)">
+        <h4 style="color:var(--purple)">&#128995; Kubernetes (k3s), NAS, распределённая БД</h4>
+        <p style="color:var(--dim)">Полноценный кластер. Автомасштабирование подов. NAS для общего хранилища. PG с Citus для шардинга. GitOps через ArgoCD.</p>
+        <div class="timeline-specs">
+          <div class="timeline-spec">3-5 серверов</div>
+          <div class="timeline-spec">512+ ГБ RAM (total)</div>
+          <div class="timeline-spec">NAS 48 ТБ (TrueNAS)</div>
+          <div class="timeline-spec">k3s (lightweight K8s)</div>
+          <div class="timeline-spec">MetalLB + Traefik</div>
+          <div class="timeline-spec">PG Citus (sharding)</div>
+          <div class="timeline-spec">Redis Cluster</div>
+          <div class="timeline-spec">ArgoCD (GitOps)</div>
+          <div class="timeline-spec">Prometheus + Grafana</div>
+          <div class="timeline-spec">Loki (logs)</div>
+        </div>
+        <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+          <strong style="color:var(--purple)">Бюджет:</strong> ~$15,000/мес &bull;
+          <strong style="color:var(--purple)">Сложность:</strong> Высокая &bull;
+          <strong style="color:var(--purple)">Отказоустойчивость:</strong> Полная (multi-node HA)
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Scaling comparison table -->
+<h3>Сравнение фаз</h3>
+<table>
+  <tr><th>Параметр</th><th style="color:var(--green)">Фаза 1 (6)</th><th style="color:var(--blue)">Фаза 2 (20)</th><th style="color:var(--purple)">Фаза 3 (50)</th></tr>
+  <tr><td>CPU (ядра)</td><td>24 (48 потоков)</td><td>48 (96 потоков)</td><td>120+ потоков</td></tr>
+  <tr><td>RAM</td><td>128 ГБ</td><td>256 ГБ</td><td>512+ ГБ</td></tr>
+  <tr><td>Хранилище</td><td>4 ТБ NVMe</td><td>8 ТБ NVMe + 16 ТБ SATA</td><td>NAS 48 ТБ + NVMe cache</td></tr>
+  <tr><td>MCP Server</td><td>1 инстанс</td><td>3 + HAProxy</td><td>K8s autoscaling</td></tr>
+  <tr><td>Celery Workers</td><td>4</td><td>8-12</td><td>20+</td></tr>
+  <tr><td>Ghidra</td><td>3 (16 ГБ)</td><td>6 (32 ГБ)</td><td>10+ (64 ГБ)</td></tr>
+  <tr><td>Оркестрация</td><td>Docker Compose</td><td>Docker Swarm</td><td>Kubernetes (k3s)</td></tr>
+  <tr><td>Мониторинг</td><td>Uptime Kuma</td><td>+ Dozzle, Telegram</td><td>Prometheus + Grafana</td></tr>
+  <tr><td>Бэкап</td><td>pg_dump + B2</td><td>+ PG replica</td><td>+ NAS snapshots</td></tr>
+  <tr><td style="font-weight:700">Бюджет/мес</td><td style="font-weight:700;color:var(--green)">~$1,800</td><td style="font-weight:700;color:var(--blue)">~$5,500</td><td style="font-weight:700;color:var(--purple)">~$15,000</td></tr>
+</table>
+
+
+<!-- ═══════════════════ SECTION 6: BACKUP & DR ═══════════════════ -->
+<h2 id="s6" style="color:var(--red)">6. Бэкапы и аварийное восстановление</h2>
+<p><span class="tag tag-red">RTO: 4 часа</span> <span class="tag tag-yellow">RPO: 6 часов</span> Трёхуровневая стратегия бэкапов с off-site хранением.</p>
+
+<div class="backup-grid">
+
+  <div class="backup-card bc-db">
+    <div class="backup-title" style="color:var(--blue)">&#128451; PostgreSQL</div>
+    <div class="backup-flow">
+      PostgreSQL (live)
+      <span class="arr">&rarr;</span> WAL архивация (непрерывно)
+      <span class="arr">&rarr;</span> pg_dump каждые 6ч
+      <span class="arr">&rarr;</span> /backup/pg/ (локальный диск)
+      <span class="arr">&rarr;</span> Backblaze B2 (ежедневно)
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+      <strong>Размер:</strong> ~5-20 ГБ<br>
+      <strong>Retention:</strong> 30 дней локально, 90 дней B2<br>
+      <strong>Восстановление:</strong> pg_restore, ~15-30 мин
+    </div>
+  </div>
+
+  <div class="backup-card bc-files">
+    <div class="backup-title" style="color:var(--cyan)">&#128230; MinIO (прошивки + артефакты)</div>
+    <div class="backup-flow">
+      MinIO buckets
+      <span class="arr">&rarr;</span> rsync incremental (по событию)
+      <span class="arr">&rarr;</span> /backup/firmware/ (SATA SSD)
+      <span class="arr">&rarr;</span> Backblaze B2 (еженедельно)
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+      <strong>Размер:</strong> 500 ГБ &mdash; 4 ТБ<br>
+      <strong>Retention:</strong> Навсегда (прошивки уникальны)<br>
+      <strong>Восстановление:</strong> rsync обратно, 1-4 часа
+    </div>
+  </div>
+
+  <div class="backup-card bc-config">
+    <div class="backup-title" style="color:var(--green)">&#128196; Конфигурации</div>
+    <div class="backup-flow">
+      docker-compose.yml
+      nginx.conf
+      .env, скрипты
+      <span class="arr">&rarr;</span> git commit (при изменении)
+      <span class="arr">&rarr;</span> GitHub private repo
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+      <strong>Размер:</strong> < 10 МБ<br>
+      <strong>Retention:</strong> Полная git-история<br>
+      <strong>Восстановление:</strong> git clone, 1 мин
+    </div>
+  </div>
+
+  <div class="backup-card bc-dr">
+    <div class="backup-title" style="color:var(--red)">&#9888;&#65039; Disaster Recovery (план)</div>
+    <div class="backup-flow">
+      1. Установить Ubuntu на новый сервер (~30 мин)
+      2. git clone конфигов (~1 мин)
+      3. docker compose up -d (~10 мин)
+      4. pg_restore из B2 (~30 мин)
+      5. rsync firmware из B2 (~2-3 часа)
+      6. Проверка + DNS switch (~15 мин)
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+      <strong>RTO:</strong> 4 часа (полное восстановление)<br>
+      <strong>RPO:</strong> 6 часов (потеря данных максимум)<br>
+      <strong>Тестирование:</strong> ежемесячный dry-run
+    </div>
+  </div>
+
+</div>
+
+<!-- Backup flow visual -->
+<h3>Визуальная схема потоков бэкапа</h3>
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:24px;margin:16px 0;font-family:'Courier New',monospace;font-size:13px;line-height:1.7;color:var(--dim);overflow-x:auto;white-space:pre">
+  <span style="color:var(--blue)">PostgreSQL</span>  ──WAL──►  /backup/pg/wal/          ──daily──►  <span style="color:var(--orange)">Backblaze B2</span>
+      │                                                        <span style="color:var(--orange)">($5/ТБ/мес)</span>
+      └──pg_dump/6h──►  /backup/pg/dumps/        ──daily──►       │
+                                                                   │
+  <span style="color:var(--cyan)">MinIO</span>       ──rsync──►  /backup/firmware/       ──weekly─►       │
+  <span style="color:var(--cyan)">(прошивки)</span>            (SATA SSD, 8 ТБ)                          │
+                                                                   │
+  <span style="color:var(--green)">Configs</span>     ──git push──►  <span style="color:var(--green)">GitHub Private Repo</span>                  │
+  <span style="color:var(--green)">(docker,nginx)</span>            (полная история)                      │
+                                                                   │
+  <span style="color:var(--red)">Redis</span>       ──AOF/RDB──►  /backup/redis/          ──daily──►    ▼
+                                                        <span style="color:var(--orange)">Backblaze B2 (Ташкент → US-West)</span>
+                                                        <span style="color:var(--muted)">encryption: AES-256 at rest</span>
+                                                        <span style="color:var(--muted)">retention: 90 дней</span>
+</div>
+
+
+<!-- ═══════════════════ SECTION 7: MONITORING ═══════════════════ -->
+<h2 id="s7" style="color:var(--yellow)">7. Стек мониторинга</h2>
+<p><span class="tag tag-yellow">Полная наблюдаемость</span> 4 уровня мониторинга: доступность, логи, метрики, алерты.</p>
+
+<div class="monitor-grid">
+
+  <div class="monitor-card" style="border-left:3px solid var(--green)">
+    <div class="monitor-icon">&#128994;</div>
+    <div class="monitor-name" style="color:var(--green)">Uptime Kuma</div>
+    <div class="monitor-desc">Мониторинг доступности всех сервисов.<br>HTTP/TCP/Docker проверки каждые 30 сек.</div>
+    <div class="monitor-targets">
+      <div class="monitor-target">nginx :443</div>
+      <div class="monitor-target">mcp-server :3000</div>
+      <div class="monitor-target">postgres :5432</div>
+      <div class="monitor-target">redis :6379</div>
+      <div class="monitor-target">minio :9000</div>
+      <div class="monitor-target">admin :3001</div>
+      <div class="monitor-target">ghidra :13100</div>
+      <div class="monitor-target">adb :5037</div>
+    </div>
+  </div>
+
+  <div class="monitor-card" style="border-left:3px solid var(--blue)">
+    <div class="monitor-icon">&#128220;</div>
+    <div class="monitor-name" style="color:var(--blue)">Dozzle</div>
+    <div class="monitor-desc">Живые логи всех Docker-контейнеров.<br>Веб-интерфейс, фильтрация, поиск по паттернам.</div>
+    <div class="monitor-targets">
+      <div class="monitor-target">stdout/stderr</div>
+      <div class="monitor-target">JSON structured</div>
+      <div class="monitor-target">regex filter</div>
+      <div class="monitor-target">multi-container</div>
+    </div>
+  </div>
+
+  <div class="monitor-card" style="border-left:3px solid var(--purple)">
+    <div class="monitor-icon">&#128200;</div>
+    <div class="monitor-name" style="color:var(--purple)">Custom Metrics</div>
+    <div class="monitor-desc">Собственные скрипты для системных метрик.<br>Cron каждые 60 сек, запись в PostgreSQL.</div>
+    <div class="monitor-targets">
+      <div class="monitor-target">CPU %</div>
+      <div class="monitor-target">RAM usage</div>
+      <div class="monitor-target">Disk space</div>
+      <div class="monitor-target">Docker stats</div>
+      <div class="monitor-target">Network I/O</div>
+      <div class="monitor-target">Task queue depth</div>
+    </div>
+  </div>
+
+  <div class="monitor-card" style="border-left:3px solid var(--orange)">
+    <div class="monitor-icon">&#128276;</div>
+    <div class="monitor-name" style="color:var(--orange)">Telegram Alerts</div>
+    <div class="monitor-desc">Мгновенные уведомления в Telegram.<br>Приоритеты: critical / warning / info.</div>
+    <div class="monitor-targets">
+      <div class="monitor-target">Сервис упал</div>
+      <div class="monitor-target">Диск > 85%</div>
+      <div class="monitor-target">RAM > 90%</div>
+      <div class="monitor-target">Task failed</div>
+      <div class="monitor-target">Worker idle > 1ч</div>
+      <div class="monitor-target">Backup failed</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Monitoring matrix -->
+<h3>Матрица мониторинга: что следит за чем</h3>
+<table>
+  <tr><th style="width:25%">Компонент</th><th>Uptime Kuma</th><th>Dozzle</th><th>Custom</th><th>Telegram</th></tr>
+  <tr><td><strong>nginx</strong></td><td style="color:var(--green)">HTTP 443 &#10003;</td><td style="color:var(--green)">access.log &#10003;</td><td style="color:var(--muted)">&mdash;</td><td style="color:var(--green)">&#10003; при падении</td></tr>
+  <tr><td><strong>mcp-server</strong></td><td style="color:var(--green)">HTTP /health &#10003;</td><td style="color:var(--green)">app.log &#10003;</td><td style="color:var(--green)">RPS, latency &#10003;</td><td style="color:var(--green)">&#10003; при ошибках</td></tr>
+  <tr><td><strong>postgresql</strong></td><td style="color:var(--green)">TCP 5432 &#10003;</td><td style="color:var(--green)">pg.log &#10003;</td><td style="color:var(--green)">connections, size &#10003;</td><td style="color:var(--green)">&#10003; при падении</td></tr>
+  <tr><td><strong>redis</strong></td><td style="color:var(--green)">TCP 6379 &#10003;</td><td style="color:var(--muted)">&mdash;</td><td style="color:var(--green)">memory, keys &#10003;</td><td style="color:var(--green)">&#10003; при OOM</td></tr>
+  <tr><td><strong>minio</strong></td><td style="color:var(--green)">HTTP 9000 &#10003;</td><td style="color:var(--green)">audit.log &#10003;</td><td style="color:var(--green)">disk usage &#10003;</td><td style="color:var(--green)">&#10003; при 85%+ disk</td></tr>
+  <tr><td><strong>celery workers</strong></td><td style="color:var(--green)">Flower API &#10003;</td><td style="color:var(--green)">worker.log &#10003;</td><td style="color:var(--green)">queue depth &#10003;</td><td style="color:var(--green)">&#10003; при сбоях</td></tr>
+  <tr><td><strong>ghidra</strong></td><td style="color:var(--green)">TCP 13100 &#10003;</td><td style="color:var(--green)">ghidra.log &#10003;</td><td style="color:var(--green)">RAM usage &#10003;</td><td style="color:var(--green)">&#10003; при OOM</td></tr>
+  <tr><td><strong>adb-bridge</strong></td><td style="color:var(--green)">TCP 5037 &#10003;</td><td style="color:var(--green)">adb.log &#10003;</td><td style="color:var(--green)">device count &#10003;</td><td style="color:var(--green)">&#10003; при disconnect</td></tr>
+  <tr><td><strong>Хост-система</strong></td><td style="color:var(--muted)">&mdash;</td><td style="color:var(--muted)">&mdash;</td><td style="color:var(--green)">CPU/RAM/Disk &#10003;</td><td style="color:var(--green)">&#10003; пороги</td></tr>
+</table>
+
+<!-- Alert rules -->
+<h3>Правила алертов</h3>
+<div class="grid-2">
+  <div class="card" style="border-left:3px solid var(--red)">
+    <div class="card-title" style="color:var(--red)">&#128680; Critical (немедленно)</div>
+    <p>Сервис не отвечает > 2 мин</p>
+    <p>Диск заполнен > 95%</p>
+    <p>RAM > 95% + OOM Kill</p>
+    <p>Backup не выполнился > 24ч</p>
+    <p>PostgreSQL replica lag > 1 мин</p>
+  </div>
+  <div class="card" style="border-left:3px solid var(--yellow)">
+    <div class="card-title" style="color:var(--yellow)">&#9888;&#65039; Warning (в рабочее время)</div>
+    <p>Диск > 85%</p>
+    <p>RAM > 85%</p>
+    <p>Task queue > 20 задач</p>
+    <p>Воркер idle > 1 часа</p>
+    <p>Скилл error rate > 30%</p>
+    <p>Воркер повторяет вопрос 3+ раз</p>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="margin-top:56px;padding-top:24px;border-top:1px solid var(--border);text-align:center;color:var(--muted);font-size:13px;">
+  Auto RE Platform &mdash; Полная архитектура системы &mdash; Апрель 2026<br>
+  Ташкент, Узбекистан &bull; On-premise инфраструктура &bull; 6&rarr;20&rarr;50 воркеров<br>
+  <span style="color:var(--accent)">Подготовлено с помощью Claude Opus 4.6</span>
+</div>
+
+</div>
+</body>
+</html>
