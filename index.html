@@ -299,7 +299,9 @@
   .feed-text .tool {
     background: var(--border); padding: 1px 6px;
     border-radius: 3px; font-size: 12px; font-family: monospace;
+    cursor: pointer; transition: background 0.15s;
   }
+  .feed-text .tool:hover { background: var(--accent); color: white; }
 
   .stages-pipeline {
     display: flex; gap: 4px; margin-bottom: 24px;
@@ -436,6 +438,9 @@
     border-radius: 3px; font-size: 11px; font-weight: 500;
   }
 
+  .clickable { cursor: pointer; transition: opacity 0.15s; }
+  .clickable:hover { opacity: 0.8; }
+
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -495,7 +500,7 @@
     <div class="nav-item" onclick="showPage('admin-claude')">
       <span class="nav-icon">&#129302;</span> Admin Claude
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="showPage('admin-claude')">
       <span class="nav-icon">&#9881;</span> &#1053;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080;
     </div>
   </nav>
@@ -524,22 +529,22 @@
     <div class="content">
 
       <div class="stats-row">
-        <div class="stat-card">
+        <div class="stat-card clickable" style="cursor:pointer" onclick="showPage('projects')">
           <div class="stat-label">&#1040;&#1082;&#1090;&#1080;&#1074;&#1085;&#1099;&#1077; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;</div>
           <div class="stat-value">3</div>
           <div class="stat-sub"><span class="up">+1</span> &#1079;&#1072; &#1085;&#1077;&#1076;&#1077;&#1083;&#1102;</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card clickable" style="cursor:pointer" onclick="showPage('workers')">
           <div class="stat-label">&#1057;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082;&#1080; &#1086;&#1085;&#1083;&#1072;&#1081;&#1085;</div>
           <div class="stat-value">4 <span style="font-size:14px;color:var(--text-muted)">/ 6</span></div>
           <div class="stat-sub">2 &#1085;&#1072; &#1101;&#1090;&#1072;&#1087;&#1077; &#1090;&#1077;&#1089;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1103;</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card clickable" style="cursor:pointer" onclick="showPage('skills')">
           <div class="stat-label">&#1042;&#1099;&#1079;&#1086;&#1074;&#1099; &#1089;&#1082;&#1080;&#1083;&#1083;&#1086;&#1074; &#1089;&#1077;&#1075;&#1086;&#1076;&#1085;&#1103;</div>
           <div class="stat-value">47</div>
           <div class="stat-sub"><span class="up">+12%</span> &#1086;&#1090; &#1074;&#1095;&#1077;&#1088;&#1072;</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card clickable" style="cursor:pointer" onclick="showPage('knowledge')">
           <div class="stat-label">&#1041;&#1072;&#1079;&#1072; &#1079;&#1085;&#1072;&#1085;&#1080;&#1081;</div>
           <div class="stat-value">847</div>
           <div class="stat-sub"><span class="up">+5</span> &#1089;&#1077;&#1075;&#1086;&#1076;&#1085;&#1103;</div>
@@ -570,7 +575,7 @@
             </div>
           </div>
 
-          <div class="project-row">
+          <div class="project-row" onclick="showPage('project-detail')">
             <div class="project-top">
               <div class="project-name">
                 Changan UNI-K 2024
@@ -587,7 +592,7 @@
             </div>
           </div>
 
-          <div class="project-row">
+          <div class="project-row" onclick="showPage('project-detail')">
             <div class="project-top">
               <div class="project-name">
                 Deepal L07 2025
@@ -611,7 +616,7 @@
             <span class="nav-badge">3</span>
           </div>
 
-          <div class="alert-item">
+          <div class="alert-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
             <span class="alert-icon" style="color:var(--red)">&#9888;</span>
             <div>
               <div><strong>&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</strong> &#1079;&#1072;&#1089;&#1090;&#1088;&#1103;&#1083; &#1085;&#1072; &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;&#1093; &#1075;&#1086;&#1083;&#1086;&#1089;&#1086;&#1074;&#1086;&#1075;&#1086; &#1091;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1103; &mdash; &#1086;&#1076;&#1080;&#1085; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089; 4 &#1088;&#1072;&#1079;&#1072; &#1079;&#1072; 2 &#1095;&#1072;&#1089;&#1072;</div>
@@ -619,7 +624,7 @@
             </div>
           </div>
 
-          <div class="alert-item">
+          <div class="alert-item clickable" onclick="showPage('skill-detail')" style="cursor:pointer">
             <span class="alert-icon" style="color:var(--yellow)">&#9888;</span>
             <div>
               <div>&#1057;&#1082;&#1080;&#1083;&#1083; <strong>apk-rebuild</strong> &#1087;&#1072;&#1076;&#1072;&#1077;&#1090; &#1074; 38% &#1089;&#1083;&#1091;&#1095;&#1072;&#1077;&#1074; &mdash; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1080; &#1085;&#1072; APK &#1086;&#1090; Changan</div>
@@ -627,7 +632,7 @@
             </div>
           </div>
 
-          <div class="alert-item">
+          <div class="alert-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
             <span class="alert-icon" style="color:var(--blue)">&#8505;</span>
             <div>
               <div><strong>&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</strong> &#1079;&#1072;&#1076;&#1072;&#1105;&#1090; &#1073;&#1072;&#1079;&#1086;&#1074;&#1099;&#1077; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099; &#1087;&#1088;&#1086; smali &mdash; &#1085;&#1091;&#1078;&#1085;&#1086; &#1086;&#1073;&#1091;&#1095;&#1077;&#1085;&#1080;&#1077; &#1080;&#1083;&#1080; &#1091;&#1087;&#1088;&#1086;&#1097;&#1105;&#1085;&#1085;&#1099;&#1081; &#1089;&#1082;&#1080;&#1083;&#1083;</div>
@@ -644,7 +649,7 @@
             <span class="link" onclick="showPage('workers')">&#1059;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077;</span>
           </div>
 
-          <div class="worker-item">
+          <div class="worker-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
             <span class="status-dot online"></span>
             <div class="worker-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
             <div class="worker-info">
@@ -654,7 +659,7 @@
             <span style="font-size:12px;color:var(--text-muted)">12 &#1084;&#1080;&#1085;</span>
           </div>
 
-          <div class="worker-item">
+          <div class="worker-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
             <span class="status-dot online"></span>
             <div class="worker-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
             <div class="worker-info">
@@ -664,7 +669,7 @@
             <span style="font-size:12px;color:var(--yellow)">&#1079;&#1072;&#1089;&#1090;&#1088;&#1103;&#1083;</span>
           </div>
 
-          <div class="worker-item">
+          <div class="worker-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
             <span class="status-dot online"></span>
             <div class="worker-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
             <div class="worker-info">
@@ -674,7 +679,7 @@
             <span style="font-size:12px;color:var(--text-muted)">1&#1095;</span>
           </div>
 
-          <div class="worker-item">
+          <div class="worker-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
             <span class="status-dot online"></span>
             <div class="worker-avatar" style="background:var(--orange-bg);color:var(--orange)">&#1044;</div>
             <div class="worker-info">
@@ -684,7 +689,7 @@
             <span style="font-size:12px;color:var(--text-muted)">30&#1084;</span>
           </div>
 
-          <div class="worker-item">
+          <div class="worker-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
             <span class="status-dot away"></span>
             <div class="worker-avatar" style="background:var(--yellow-bg);color:var(--yellow)">&#1052;</div>
             <div class="worker-info">
@@ -694,7 +699,7 @@
             <span style="font-size:12px;color:var(--text-muted)">45&#1084;</span>
           </div>
 
-          <div class="worker-item">
+          <div class="worker-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
             <span class="status-dot offline"></span>
             <div class="worker-avatar" style="background:var(--border);color:var(--text-muted)">&#1057;</div>
             <div class="worker-info">
@@ -711,7 +716,7 @@
             <span class="link" onclick="showPage('activity')">&#1042;&#1089;&#1103; &#1083;&#1077;&#1085;&#1090;&#1072;</span>
           </div>
 
-          <div class="feed-item">
+          <div class="feed-item clickable" onclick="showPage('activity')" style="cursor:pointer">
             <div class="feed-time">14:32</div>
             <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
             <div class="feed-text">
@@ -720,7 +725,7 @@
             </div>
           </div>
 
-          <div class="feed-item">
+          <div class="feed-item clickable" onclick="showPage('activity')" style="cursor:pointer">
             <div class="feed-time">14:28</div>
             <div class="feed-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
             <div class="feed-text">
@@ -729,7 +734,7 @@
             </div>
           </div>
 
-          <div class="feed-item">
+          <div class="feed-item clickable" onclick="showPage('activity')" style="cursor:pointer">
             <div class="feed-time">14:15</div>
             <div class="feed-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
             <div class="feed-text">
@@ -738,7 +743,7 @@
             </div>
           </div>
 
-          <div class="feed-item">
+          <div class="feed-item clickable" onclick="showPage('activity')" style="cursor:pointer">
             <div class="feed-time">13:55</div>
             <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
             <div class="feed-text">
@@ -747,7 +752,7 @@
             </div>
           </div>
 
-          <div class="feed-item">
+          <div class="feed-item clickable" onclick="showPage('activity')" style="cursor:pointer">
             <div class="feed-time">13:40</div>
             <div class="feed-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
             <div class="feed-text">
@@ -756,7 +761,7 @@
             </div>
           </div>
 
-          <div class="feed-item">
+          <div class="feed-item clickable" onclick="showPage('activity')" style="cursor:pointer">
             <div class="feed-time">13:22</div>
             <div class="feed-avatar" style="background:var(--orange-bg);color:var(--orange)">&#1044;</div>
             <div class="feed-text">
@@ -775,7 +780,7 @@
     <div class="topbar">
       <h1><span style="cursor:pointer;color:var(--text-dim)" onclick="showPage('dashboard')">&#8592;</span>&nbsp;&nbsp;Deepal S07 2025</h1>
       <div class="topbar-right">
-        <span style="font-size:13px;color:var(--text-dim)">&#1048;&#1089;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100;: <strong style="color:var(--text)">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</strong></span>
+        <span style="font-size:13px;color:var(--text-dim)">&#1048;&#1089;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100;: <strong style="color:var(--accent);cursor:pointer" onclick="showPage('worker-detail')">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</strong></span>
         <button class="btn">&#1055;&#1077;&#1088;&#1077;&#1085;&#1072;&#1079;&#1085;&#1072;&#1095;&#1080;&#1090;&#1100;</button>
         <button class="btn btn-primary">&#1054;&#1090;&#1082;&#1088;&#1099;&#1090;&#1100; &#1074; Claude Code</button>
       </div>
@@ -783,7 +788,7 @@
     <div class="content">
 
       <div class="stages-pipeline">
-        <div class="stage-item completed">
+        <div class="stage-item completed" style="cursor:pointer" onclick="showPage('stage-detail')">
           <div class="stage-num">&#10003;</div>
           <div class="stage-label">&#1042;&#1079;&#1083;&#1086;&#1084;</div>
           <div class="stage-days">3 &#1076;&#1085;&#1103;</div>
@@ -793,27 +798,27 @@
           <div class="stage-label">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</div>
           <div class="stage-days">5 &#1076;&#1085;&#1077;&#1081;</div>
         </div>
-        <div class="stage-item completed">
+        <div class="stage-item completed" style="cursor:pointer" onclick="showPage('stage-detail')">
           <div class="stage-num">&#10003;</div>
           <div class="stage-label">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</div>
           <div class="stage-days">4 &#1076;&#1085;&#1103;</div>
         </div>
-        <div class="stage-item current">
+        <div class="stage-item current" style="cursor:pointer" onclick="showPage('stage-detail')">
           <div class="stage-num">4</div>
           <div class="stage-label">&#1058;&#1077;&#1089;&#1090;&#1099;</div>
           <div class="stage-days">2 &#1076;&#1085;&#1103;...</div>
         </div>
-        <div class="stage-item">
+        <div class="stage-item" style="cursor:pointer" onclick="showPage('stage-detail')">
           <div class="stage-num">5</div>
           <div class="stage-label">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</div>
           <div class="stage-days">&mdash;</div>
         </div>
-        <div class="stage-item">
+        <div class="stage-item" style="cursor:pointer" onclick="showPage('stage-detail')">
           <div class="stage-num">6</div>
           <div class="stage-label">&#1055;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1072;</div>
           <div class="stage-days">&mdash;</div>
         </div>
-        <div class="stage-item">
+        <div class="stage-item" style="cursor:pointer" onclick="showPage('stage-detail')">
           <div class="stage-num">7</div>
           <div class="stage-label">&#1056;&#1077;&#1083;&#1080;&#1079;</div>
           <div class="stage-days">&mdash;</div>
@@ -847,7 +852,7 @@
         <div class="card">
           <div class="card-header">
             &#1044;&#1080;&#1072;&#1083;&#1086;&#1075; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1072; (&#1078;&#1080;&#1074;&#1086;&#1081;)
-            <span class="link">&#1042;&#1089;&#1103; &#1080;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103;</span>
+            <span class="link" onclick="showPage('activity')">&#1042;&#1089;&#1103; &#1080;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103;</span>
           </div>
 
           <div class="convo-item">
@@ -911,21 +916,21 @@
                 <div class="alert-time">&#1053;&#1072;&#1081;&#1076;&#1077;&#1085; 12 &#1084;&#1080;&#1085; &#1085;&#1072;&#1079;&#1072;&#1076; &middot; &#1080;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1103;&#1077;&#1090;&#1089;&#1103;</div>
               </div>
             </div>
-            <div class="alert-item">
+            <div class="alert-item" style="cursor:pointer" onclick="showPage('bug-detail')">
               <span style="color:var(--yellow)">&#9679;</span>
               <div>
                 <div>#10 &#1053;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080; &mdash; &#1082;&#1088;&#1072;&#1096; &#1087;&#1088;&#1080; &#1089;&#1084;&#1077;&#1085;&#1077; &#1103;&#1079;&#1099;&#1082;&#1072;</div>
                 <div class="alert-time">&#1053;&#1072;&#1081;&#1076;&#1077;&#1085; &#1074;&#1095;&#1077;&#1088;&#1072;</div>
               </div>
             </div>
-            <div class="alert-item">
+            <div class="alert-item" style="cursor:pointer" onclick="showPage('bug-detail')">
               <span style="color:var(--yellow)">&#9679;</span>
               <div>
                 <div>#9 &#1052;&#1077;&#1076;&#1080;&#1072; &mdash; &#1085;&#1077; &#1075;&#1088;&#1091;&#1079;&#1080;&#1090;&#1089;&#1103; &#1086;&#1073;&#1083;&#1086;&#1078;&#1082;&#1072; &#1072;&#1083;&#1100;&#1073;&#1086;&#1084;&#1072;</div>
                 <div class="alert-time">&#1053;&#1072;&#1081;&#1076;&#1077;&#1085; &#1074;&#1095;&#1077;&#1088;&#1072;</div>
               </div>
             </div>
-            <div class="alert-item">
+            <div class="alert-item" style="cursor:pointer" onclick="showPage('bug-detail')">
               <span style="color:var(--text-muted)">&#9679;</span>
               <div>
                 <div>#7 &#1051;&#1072;&#1091;&#1085;&#1095;&#1077;&#1088; &mdash; &#1074;&#1080;&#1076;&#1078;&#1077;&#1090;&#1099; &#1085;&#1072;&#1082;&#1083;&#1072;&#1076;&#1099;&#1074;&#1072;&#1102;&#1090;&#1089;&#1103; &#1087;&#1088;&#1080; &#1087;&#1086;&#1074;&#1086;&#1088;&#1086;&#1090;&#1077;</div>
@@ -960,7 +965,7 @@
                     <td style="padding:10px 8px"><code>v2.3.1-ru</code></td>
                     <td style="padding:10px 8px"><span style="color:var(--yellow)">&#1042; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077;</span></td>
                   </tr>
-                  <tr style="border-bottom:1px solid var(--border)">
+                  <tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="showPage('bug-detail')">
                     <td style="padding:10px 12px;color:var(--text-muted)">#11</td>
                     <td style="padding:10px 8px">SystemUI &#1082;&#1088;&#1072;&#1096; &#1087;&#1088;&#1080; &#1089;&#1074;&#1072;&#1081;&#1087;&#1077; &#1074;&#1085;&#1080;&#1079;<br><span style="font-size:10px;color:var(--text-muted)">&#128247; /bugs/11_systemui_crash.png</span></td>
                     <td style="padding:10px 8px"><span class="stage-badge stage-test">&#1058;&#1077;&#1089;&#1090;&#1099;</span></td>
@@ -969,7 +974,7 @@
                     <td style="padding:10px 8px"><code>v2.3.1-ru</code></td>
                     <td style="padding:10px 8px"><span style="color:var(--green)">&#1048;&#1089;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085;</span></td>
                   </tr>
-                  <tr style="border-bottom:1px solid var(--border)">
+                  <tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="showPage('bug-detail')">
                     <td style="padding:10px 12px;color:var(--text-muted)">#10</td>
                     <td style="padding:10px 8px">&#1053;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080; &mdash; &#1082;&#1088;&#1072;&#1096; &#1087;&#1088;&#1080; &#1089;&#1084;&#1077;&#1085;&#1077; &#1103;&#1079;&#1099;&#1082;&#1072;<br><span style="font-size:10px;color:var(--text-muted)">logcat: java.lang.NullPointerException at LocaleManager</span></td>
                     <td style="padding:10px 8px"><span class="stage-badge stage-translate">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</span></td>
@@ -978,7 +983,7 @@
                     <td style="padding:10px 8px"><code>v2.3.0-ru</code></td>
                     <td style="padding:10px 8px"><span style="color:var(--yellow)">&#1054;&#1090;&#1082;&#1088;&#1099;&#1090;</span></td>
                   </tr>
-                  <tr style="border-bottom:1px solid var(--border)">
+                  <tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="showPage('bug-detail')">
                     <td style="padding:10px 12px;color:var(--text-muted)">#9</td>
                     <td style="padding:10px 8px">&#1052;&#1077;&#1076;&#1080;&#1072; &mdash; &#1085;&#1077; &#1075;&#1088;&#1091;&#1079;&#1080;&#1090;&#1089;&#1103; &#1086;&#1073;&#1083;&#1086;&#1078;&#1082;&#1072; &#1072;&#1083;&#1100;&#1073;&#1086;&#1084;&#1072;</td>
                     <td style="padding:10px 8px"><span class="stage-badge stage-func">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span></td>
@@ -987,7 +992,7 @@
                     <td style="padding:10px 8px"><code>v2.3.0-ru</code></td>
                     <td style="padding:10px 8px"><span style="color:var(--yellow)">&#1054;&#1090;&#1082;&#1088;&#1099;&#1090;</span></td>
                   </tr>
-                  <tr style="border-bottom:1px solid var(--border)">
+                  <tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="showPage('bug-detail')">
                     <td style="padding:10px 12px;color:var(--text-muted)">#7</td>
                     <td style="padding:10px 8px">&#1051;&#1072;&#1091;&#1085;&#1095;&#1077;&#1088; &mdash; &#1074;&#1080;&#1076;&#1078;&#1077;&#1090;&#1099; &#1085;&#1072;&#1082;&#1083;&#1072;&#1076;&#1099;&#1074;&#1072;&#1102;&#1090;&#1089;&#1103; &#1087;&#1088;&#1080; &#1087;&#1086;&#1074;&#1086;&#1088;&#1086;&#1090;&#1077;<br><span style="font-size:10px;color:var(--text-muted)">&#128247; /bugs/7_widgets_overlap.png</span></td>
                     <td style="padding:10px 8px"><span class="stage-badge stage-func">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span></td>
@@ -1003,23 +1008,23 @@
 
           <div class="card">
             <div class="card-header">&#1053;&#1072;&#1082;&#1086;&#1087;&#1083;&#1077;&#1085;&#1085;&#1099;&#1077; &#1079;&#1085;&#1072;&#1085;&#1080;&#1103;</div>
-            <div class="knowledge-item">
+            <div class="knowledge-item clickable" onclick="showPage('knowledge')" style="cursor:pointer">
               <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">ADB</span>
               <span>&#1063;&#1077;&#1088;&#1077;&#1079; &#1076;&#1080;&#1072;&#1075;. &#1087;&#1086;&#1088;&#1090;, &#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1072;: diag_enter_adb</span>
             </div>
-            <div class="knowledge-item">
+            <div class="knowledge-item clickable" onclick="showPage('knowledge')" style="cursor:pointer">
               <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">Root</span>
               <span>Magisk 26.4 &#1095;&#1077;&#1088;&#1077;&#1079; fastboot boot patch</span>
             </div>
-            <div class="knowledge-item">
+            <div class="knowledge-item clickable" onclick="showPage('knowledge')" style="cursor:pointer">
               <span class="knowledge-cat" style="background:var(--blue-bg);color:var(--blue)">APK</span>
               <span>23 &#1087;&#1072;&#1082;&#1077;&#1090;&#1072; &#1079;&#1072;&#1084;&#1072;&#1087;&#1083;&#1077;&#1085;&#1099;, 4200 &#1089;&#1090;&#1088;&#1086;&#1082;</span>
             </div>
-            <div class="knowledge-item">
+            <div class="knowledge-item clickable" onclick="showPage('knowledge')" style="cursor:pointer">
               <span class="knowledge-cat" style="background:var(--purple-bg);color:var(--purple)">API</span>
               <span>&#1050;&#1083;&#1080;&#1084;&#1072;&#1090;: com.deepal.vehicle.climate</span>
             </div>
-            <div class="knowledge-item">
+            <div class="knowledge-item clickable" onclick="showPage('knowledge')" style="cursor:pointer">
               <span class="knowledge-cat" style="background:var(--purple-bg);color:var(--purple)">API</span>
               <span>&#1043;&#1086;&#1083;&#1086;&#1089;: &#1089;&#1090;&#1072;&#1085;&#1076;&#1072;&#1088;&#1090;&#1085;&#1099;&#1081; CarAudioManager + &#1082;&#1072;&#1089;&#1090;&#1086;&#1084; intents</span>
             </div>
@@ -1099,7 +1104,7 @@
         &#1069;&#1090;&#1072;&#1087; 1: &#1042;&#1079;&#1083;&#1086;&#1084; &#1080; Root
       </div>
       <div class="skills-grid">
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">adb-finder</div>
             <span class="skill-card-stage stage-badge stage-hack">&#1042;&#1079;&#1083;&#1086;&#1084;</span>
@@ -1112,7 +1117,7 @@
           </div>
         </div>
 
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">root-helper</div>
             <span class="skill-card-stage stage-badge stage-hack">&#1042;&#1079;&#1083;&#1086;&#1084;</span>
@@ -1125,7 +1130,7 @@
           </div>
         </div>
 
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">vuln-scanner</div>
             <span class="skill-card-stage stage-badge stage-hack">&#1042;&#1079;&#1083;&#1086;&#1084;</span>
@@ -1156,7 +1161,7 @@
           </div>
         </div>
 
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">apk-rebuild</div>
             <span class="skill-card-stage stage-badge stage-translate">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</span>
@@ -1169,7 +1174,7 @@
           </div>
         </div>
 
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">systemui-adapt</div>
             <span class="skill-card-stage stage-badge stage-translate">&#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;</span>
@@ -1187,7 +1192,7 @@
         &#1069;&#1090;&#1072;&#1087; 3: &#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;
       </div>
       <div class="skills-grid">
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">widget-builder</div>
             <span class="skill-card-stage stage-badge stage-func">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span>
@@ -1200,7 +1205,7 @@
           </div>
         </div>
 
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">voice-setup</div>
             <span class="skill-card-stage stage-badge stage-func">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span>
@@ -1213,7 +1218,7 @@
           </div>
         </div>
 
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">split-screen</div>
             <span class="skill-card-stage stage-badge stage-func">&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083;</span>
@@ -1231,7 +1236,7 @@
         &#1069;&#1090;&#1072;&#1087; 5: &#1047;&#1072;&#1097;&#1080;&#1090;&#1072;
       </div>
       <div class="skills-grid">
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">integrity-inject</div>
             <span class="skill-card-stage stage-badge stage-protect">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</span>
@@ -1244,7 +1249,7 @@
           </div>
         </div>
 
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">trojan-embed</div>
             <span class="skill-card-stage stage-badge stage-protect">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</span>
@@ -1257,7 +1262,7 @@
           </div>
         </div>
 
-        <div class="skill-card">
+        <div class="skill-card" onclick="showPage('skill-detail')">
           <div class="skill-card-header">
             <div class="skill-card-name">resource-encrypt</div>
             <span class="skill-card-stage stage-badge stage-protect">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</span>
@@ -1298,7 +1303,7 @@
         </div>
       </div>
 
-      <div class="worker-detail-card">
+      <div class="worker-detail-card" onclick="showPage('worker-detail')">
         <div class="worker-big-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
         <div class="worker-detail-info">
           <div class="worker-detail-name">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088; <span class="status-dot online" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
@@ -1312,7 +1317,7 @@
         </div>
       </div>
 
-      <div class="worker-detail-card">
+      <div class="worker-detail-card" onclick="showPage('worker-detail')">
         <div class="worker-big-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
         <div class="worker-detail-info">
           <div class="worker-detail-name">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076; <span class="status-dot online" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
@@ -1326,7 +1331,7 @@
         </div>
       </div>
 
-      <div class="worker-detail-card">
+      <div class="worker-detail-card" onclick="showPage('worker-detail')">
         <div class="worker-big-avatar" style="background:var(--orange-bg);color:var(--orange)">&#1044;</div>
         <div class="worker-detail-info">
           <div class="worker-detail-name">&#1044;&#1072;&#1074;&#1088;&#1086;&#1085; <span class="status-dot online" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
@@ -1340,7 +1345,7 @@
         </div>
       </div>
 
-      <div class="worker-detail-card">
+      <div class="worker-detail-card" onclick="showPage('worker-detail')">
         <div class="worker-big-avatar" style="background:var(--yellow-bg);color:var(--yellow)">&#1052;</div>
         <div class="worker-detail-info">
           <div class="worker-detail-name">&#1052;&#1072;&#1082;&#1089;&#1080;&#1084; <span class="tag" style="background:var(--accent);color:white">&#1051;&#1080;&#1076;</span> <span class="status-dot away" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
@@ -1353,7 +1358,7 @@
         </div>
       </div>
 
-      <div class="worker-detail-card">
+      <div class="worker-detail-card" onclick="showPage('worker-detail')">
         <div class="worker-big-avatar" style="background:var(--border);color:var(--text-muted)">&#1057;</div>
         <div class="worker-detail-info">
           <div class="worker-detail-name">&#1057;&#1091;&#1083;&#1090;&#1072;&#1085; <span class="tag" style="background:var(--accent);color:white">&#1051;&#1080;&#1076;</span> <span class="status-dot offline" style="display:inline-block;vertical-align:middle;margin-left:6px"></span></div>
@@ -1389,7 +1394,7 @@
       <div class="card">
         <div class="card-header">&#1055;&#1086;&#1074;&#1090;&#1086;&#1088;&#1103;&#1102;&#1097;&#1080;&#1077;&#1089;&#1103; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;&#1099; &mdash; &#1088;&#1072;&#1073;&#1086;&#1090;&#1085;&#1080;&#1082;&#1080; &#1089;&#1087;&#1088;&#1072;&#1096;&#1080;&#1074;&#1072;&#1102;&#1090; &#1086;&#1076;&#1085;&#1086; &#1080; &#1090;&#1086; &#1078;&#1077;</div>
 
-        <div class="question-item">
+        <div class="question-item clickable" onclick="showPage('skill-detail')" style="cursor:pointer">
           <div class="question-text">
             <strong>&laquo;&#1050;&#1072;&#1082; &#1087;&#1086;&#1083;&#1091;&#1095;&#1080;&#1090;&#1100; RECORD_AUDIO &#1076;&#1083;&#1103; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1085;&#1086;&#1075;&#1086; &#1087;&#1088;&#1080;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1103; &#1073;&#1077;&#1079; &#1087;&#1072;&#1090;&#1095;&#1072; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072;?&raquo;</strong>
             <span class="question-freq">5x</span>
@@ -1405,7 +1410,7 @@
           </div>
         </div>
 
-        <div class="question-item">
+        <div class="question-item clickable" onclick="showPage('skill-detail')" style="cursor:pointer">
           <div class="question-text">
             <strong>&laquo;APK &#1085;&#1077; &#1089;&#1086;&#1073;&#1080;&#1088;&#1072;&#1077;&#1090;&#1089;&#1103;, &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1080;&raquo;</strong>
             <span class="question-freq">4x</span>
@@ -1421,7 +1426,7 @@
           </div>
         </div>
 
-        <div class="question-item">
+        <div class="question-item clickable" onclick="showPage('skill-detail')" style="cursor:pointer">
           <div class="question-text">
             <strong>&laquo;&#1063;&#1090;&#1086; &#1090;&#1072;&#1082;&#1086;&#1077; smali? &#1050;&#1072;&#1082; &#1077;&#1075;&#1086; &#1095;&#1080;&#1090;&#1072;&#1090;&#1100;?&raquo;</strong>
             <span class="question-freq">3x</span>
@@ -1437,7 +1442,7 @@
           </div>
         </div>
 
-        <div class="question-item">
+        <div class="question-item clickable" onclick="showPage('skill-detail')" style="cursor:pointer">
           <div class="question-text">
             <strong>&laquo;&#1054;&#1074;&#1077;&#1088;&#1083;&#1077;&#1081; &#1085;&#1077; &#1087;&#1086;&#1082;&#1072;&#1079;&#1099;&#1074;&#1072;&#1077;&#1090;&#1089;&#1103; &#1087;&#1086;&#1074;&#1077;&#1088;&#1093; &#1083;&#1072;&#1091;&#1085;&#1095;&#1077;&#1088;&#1072;&raquo;</strong>
             <span class="question-freq">3x</span>
@@ -1467,7 +1472,7 @@
     </div>
     <div class="content">
       <div class="card">
-        <div class="feed-item">
+        <div class="feed-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
           <div class="feed-time">14:35</div>
           <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
           <div class="feed-text">
@@ -1475,7 +1480,7 @@
             <br>&#1048;&#1048; &#1080;&#1089;&#1087;&#1088;&#1072;&#1074;&#1080;&#1083; &#1087;&#1088;&#1086;&#1087;&#1091;&#1097;&#1077;&#1085;&#1085;&#1091;&#1102; &#1089;&#1090;&#1088;&#1086;&#1082;&#1091; &#1074; &#1082;&#1083;&#1080;&#1084;&#1072;&#1090;&#1077;. <span class="tool">apk-translate</span> &rarr; <span class="tool">apk-rebuild</span>
           </div>
         </div>
-        <div class="feed-item">
+        <div class="feed-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
           <div class="feed-time">14:28</div>
           <div class="feed-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
           <div class="feed-text">
@@ -1483,7 +1488,7 @@
             <br>&#1057;&#1087;&#1088;&#1086;&#1089;&#1080;&#1083; &#1087;&#1088;&#1086; RECORD_AUDIO <span style="color:var(--yellow)">(5-&#1081; &#1088;&#1072;&#1079;)</span>. <span class="tool">voice-setup</span> &#1087;&#1088;&#1077;&#1076;&#1083;&#1086;&#1078;&#1080;&#1083; &#1087;&#1072;&#1090;&#1095; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072;.
           </div>
         </div>
-        <div class="feed-item">
+        <div class="feed-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
           <div class="feed-time">14:15</div>
           <div class="feed-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
           <div class="feed-text">
@@ -1491,7 +1496,7 @@
             <br>&#1048;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1083; <span class="tool">adb-finder</span> &mdash; &#1085;&#1072;&#1096;&#1105;&#1083; &#1076;&#1080;&#1072;&#1075;. &#1087;&#1086;&#1088;&#1090;. &#1055;&#1088;&#1086;&#1073;&#1091;&#1077;&#1090; &#1074;&#1082;&#1083;&#1102;&#1095;&#1080;&#1090;&#1100; ADB.
           </div>
         </div>
-        <div class="feed-item">
+        <div class="feed-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
           <div class="feed-time">13:55</div>
           <div class="feed-avatar" style="background:var(--blue-bg);color:var(--blue)">&#1056;</div>
           <div class="feed-text">
@@ -1499,7 +1504,7 @@
             <br><span class="tool">apk-rebuild</span> &#1079;&#1072;&#1074;&#1077;&#1088;&#1096;&#1105;&#1085; &#1076;&#1083;&#1103; &#1084;&#1077;&#1076;&#1080;&#1072;&#1087;&#1083;&#1077;&#1077;&#1088;&#1072;. &#1055;&#1086;&#1076;&#1087;&#1080;&#1089;&#1072;&#1085; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1077;&#1085;&#1085;&#1099;&#1084; &#1082;&#1083;&#1102;&#1095;&#1086;&#1084;.
           </div>
         </div>
-        <div class="feed-item">
+        <div class="feed-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
           <div class="feed-time">13:40</div>
           <div class="feed-avatar" style="background:var(--purple-bg);color:var(--purple)">&#1040;</div>
           <div class="feed-text">
@@ -1507,7 +1512,7 @@
             <br><span style="color:var(--red)">&#1055;&#1086;&#1074;&#1090;&#1086;&#1088;&#1085;&#1099;&#1081; &#1074;&#1086;&#1087;&#1088;&#1086;&#1089;</span>: &laquo;&#1074;&#1089;&#1105; &#1077;&#1097;&#1105; permission denied &#1076;&#1083;&#1103; &#1084;&#1080;&#1082;&#1088;&#1086;&#1092;&#1086;&#1085;&#1072;&raquo;. <span class="tool">voice-setup</span> &mdash; &#1090;&#1086;&#1090; &#1078;&#1077; &#1086;&#1090;&#1074;&#1077;&#1090;.
           </div>
         </div>
-        <div class="feed-item">
+        <div class="feed-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
           <div class="feed-time">13:22</div>
           <div class="feed-avatar" style="background:var(--orange-bg);color:var(--orange)">&#1044;</div>
           <div class="feed-text">
@@ -1515,7 +1520,7 @@
             <br>&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1080;&#1083; &#1084;&#1086;&#1076;&#1091;&#1083;&#1100; 3: &#1057;&#1090;&#1088;&#1091;&#1082;&#1090;&#1091;&#1088;&#1072; APK. &#1054;&#1094;&#1077;&#1085;&#1082;&#1072;: <span style="color:var(--green)">85%</span>. &#1055;&#1077;&#1088;&#1077;&#1093;&#1086;&#1076;&#1080;&#1090; &#1082; &#1084;&#1086;&#1076;&#1091;&#1083;&#1102; 4.
           </div>
         </div>
-        <div class="feed-item">
+        <div class="feed-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
           <div class="feed-time">12:50</div>
           <div class="feed-avatar" style="background:var(--yellow-bg);color:var(--yellow)">&#1052;</div>
           <div class="feed-text">
@@ -1523,7 +1528,7 @@
             <br>&#1055;&#1088;&#1086;&#1074;&#1077;&#1088;&#1080;&#1083; &#1074;&#1080;&#1076;&#1078;&#1077;&#1090;&#1099; &#1056;&#1091;&#1089;&#1090;&#1072;&#1084;&#1072; &#1076;&#1083;&#1103; S07. &#1054;&#1076;&#1086;&#1073;&#1088;&#1077;&#1085;&#1086; &#1089; &#1084;&#1077;&#1083;&#1082;&#1080;&#1084;&#1080; &#1079;&#1072;&#1084;&#1077;&#1095;&#1072;&#1085;&#1080;&#1103;&#1084;&#1080;.
           </div>
         </div>
-        <div class="feed-item">
+        <div class="feed-item clickable" onclick="showPage('worker-detail')" style="cursor:pointer">
           <div class="feed-time">12:15</div>
           <div class="feed-avatar" style="background:var(--green-bg);color:var(--green)">&#1046;</div>
           <div class="feed-text">
@@ -1556,27 +1561,27 @@
       <div class="grid-2">
         <div class="card">
           <div class="card-header">Deepal S07 &middot; 234 &#1079;&#1072;&#1087;&#1080;&#1089;&#1080;</div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">ADB</span>
             <span>&#1063;&#1077;&#1088;&#1077;&#1079; &#1076;&#1080;&#1072;&#1075;. &#1087;&#1086;&#1088;&#1090; USB-C. &#1050;&#1086;&#1084;&#1072;&#1085;&#1076;&#1072;: <code>diag_enter_adb</code></span>
           </div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">Root</span>
             <span>Magisk 26.4 &#1095;&#1077;&#1088;&#1077;&#1079; <code>fastboot boot magisk_patched.img</code></span>
           </div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--blue-bg);color:var(--blue)">APK</span>
             <span>&#1050;&#1083;&#1080;&#1084;&#1072;&#1090;: com.deepal.hvac, 42 &#1089;&#1090;&#1088;&#1086;&#1082;&#1080; &#1076;&#1083;&#1103; &#1087;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;&#1072;</span>
           </div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--blue-bg);color:var(--blue)">APK</span>
             <span>&#1053;&#1072;&#1074;&#1080;&#1075;&#1072;&#1094;&#1080;&#1103;: com.deepal.navi, &#1089;&#1077;&#1088;&#1074;. &#1089;&#1090;&#1088;&#1086;&#1082;&#1080; &#1074; /assets/i18n/</span>
           </div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--purple-bg);color:var(--purple)">&#1043;&#1086;&#1083;&#1086;&#1089;</span>
             <span>&#1057;&#1090;&#1072;&#1085;&#1076;&#1072;&#1088;&#1090;&#1085;&#1099;&#1081; CarAudioManager API. &#1053;&#1091;&#1078;&#1077;&#1085; RECORD_AUDIO + &#1087;&#1072;&#1090;&#1095; &#1092;&#1088;&#1077;&#1081;&#1084;&#1074;&#1086;&#1088;&#1082;&#1072;</span>
           </div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--orange-bg);color:var(--orange)">&#1047;&#1072;&#1097;&#1080;&#1090;&#1072;</span>
             <span>&#1050;&#1083;&#1102;&#1095; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;: /system/etc/security/otacerts.zip</span>
           </div>
@@ -1584,23 +1589,23 @@
 
         <div class="card">
           <div class="card-header">Changan UNI-K &middot; 187 &#1079;&#1072;&#1087;&#1080;&#1089;&#1077;&#1081;</div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">ADB</span>
             <span>&#1048;&#1085;&#1078;. &#1084;&#1077;&#1085;&#1102;: &#1079;&#1072;&#1078;&#1072;&#1090;&#1100; &#1082;&#1083;&#1080;&#1084;&#1072;&#1090; + &#1075;&#1088;&#1086;&#1084;&#1082;&#1086;&#1089;&#1090;&#1100; 5 &#1089;&#1077;&#1082;. &#1055;&#1077;&#1088;&#1077;&#1082;&#1083;&#1102;&#1095;&#1072;&#1090;&#1077;&#1083;&#1100; ADB &#1074;&#1085;&#1091;&#1090;&#1088;&#1080;.</span>
           </div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--red-bg);color:var(--red)">Root</span>
             <span>Magisk &#1095;&#1077;&#1088;&#1077;&#1079; recovery. A/B &#1089;&#1083;&#1086;&#1090;&#1099; &mdash; &#1087;&#1072;&#1090;&#1095;&#1080;&#1090;&#1100; &#1087;&#1088;&#1072;&#1074;&#1080;&#1083;&#1100;&#1085;&#1099;&#1081; &#1089;&#1083;&#1086;&#1090;</span>
           </div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--blue-bg);color:var(--blue)">APK</span>
             <span>&#1044;&#1088;&#1091;&#1075;&#1086;&#1081; &#1085;&#1077;&#1081;&#1084;&#1080;&#1085;&#1075;: com.changan.* (&#1085;&#1077; com.deepal.*)</span>
           </div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--purple-bg);color:var(--purple)">&#1043;&#1086;&#1083;&#1086;&#1089;</span>
             <span>&#1050;&#1072;&#1089;&#1090;&#1086;&#1084;&#1085;&#1072;&#1103; &#1086;&#1073;&#1105;&#1088;&#1090;&#1082;&#1072; &#1085;&#1072;&#1076; &#1089;&#1090;&#1072;&#1085;&#1076;&#1072;&#1088;&#1090;&#1085;&#1099;&#1084; API. &#1053;&#1091;&#1078;&#1085;&#1099; &#1076;&#1086;&#1087;. &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1077;&#1085;&#1080;&#1103;.</span>
           </div>
-          <div class="knowledge-item">
+          <div class="knowledge-item clickable" style="cursor:pointer">
             <span class="knowledge-cat" style="background:var(--green-bg);color:var(--green)">&#1057;&#1077;&#1090;&#1100;</span>
             <span>APN &#1079;&#1072;&#1083;&#1086;&#1095;&#1077;&#1085; &#1085;&#1072; China Mobile. &#1055;&#1072;&#1090;&#1095;: /system/etc/apns-conf.xml</span>
           </div>
@@ -1644,7 +1649,7 @@
           </div>
         </div>
 
-        <div class="project-row">
+        <div class="project-row" onclick="showPage('project-detail')">
           <div class="project-top">
             <div class="project-name">
               Changan UNI-K 2024
@@ -1661,7 +1666,7 @@
           </div>
         </div>
 
-        <div class="project-row">
+        <div class="project-row" onclick="showPage('project-detail')">
           <div class="project-top">
             <div class="project-name">
               Deepal L07 2025
@@ -1720,7 +1725,7 @@
         <div class="card-header">&#1040;&#1074;&#1090;&#1086;&#1084;&#1086;&#1073;&#1080;&#1083;&#1080; &#1074; &#1075;&#1072;&#1088;&#1072;&#1078;&#1077;</div>
 
         <!-- Device 1 -->
-        <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px">
+        <div class="clickable" style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;cursor:pointer" onclick="showPage('project-detail')">
           <div style="flex-shrink:0">
             <span class="status-dot online" style="display:inline-block;width:10px;height:10px"></span>
           </div>
@@ -1744,7 +1749,7 @@
         </div>
 
         <!-- Device 2 -->
-        <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px">
+        <div class="clickable" style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;cursor:pointer" onclick="showPage('project-detail')">
           <div style="flex-shrink:0">
             <span class="status-dot online" style="display:inline-block;width:10px;height:10px"></span>
           </div>
@@ -1754,7 +1759,7 @@
               <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:8px">VIN: LS6C...5678</span>
             </div>
             <div style="display:flex;gap:16px;font-size:12px;color:var(--text-dim);flex-wrap:wrap">
-              <span>&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;: <span style="color:var(--accent)">Changan UNI-K 2024</span></span>
+              <span>&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;: <span style="color:var(--accent);cursor:pointer" onclick="event.stopPropagation();showPage('project-detail')">Changan UNI-K 2024</span></span>
               <span>&#1041;&#1080;&#1083;&#1076;: <code style="background:var(--border);padding:1px 6px;border-radius:3px">v1.1.0-ru</code></span>
               <span>&#1044;&#1077;&#1087;&#1083;&#1086;&#1081;: 11:30</span>
             </div>
@@ -1768,7 +1773,7 @@
         </div>
 
         <!-- Device 3 -->
-        <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px">
+        <div class="clickable" style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;cursor:pointer" onclick="showPage('project-detail')">
           <div style="flex-shrink:0">
             <span class="status-dot offline" style="display:inline-block;width:10px;height:10px"></span>
           </div>
@@ -1778,7 +1783,7 @@
               <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:8px">VIN: LS6A...9012</span>
             </div>
             <div style="display:flex;gap:16px;font-size:12px;color:var(--text-dim);flex-wrap:wrap">
-              <span>&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;: <span style="color:var(--accent)">Deepal L07 2025</span></span>
+              <span>&#1055;&#1088;&#1086;&#1077;&#1082;&#1090;: <span style="color:var(--accent);cursor:pointer" onclick="event.stopPropagation();showPage('project-detail')">Deepal L07 2025</span></span>
               <span>&#1041;&#1080;&#1083;&#1076;: <code style="background:var(--border);padding:1px 6px;border-radius:3px">stock</code></span>
               <span>&#1044;&#1077;&#1087;&#1083;&#1086;&#1081;: &mdash;</span>
             </div>
@@ -1792,7 +1797,7 @@
         </div>
 
         <!-- Device 4 -->
-        <div style="padding:16px 20px;display:flex;align-items:center;gap:16px">
+        <div class="clickable" style="padding:16px 20px;display:flex;align-items:center;gap:16px;cursor:pointer" onclick="showPage('project-detail')">
           <div style="flex-shrink:0">
             <span class="status-dot online" style="display:inline-block;width:10px;height:10px"></span>
           </div>
@@ -1857,7 +1862,7 @@
       <!-- Progress per worker -->
       <div class="card" style="margin-bottom:24px">
         <div class="card-header">&#1055;&#1088;&#1086;&#1075;&#1088;&#1077;&#1089;&#1089; &#1089;&#1090;&#1072;&#1078;&#1105;&#1088;&#1086;&#1074;</div>
-        <div style="padding:16px 20px;display:flex;align-items:center;gap:16px">
+        <div class="clickable" style="padding:16px 20px;display:flex;align-items:center;gap:16px;cursor:pointer" onclick="showPage('worker-detail')">
           <div class="worker-avatar" style="background:var(--orange-bg);color:var(--orange)">&#1044;</div>
           <div style="flex:1">
             <div style="font-weight:600;font-size:14px;margin-bottom:6px">&#1044;&#1072;&#1074;&#1088;&#1086;&#1085; <span style="font-size:12px;color:var(--text-dim);font-weight:400">&middot; &#1057;&#1090;&#1072;&#1078;&#1105;&#1088; &middot; 5 &#1076;&#1085;&#1077;&#1081;</span></div>
@@ -1876,7 +1881,7 @@
       <div class="card">
         <div class="card-header">&#1059;&#1095;&#1077;&#1073;&#1085;&#1099;&#1077; &#1084;&#1086;&#1076;&#1091;&#1083;&#1080;</div>
 
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer">
           <div style="width:32px;height:32px;border-radius:8px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">1</div>
           <div style="flex:1">
             <div style="font-weight:600;font-size:13px">&#1057;&#1090;&#1088;&#1091;&#1082;&#1090;&#1091;&#1088;&#1072; APK</div>
@@ -1885,7 +1890,7 @@
           <span style="color:var(--green);font-size:13px;font-weight:600">&#10003; &#1055;&#1088;&#1086;&#1081;&#1076;&#1077;&#1085;</span>
         </div>
 
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer">
           <div style="width:32px;height:32px;border-radius:8px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">2</div>
           <div style="flex:1">
             <div style="font-weight:600;font-size:13px">&#1054;&#1089;&#1085;&#1086;&#1074;&#1099; smali</div>
@@ -1894,7 +1899,7 @@
           <span style="color:var(--green);font-size:13px;font-weight:600">&#10003; &#1055;&#1088;&#1086;&#1081;&#1076;&#1077;&#1085;</span>
         </div>
 
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer">
           <div style="width:32px;height:32px;border-radius:8px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">3</div>
           <div style="flex:1">
             <div style="font-weight:600;font-size:13px">&#1056;&#1072;&#1073;&#1086;&#1090;&#1072; &#1089; ADB</div>
@@ -1903,7 +1908,7 @@
           <span style="color:var(--green);font-size:13px;font-weight:600">&#10003; 85%</span>
         </div>
 
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer">
           <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">4</div>
           <div style="flex:1">
             <div style="font-weight:600;font-size:13px">&#1048;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099; &#1087;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;&#1072;</div>
@@ -1912,7 +1917,7 @@
           <span style="color:var(--accent);font-size:13px;font-weight:600">&#9654; &#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081;</span>
         </div>
 
-        <div style="padding:14px 20px;display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:14px 20px;display:flex;align-items:center;gap:12px;cursor:pointer">
           <div style="width:32px;height:32px;border-radius:8px;background:var(--border);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">5</div>
           <div style="flex:1">
             <div style="font-weight:600;font-size:13px;color:var(--text-dim)">&#1058;&#1077;&#1089;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077; &#1085;&#1072; &#1091;&#1089;&#1090;&#1088;&#1086;&#1081;&#1089;&#1090;&#1074;&#1077;</div>
@@ -1945,7 +1950,7 @@
       <div class="card">
         <div class="card-header">&#1048;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103; &#1089;&#1073;&#1086;&#1088;&#1086;&#1082; &mdash; Deepal S07 2025</div>
 
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px">
+        <div class="clickable" style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;cursor:pointer">
           <div style="flex-shrink:0">
             <code style="font-size:14px;font-weight:700;color:var(--accent)">v2.3.1-ru</code>
           </div>
@@ -1962,7 +1967,7 @@
           </div>
         </div>
 
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px">
+        <div class="clickable" style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;cursor:pointer">
           <div style="flex-shrink:0">
             <code style="font-size:14px;font-weight:700;color:var(--text-dim)">v2.3.0-ru</code>
           </div>
@@ -1978,7 +1983,7 @@
           </div>
         </div>
 
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px">
+        <div class="clickable" style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;cursor:pointer">
           <div style="flex-shrink:0">
             <code style="font-size:14px;font-weight:700;color:var(--text-dim)">v2.2.0-ru</code>
           </div>
@@ -1994,7 +1999,7 @@
           </div>
         </div>
 
-        <div style="padding:14px 20px;display:flex;align-items:center;gap:16px">
+        <div class="clickable" style="padding:14px 20px;display:flex;align-items:center;gap:16px;cursor:pointer">
           <div style="flex-shrink:0">
             <code style="font-size:14px;font-weight:700;color:var(--text-muted)">v1.0.0-stock</code>
           </div>
@@ -2165,7 +2170,7 @@
       </div>
 
       <!-- Current session -->
-      <div class="card" style="margin-bottom:24px;border-color:var(--accent)">
+      <div class="card clickable" style="margin-bottom:24px;border-color:var(--accent);cursor:pointer" onclick="showPage('skill-detail')">
         <div class="card-header">
           <span>&#9654; &#1058;&#1077;&#1082;&#1091;&#1097;&#1072;&#1103; &#1089;&#1077;&#1089;&#1089;&#1080;&#1103;</span>
           <span class="stage-badge" style="background:var(--accent);color:white">&#1040;&#1082;&#1090;&#1080;&#1074;&#1085;&#1072;</span>
@@ -2187,7 +2192,7 @@
       <div class="card">
         <div class="card-header">&#1048;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103; &#1089;&#1077;&#1089;&#1089;&#1080;&#1081; &#1089;&#1077;&#1075;&#1086;&#1076;&#1085;&#1103;</div>
 
-        <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer" onclick="showPage('skill-detail')">
           <div style="font-size:12px;color:var(--text-muted);width:50px;flex-shrink:0">13:20</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:500">&#1057;&#1086;&#1079;&#1076;&#1072;&#1085; &#1089;&#1082;&#1080;&#1083;&#1083; <span class="tool">device-lock</span></div>
@@ -2196,7 +2201,7 @@
           <span class="stage-badge stage-release">&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1072;</span>
         </div>
 
-        <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer" onclick="showPage('skill-detail')">
           <div style="font-size:12px;color:var(--text-muted);width:50px;flex-shrink:0">12:00</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:500">&#1059;&#1083;&#1091;&#1095;&#1096;&#1077;&#1085; &#1089;&#1082;&#1080;&#1083;&#1083; <span class="tool">apk-rebuild</span></div>
@@ -2205,7 +2210,7 @@
           <span class="stage-badge stage-release">&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1072;</span>
         </div>
 
-        <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer" onclick="showPage('skill-detail')">
           <div style="font-size:12px;color:var(--text-muted);width:50px;flex-shrink:0">11:15</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:500">&#1057;&#1086;&#1079;&#1076;&#1072;&#1085; &#1089;&#1082;&#1080;&#1083;&#1083; <span class="tool">delivery-check</span></div>
@@ -2214,7 +2219,7 @@
           <span class="stage-badge stage-release">&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1072;</span>
         </div>
 
-        <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer" onclick="showPage('skill-detail')">
           <div style="font-size:12px;color:var(--text-muted);width:50px;flex-shrink:0">10:30</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:500">&#1057;&#1086;&#1079;&#1076;&#1072;&#1085; &#1089;&#1082;&#1080;&#1083;&#1083; <span class="tool">bug-report</span></div>
@@ -2223,7 +2228,7 @@
           <span class="stage-badge stage-release">&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1072;</span>
         </div>
 
-        <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer" onclick="showPage('skill-detail')">
           <div style="font-size:12px;color:var(--text-muted);width:50px;flex-shrink:0">09:45</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:500">&#1054;&#1090;&#1083;&#1072;&#1076;&#1082;&#1072; <span class="tool">apk-translate</span></div>
@@ -2232,7 +2237,7 @@
           <span class="stage-badge stage-release">&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1072;</span>
         </div>
 
-        <div style="padding:12px 20px;display:flex;align-items:center;gap:12px">
+        <div class="clickable" style="padding:12px 20px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="showPage('skill-detail')">
           <div style="font-size:12px;color:var(--text-muted);width:50px;flex-shrink:0">09:00</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:500">&#1054;&#1090;&#1083;&#1072;&#1076;&#1082;&#1072; <span class="tool">root-helper</span></div>
@@ -2360,28 +2365,28 @@
           <div class="card">
             <div class="card-header">&#1050;&#1090;&#1086; &#1080;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1091;&#1077;&#1090;</div>
             <div class="card-body" style="font-size:13px;display:flex;flex-direction:column;gap:10px">
-              <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="clickable" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="showPage('worker-detail')">
                 <div style="display:flex;align-items:center;gap:8px">
                   <div class="worker-avatar" style="background:var(--blue-bg);color:var(--blue);width:28px;height:28px;font-size:11px">&#1056;</div>
                   <span style="font-weight:600">&#1056;&#1091;&#1089;&#1090;&#1072;&#1084;</span>
                 </div>
                 <span style="color:var(--text-dim)">45 &#1074;&#1099;&#1079;&#1086;&#1074;&#1086;&#1074;, <span style="color:var(--green)">96%</span> &#1091;&#1089;&#1087;&#1077;&#1093;</span>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="clickable" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="showPage('worker-detail')">
                 <div style="display:flex;align-items:center;gap:8px">
                   <div class="worker-avatar" style="background:var(--purple-bg);color:var(--purple);width:28px;height:28px;font-size:11px">&#1040;</div>
                   <span style="font-weight:600">&#1040;&#1083;&#1080;&#1096;&#1077;&#1088;</span>
                 </div>
                 <span style="color:var(--text-dim)">38 &#1074;&#1099;&#1079;&#1086;&#1074;&#1086;&#1074;, <span style="color:var(--green)">92%</span> &#1091;&#1089;&#1087;&#1077;&#1093;</span>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="clickable" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="showPage('worker-detail')">
                 <div style="display:flex;align-items:center;gap:8px">
                   <div class="worker-avatar" style="background:var(--green-bg);color:var(--green);width:28px;height:28px;font-size:11px">&#1046;</div>
                   <span style="font-weight:600">&#1046;&#1072;&#1084;&#1096;&#1080;&#1076;</span>
                 </div>
                 <span style="color:var(--text-dim)">12 &#1074;&#1099;&#1079;&#1086;&#1074;&#1086;&#1074;, <span style="color:var(--yellow)">83%</span> &#1091;&#1089;&#1087;&#1077;&#1093;</span>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="clickable" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="showPage('worker-detail')">
                 <div style="display:flex;align-items:center;gap:8px">
                   <div class="worker-avatar" style="background:var(--orange-bg);color:var(--orange);width:28px;height:28px;font-size:11px">&#1044;</div>
                   <span style="font-weight:600">&#1044;&#1072;&#1074;&#1088;&#1086;&#1085;&#1086;&#1074;</span>
@@ -2835,7 +2840,32 @@ function showPage(pageId) {
   if (idx !== undefined) {
     document.querySelectorAll('.sidebar-nav .nav-item')[idx].classList.add('active');
   }
+  // Scroll to top of main content
+  document.querySelector('.main').scrollTop = 0;
 }
+
+// Make .tool badges navigate to skill-detail on click
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('tool')) {
+    e.stopPropagation();
+    showPage('skill-detail');
+  }
+});
+
+// Make tabs interactive (switch active state)
+document.querySelectorAll('.tabs').forEach(function(tabGroup) {
+  tabGroup.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      tabGroup.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+    });
+  });
+});
+
+// Make card-header .link elements that don't have onclick into clickable items
+document.querySelectorAll('.card-header .link').forEach(function(link) {
+  link.style.cursor = 'pointer';
+});
 </script>
 
 </body>
