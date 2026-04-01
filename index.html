@@ -2823,7 +2823,7 @@
 </main>
 
 <script>
-function showPage(pageId) {
+function showPage(pageId, pushState) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const target = document.getElementById('page-' + pageId);
   if (target) target.classList.add('active');
@@ -2840,9 +2840,56 @@ function showPage(pageId) {
   if (idx !== undefined) {
     document.querySelectorAll('.sidebar-nav .nav-item')[idx].classList.add('active');
   }
-  // Scroll to top of main content
   document.querySelector('.main').scrollTop = 0;
+
+  // URL state management
+  if (pushState !== false) {
+    history.pushState({ page: pageId }, '', '#' + pageId);
+  }
+  document.title = 'Auto RE — ' + (pageTitles[pageId] || pageId);
 }
+
+// Page titles for browser tab
+var pageTitles = {
+  'dashboard': 'Главная',
+  'projects': 'Проекты',
+  'project-detail': 'Deepal S07 2025',
+  'workers': 'Сотрудники',
+  'worker-detail': 'Рустам',
+  'skills': 'Скиллы',
+  'skill-detail': 'apk-translate',
+  'devices': 'Устройства',
+  'activity': 'Лента активности',
+  'questions': 'Вопросы',
+  'onboarding': 'Обучение',
+  'knowledge': 'База знаний',
+  'builds': 'Сборки',
+  'delivery': 'Доставка',
+  'admin-claude': 'Admin Claude',
+  'stage-detail': 'Этап: Перевод',
+  'bug-detail': 'Баг #12'
+};
+
+// Handle browser back/forward
+window.addEventListener('popstate', function(e) {
+  if (e.state && e.state.page) {
+    showPage(e.state.page, false);
+  } else {
+    var hash = location.hash.replace('#', '');
+    showPage(hash || 'dashboard', false);
+  }
+});
+
+// Load page from URL hash on startup
+(function() {
+  var hash = location.hash.replace('#', '');
+  if (hash && document.getElementById('page-' + hash)) {
+    showPage(hash, false);
+    history.replaceState({ page: hash }, '', '#' + hash);
+  } else {
+    history.replaceState({ page: 'dashboard' }, '', '#dashboard');
+  }
+})();
 
 // Make .tool badges navigate to skill-detail on click
 document.addEventListener('click', function(e) {
