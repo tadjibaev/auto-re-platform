@@ -59,6 +59,7 @@
 
 <div class="toc">
   <div class="toc-title">Содержание</div>
+  <a href="#0" style="color:var(--orange);font-weight:600">0. Асинхронность и мульти-агентность &mdash; ноль простоев</a>
   <a href="#1">1. Архитектура данных &mdash; сотни гигабайт прошивок</a>
   <a href="#2">2. MCP-сервер и движок скиллов</a>
   <a href="#3">3. База знаний и самообучение</a>
@@ -67,6 +68,142 @@
   <a href="#6">6. Аналитика и мониторинг</a>
   <a href="#7">7. Стоимость и масштабирование</a>
   <a href="#8">8. Порядок реализации</a>
+</div>
+
+<!-- ===================== SECTION 0 ===================== -->
+<h2 id="0" style="color:var(--orange)">0. Асинхронность и мульти-агентность</h2>
+<p><span class="tag tag-orange">Архитектурный принцип #1</span> Воркер никогда не ждёт. Пока одна задача выполняется на сервере, он работает над следующей. Система параллелизирует всё что можно.</p>
+
+<div class="warning">
+  <strong>Проблема без асинхронности:</strong> jadx декомпилирует APK = 5 мин. Ghidra анализирует бинарь = 30 мин. apk-rebuild = 2 мин. Воркер сидит и ждёт. При 23 APK &times; 7 минут = <strong>2.5 часа чистого ожидания в день</strong>. При 6 воркерах = 15 человеко-часов потерь ежедневно.
+</div>
+
+<h3>Принцип: Fire-and-Forget + Notification</h3>
+<div class="diagram">
+Воркер: "декомпилируй com.deepal.hvac"
+     │
+     ▼
+MCP: task_id=abc123, status=queued        ← мгновенный ответ (100ms)
+     │
+     ▼
+Воркер: "пока жду, переведи strings.xml   ← уже работает над другим
+         от com.deepal.media"
+     │
+     ▼
+MCP: task_id=def456, status=queued
+     │
+     ...5 минут проходит...
+     │
+     ▼
+Сервер → Claude Code: "abc123 готов!       ← push-нотификация
+  com.deepal.hvac декомпилирован,
+  найдено 42 строки, 3 хардкод в smali"
+     │
+     ▼
+Воркер продолжает с hvac, media ещё
+собирается в фоне</div>
+
+<h3>3 уровня параллелизма</h3>
+
+<div class="card">
+  <div class="card-title">Уровень 1: Параллельные задачи одного воркера</div>
+  <p>Воркер может иметь <strong>до 5 фоновых задач</strong> одновременно. Пока jadx декомпилирует APK #1, он уже переводит APK #2 (который был декомпилирован раньше), а APK #3 собирается в фоне после перевода.</p>
+  <p><strong>Конвейер:</strong> decode → translate → rebuild → install идут <strong>не последовательно для всех APK</strong>, а конвейером: APK #1 на этапе rebuild, APK #2 на translate, APK #3 на decode — одновременно.</p>
+</div>
+
+<div class="card">
+  <div class="card-title">Уровень 2: Мульти-агент внутри скилла</div>
+  <p>Скилл <code>voice-setup</code> (Level 3) запускает 3 суб-агента <strong>параллельно</strong>:</p>
+  <p>Агент 1: сканирует разрешения через ADB<br>
+  Агент 2: ищет API функций авто в декомпилированном коде<br>
+  Агент 3: подготавливает шаблон патча фреймворка</p>
+  <p>Все три работают одновременно. Оркестратор собирает результаты и передаёт дальше. <strong>Экономия:</strong> 15 мин вместо 45 мин последовательно.</p>
+</div>
+
+<div class="card">
+  <div class="card-title">Уровень 3: Спекулятивное выполнение</div>
+  <p>Система <strong>предугадывает</strong> что понадобится дальше и запускает заранее:</p>
+  <p>Воркер начал переводить APK → система в фоне уже:<br>
+  &bull; Декомпилирует следующие 3 APK по приоритету<br>
+  &bull; Извлекает строки из них<br>
+  &bull; Ищет похожие записи в базе знаний<br>
+  &bull; Готовит предварительный перевод автомобильных терминов</p>
+  <p>Когда воркер закончит текущий APK — следующий <strong>уже готов к работе</strong>.</p>
+</div>
+
+<h3>Реализация в MCP</h3>
+
+<table>
+  <tr><th>Операция</th><th>Тип</th><th>Поведение</th></tr>
+  <tr><td>extract_strings</td><td><span class="tag tag-green">Синхронная</span></td><td>< 10 сек, ждём результат</td></tr>
+  <tr><td>translate_batch</td><td><span class="tag tag-green">Синхронная</span></td><td>< 30 сек, ждём результат</td></tr>
+  <tr><td>adb_shell</td><td><span class="tag tag-green">Синхронная</span></td><td>< 5 сек, ждём результат</td></tr>
+  <tr><td>apk_decode</td><td><span class="tag tag-yellow">Async + poll</span></td><td>30 сек - 2 мин, фоновая задача</td></tr>
+  <tr><td>apk_rebuild</td><td><span class="tag tag-yellow">Async + poll</span></td><td>1-3 мин, фоновая задача</td></tr>
+  <tr><td>jadx_decompile</td><td><span class="tag tag-orange">Async + notify</span></td><td>2-10 мин, нотификация по готовности</td></tr>
+  <tr><td>ghidra_analyze</td><td><span class="tag tag-red">Async + notify</span></td><td>5-30 мин, нотификация по готовности</td></tr>
+  <tr><td>full_protection</td><td><span class="tag tag-red">Multi-agent async</span></td><td>10-20 мин, 4 суб-агента параллельно</td></tr>
+</table>
+
+<h3>Паттерн нотификации</h3>
+<div class="card">
+  <div class="card-title">Как Claude Code узнаёт что задача готова?</div>
+  <p><strong>Вариант A (рекомендуемый): MCP Notifications.</strong> MCP-протокол поддерживает server → client notifications. Сервер отправляет <code>notifications/task_complete</code> с результатом. Claude Code получает и вплетает в контекст разговора.</p>
+  <p><strong>Вариант B (fallback): Smart polling.</strong> Tool <code>check_tasks()</code> проверяет все фоновые задачи воркера. Claude Code вызывает его периодически между другими действиями. Не отдельным сообщением — а попутно, как часть workflow.</p>
+  <p><strong>Вариант C (для критичных): Webhook → Telegram.</strong> Длинные задачи (Ghidra 30 мин) → бот в Telegram: «Ghidra анализ firmware.bin завершён. 47 функций найдено. Продолжить в Claude Code.» Воркер мог уйти на обед.</p>
+</div>
+
+<h3>Конвейерный перевод 23 APK</h3>
+<div class="diagram">
+Без конвейера (последовательно):
+APK1: [decode 2m][translate 5m][rebuild 2m] = 9m
+APK2:                                        [decode 2m][translate 5m][rebuild 2m] = 9m
+APK3:                                                                               [decode]...
+Итого 23 APK: ~207 минут = 3.5 часа
+
+С конвейером (параллельно):
+APK1: [decode 2m][translate 5m][rebuild 2m]
+APK2:   [decode 2m][translate 5m][rebuild 2m]
+APK3:     [decode 2m][translate 5m][rebuild 2m]
+APK4:       [decode 2m]...
+Итого 23 APK: ~70 минут = 1.2 часа (3x быстрее)
+
+С конвейером + спекулятивное:
+APK1-5:  [pre-decoded]→[translate 5m][rebuild 2m]
+APK6-10: [decoding...]→[translate 5m]...
+Итого: ~50 минут (4x быстрее)</div>
+
+<h3>Мульти-агент: пример full_protection</h3>
+<div class="diagram">
+Воркер: "защити финальную сборку"
+         │
+    Оркестратор
+    ┌────┼────┬────┐
+    ▼    ▼    ▼    ▼         ← все параллельно
+  Agent1 Agent2 Agent3 Agent4
+  integrity троян  шифр.  активация
+  checks   embed  ресурсов сервер
+  (3 мин)  (5 мин) (2 мин) (1 мин)
+    │    │    │    │
+    └────┴────┴────┘
+         │
+    Оркестратор: собирает, перекрёстная проверка
+         │                   ← последовательно (зависимости)
+    Final APK ready (6 мин вместо 11 последовательно)</div>
+
+<h3>Что это даёт в цифрах</h3>
+<table>
+  <tr><th>Метрика</th><th>Без async</th><th>С async</th><th>Экономия</th></tr>
+  <tr><td>Перевод 23 APK</td><td>3.5 часа</td><td>50-70 мин</td><td><strong>3-4x</strong></td></tr>
+  <tr><td>Полная защита</td><td>11 мин</td><td>6 мин</td><td><strong>1.8x</strong></td></tr>
+  <tr><td>Voice setup</td><td>45 мин</td><td>15 мин</td><td><strong>3x</strong></td></tr>
+  <tr><td>Ghidra анализ</td><td>30 мин (ждём)</td><td>0 мин (фон)</td><td><strong>∞</strong></td></tr>
+  <tr><td>Полный проект (7 этапов)</td><td>~3 недели</td><td>~1-1.5 недели</td><td><strong>2-3x</strong></td></tr>
+  <tr><td style="color:var(--orange)">Человеко-часы потерь/день</td><td style="color:var(--red)">2.5 часа</td><td style="color:var(--green)">~15 мин</td><td><strong>10x</strong></td></tr>
+</table>
+
+<div class="key-point">
+  <strong>Главный принцип:</strong> Сервер всегда работает. Воркер всегда работает. Никто никого не ждёт. Задачи текут как конвейер, длинные уходят в фон, система предугадывает следующие шаги. Это не оптимизация — это <strong>фундамент архитектуры</strong>.
 </div>
 
 <!-- ===================== SECTION 1 ===================== -->
